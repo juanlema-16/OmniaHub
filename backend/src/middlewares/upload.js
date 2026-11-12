@@ -29,7 +29,17 @@ export const imageUpload = (folder, { maxMB = 5 } = {}) => {
   });
 };
 
+export const fileUrl = (folder, filename) => `/uploads/${folder}/${filename}`;
+
 export const removeUploadedFiles = (files) => {
   const list = Array.isArray(files) ? files : Object.values(files || {}).flat();
   for (const file of list) fs.rm(file.path, { force: true }, () => {});
+};
+
+// Borra archivos guardados a partir de su URL pública (/uploads/carpeta/archivo)
+export const removeFilesByUrl = (urls = []) => {
+  for (const url of urls) {
+    const match = /^\/uploads\/([a-z-]+)\/([\w.-]+)$/i.exec(url || '');
+    if (match) fs.rm(uploadPath(match[1], match[2]), { force: true }, () => {});
+  }
 };

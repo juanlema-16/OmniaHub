@@ -1,16 +1,10 @@
 import * as kycService from '../services/kyc.service.js';
-import { removeUploadedFiles } from '../middlewares/upload.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendOk } from '../utils/response.js';
 
 export const submit = asyncHandler(async (req, res) => {
-  try {
-    const kyc = await kycService.submitKyc(req.user, req.files);
-    sendOk(res, kyc, 'Documentos enviados. Te avisaremos cuando sean revisados', 201);
-  } catch (error) {
-    removeUploadedFiles(req.files);
-    throw error;
-  }
+  const kyc = await kycService.submitKyc(req.user, req.files);
+  sendOk(res, kyc, 'Documentos enviados. Te avisaremos cuando sean revisados', 201);
 });
 
 export const getMine = asyncHandler(async (req, res) => {

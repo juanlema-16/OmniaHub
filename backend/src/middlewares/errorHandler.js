@@ -2,6 +2,7 @@ import { ZodError } from 'zod';
 import multer from 'multer';
 import { ApiError } from '../utils/ApiError.js';
 import { env } from '../config/env.js';
+import { removeUploadedFiles } from './upload.js';
 
 export const notFound = (req, res, next) => {
   next(ApiError.notFound(`Ruta no encontrada: ${req.method} ${req.originalUrl}`));
@@ -39,6 +40,10 @@ export const errorHandler = (err, req, res, next) => {
     status = 400;
     message = 'El cuerpo de la solicitud no es un JSON válido';
   }
+
+  // Si la solicitud falló, los archivos que alcanzó a subir multer ya no sirven
+  if (req.files) removeUploadedFiles(req.files);
+  if (req.file) removeUploadedFiles([req.file]);
 
   if (status >= 500) console.error(err);
 

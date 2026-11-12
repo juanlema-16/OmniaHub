@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import mongoose from 'mongoose';
 import User from '../models/User.js';
+import { withTransaction } from '../utils/transaction.js';
 import { env } from '../config/env.js';
 import { signToken } from '../middlewares/auth.js';
 import { ApiError } from '../utils/ApiError.js';
@@ -50,16 +50,11 @@ export const register = async ({ tiendaNombre, empresaNombre, nit, ...data }) =>
     userData.empresa = { nombre: empresaNombre || `${data.nombre} ${data.apellido}`, nit: nit || 'CF' };
   }
 
-  let user;
-  const session = await mongoose.startSession();
-  try {
-    await session.withTransaction(async () => {
-      [user] = await User.create([userData], { session });
-      if (user.role !== 'cliente') await createWallet(user._id, session);
-    });
-  } finally {
-    await session.endSession();
-  }
+  const user = await withTransaction(async (session) => {
+    const [created] = await User.create([userData], { session });
+    if (created.role !== 'cliente') await createWallet(created._id, session);
+    return created;
+  });
 
   return { user, devCode: enviarCodigo(user.email, code) };
 };
