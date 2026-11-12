@@ -7,6 +7,8 @@ import rateLimit from 'express-rate-limit';
 import { env } from './config/env.js';
 import { dbStatus } from './config/db.js';
 import { errorHandler, notFound } from './middlewares/errorHandler.js';
+import { ApiError } from './utils/ApiError.js';
+import routes from './routes/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,6 +31,8 @@ app.use(
   })
 );
 
+// Los documentos KYC solo se entregan por /api/kyc/archivo con autenticación
+app.use('/uploads/kyc', (req, res, next) => next(ApiError.notFound('Archivo no encontrado')));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.get('/api/health', (req, res) => {
@@ -38,6 +42,8 @@ app.get('/api/health', (req, res) => {
     message: 'API de OmniaHub funcionando',
   });
 });
+
+app.use('/api', routes);
 
 app.use(notFound);
 app.use(errorHandler);
