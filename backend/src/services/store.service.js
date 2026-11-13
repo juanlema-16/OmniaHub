@@ -187,7 +187,6 @@ export const checkCoupon = async (slug, { codigo, items }) => {
 };
 
 export const checkout = async (slug, cliente, { cliente: datos, destino, items, transportadora, metodoPago, cupon }) => {
-  if (cliente.role !== 'cliente') throw ApiError.forbidden('Para comprar inicia sesión con una cuenta de cliente');
   const dropshipper = await findStore(slug);
   const { lineas, subtotal } = await preciosDelCarrito(dropshipper, items);
 
