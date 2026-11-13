@@ -2,7 +2,8 @@ import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import Skeleton from './Skeleton';
 import EmptyState from './EmptyState';
 
-// columns: [{ key, header, render?: (row) => node, className?, align?: 'right' | 'center' }]
+// columns: [{ key, header, render?: (row) => node, className?, align?: 'right' | 'center', sticky?: true }]
+// sticky: la columna (normalmente las acciones) queda fija a la derecha y siempre visible aunque la tabla tenga scroll
 // pagination: { page, pages, total, limit?, onPageChange }
 // search: { value, onChange, placeholder } · aboveTable: panel opcional entre la barra y la tabla (filtros avanzados)
 export default function Table({
@@ -22,6 +23,7 @@ export default function Table({
   aboveTable,
 }) {
   const alinear = (c) => (c.align === 'right' ? 'text-right' : c.align === 'center' ? 'text-center' : 'text-left');
+  const fija = 'sticky right-0 z-[1] shadow-[-10px_0_12px_-12px_rgba(15,23,42,0.35)]';
 
   // bare: sin borde ni sombra propios, para usarla dentro de un Card
   return (
@@ -51,7 +53,7 @@ export default function Table({
           <thead className="bg-slate-50">
             <tr>
               {columns.map((c) => (
-                <th key={c.key} scope="col" className={`whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 ${alinear(c)} ${c.className || ''}`}>
+                <th key={c.key} scope="col" className={`whitespace-nowrap px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 first:pl-4 last:pr-4 ${alinear(c)} ${c.sticky ? `${fija} bg-slate-50` : ''} ${c.className || ''}`}>
                   {c.header}
                 </th>
               ))}
@@ -62,7 +64,7 @@ export default function Table({
               Array.from({ length: skeletonRows }).map((_, i) => (
                 <tr key={`sk-${i}`}>
                   {columns.map((c) => (
-                    <td key={c.key} className="px-4 py-3.5">
+                    <td key={c.key} className="px-3 py-3.5 first:pl-4 last:pr-4">
                       <Skeleton className="h-4 w-full max-w-[10rem]" />
                     </td>
                   ))}
@@ -73,10 +75,13 @@ export default function Table({
                 <tr
                   key={row[rowKey]}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={onRowClick ? 'cursor-pointer transition-colors hover:bg-slate-50' : ''}
+                  className={`group ${onRowClick ? 'cursor-pointer transition-colors hover:bg-slate-50' : ''}`}
                 >
                   {columns.map((c) => (
-                    <td key={c.key} className={`whitespace-nowrap px-4 py-3 text-slate-700 ${alinear(c)} ${c.className || ''}`}>
+                    <td
+                      key={c.key}
+                      className={`whitespace-nowrap px-3 py-3 text-slate-700 first:pl-4 last:pr-4 ${alinear(c)} ${c.sticky ? `${fija} bg-white ${onRowClick ? 'transition-colors group-hover:bg-slate-50' : ''}` : ''} ${c.className || ''}`}
+                    >
                       {c.render ? c.render(row) : row[c.key]}
                     </td>
                   ))}
