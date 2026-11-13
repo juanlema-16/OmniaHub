@@ -9,19 +9,21 @@ import Alert from '../ui/Alert';
 import { createBanner, updateBanner } from '../../api/admin';
 import { getErrorMessage } from '../../api/axios';
 import { isoDate } from '../../utils/dates';
+import { ROLES } from '../../utils/constants';
 import { erroresDeApi, reglas, validar } from '../../utils/validation';
 
 export const UBICACIONES = { LANDING: 'Página de inicio', PANEL: 'Paneles de los usuarios' };
 const TIPOS = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_MB = 5;
 
-const vacio = () => ({ titulo: '', subtitulo: '', link: '', ubicacion: ['LANDING', 'PANEL'], inicio: isoDate(), fin: '', activo: true });
+const vacio = () => ({ titulo: '', subtitulo: '', link: '', ubicacion: ['LANDING', 'PANEL'], roles: [], inicio: isoDate(), fin: '', activo: true });
 
 const desdeBanner = (b) => ({
   titulo: b.titulo,
   subtitulo: b.subtitulo || '',
   link: b.link || '',
   ubicacion: b.ubicacion,
+  roles: b.roles || [],
   inicio: b.inicio ? isoDate(b.inicio) : isoDate(),
   fin: b.fin ? isoDate(b.fin) : '',
   activo: b.activo,
@@ -77,6 +79,8 @@ export default function BannerFormModal({ open, banner, onClose, onSaved }) {
     setErrores((er) => ({ ...er, ubicacion: undefined }));
   };
 
+  const alternarRol = (r) => setForm((f) => ({ ...f, roles: f.roles.includes(r) ? f.roles.filter((x) => x !== r) : [...f.roles, r] }));
+
   const esquema = {
     titulo: [reglas.requerido('El título'), reglas.minimo('El título', 3)],
     link: [(v) => (v && !/^(\/|https:\/\/)/.test(v.trim()) ? 'El enlace debe empezar con / o https://' : null)],
@@ -84,8 +88,6 @@ export default function BannerFormModal({ open, banner, onClose, onSaved }) {
     inicio: [reglas.requerido('La fecha de inicio', 'a')],
     fin: [
       (v, valores) => (v && valores.inicio && v < valores.inicio ? 'La fecha de fin no puede ser anterior a la de inicio' : null),
-      // El backend no permite quitar una fecha de fin ya guardada (multipart no envía null)
-      (v) => (banner?.fin && !v ? 'Elige una fecha de fin: no se puede quitar una ya guardada' : null),
     ],
   };
 
@@ -102,9 +104,12 @@ export default function BannerFormModal({ open, banner, onClose, onSaved }) {
     datos.append('subtitulo', form.subtitulo.trim());
     datos.append('link', form.link.trim());
     datos.append('ubicacion', form.ubicacion.join(','));
+    // Sin roles marcados lo ven todos; solo aplica a los paneles
+    datos.append('roles', form.ubicacion.includes('PANEL') ? form.roles.join(',') : '');
     // Guatemala es UTC-6 todo el año: el banner empieza a las 00:00 y termina a las 23:59 del día elegido
     datos.append('inicio', `${form.inicio}T00:00:00-06:00`);
-    if (form.fin) datos.append('fin', `${form.fin}T23:59:59.999-06:00`);
+    // Un valor vacío quita la fecha de fin ya guardada
+    datos.append('fin', form.fin ? `${form.fin}T23:59:59.999-06:00` : '');
     datos.append('activo', String(form.activo));
     if (archivo) datos.append('imagen', archivo);
 
@@ -190,10 +195,30 @@ export default function BannerFormModal({ open, banner, onClose, onSaved }) {
           {errores.ubicacion && <p className="mt-1.5 text-xs font-medium text-danger" role="alert">{errores.ubicacion}</p>}
         </fieldset>
 
+        {form.ubicacion.includes('PANEL') && (
+          <fieldset>
+            <legend className="mb-1 text-sm font-medium text-slate-700">Roles que lo ven en su panel</legend>
+            <p className="mb-2 text-xs text-slate-500">Sin marcar ninguno, lo ven todos los roles. La página de inicio es pública y no distingue roles.</p>
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
+              {Object.entries(ROLES).map(([valor, { label }]) => (
+                <label key={valor} className="inline-flex items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" checked={form.roles.includes(valor)} onChange={() => alternarRol(valor)} className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        )}
+
         <div className="grid gap-4 sm:grid-cols-2">
           <Input label="Visible desde" name="inicio" type="date" value={form.inicio} onChange={cambiar} error={errores.inicio} required />
-          <Input label="Visible hasta (opcional)" name="fin" type="date" value={form.fin} min={form.inicio || undefined} onChange={cambiar} error={errores.fin} hint="Incluye todo ese día" />
+          <Input label="Visible hasta (opcional)" name="fin" type="date" value={form.fin} min={form.inicio || undefined} onChange={cambiar} error={errores.fin} hint={form.fin ? 'Incluye todo ese día' : 'Sin fecha de fin: se muestra hasta que lo desactives'} />
         </div>
+        {form.fin && (
+          <button type="button" onClick={() => setForm((f) => ({ ...f, fin: '' }))} className="-mt-2 text-sm font-medium text-primary hover:underline">
+            Quitar la fecha de fin
+          </button>
+        )}
         <Switch checked={form.activo} onChange={(activo) => setForm((f) => ({ ...f, activo }))} label="Banner activo" />
       </form>
     </Modal>

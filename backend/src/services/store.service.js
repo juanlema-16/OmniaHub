@@ -125,15 +125,18 @@ export const checkout = async (slug, cliente, { cliente: datos, destino, items, 
   );
 };
 
-export const activeBanners = (ubicacion) => {
+// En los paneles solo se muestran los banners dirigidos al rol (o a todos); la landing es pública y los muestra todos
+export const activeBanners = ({ ubicacion, rol }) => {
   const ahora = new Date();
+  const vigencia = [{ $or: [{ inicio: null }, { inicio: { $lte: ahora } }] }, { $or: [{ fin: null }, { fin: { $gte: ahora } }] }];
+  const paraElRol = ubicacion === 'PANEL' ? [{ $or: [{ roles: { $exists: false } }, { roles: { $size: 0 } }, ...(rol ? [{ roles: rol }] : [])] }] : [];
   return Banner.find({
     activo: true,
     ubicacion,
-    $and: [{ $or: [{ inicio: null }, { inicio: { $lte: ahora } }] }, { $or: [{ fin: null }, { fin: { $gte: ahora } }] }],
+    $and: [...vigencia, ...paraElRol],
   })
     .sort({ inicio: -1 })
-    .select('titulo subtitulo imagen link ubicacion');
+    .select('titulo subtitulo imagen link ubicacion roles');
 };
 
 export const listPolicies = () => Policy.find().sort({ titulo: 1 }).select('slug titulo actualizadoEn');

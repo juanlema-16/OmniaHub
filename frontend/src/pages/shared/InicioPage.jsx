@@ -125,7 +125,7 @@ export default function InicioPage() {
 
   const resumen = useAsync(() => (role === 'cliente' ? Promise.resolve(null) : getSummary()), [role]);
   const ordenes = useAsync(() => listOrders({ limit: 5 }), [role]);
-  const banners = useAsync(() => getBanners('PANEL'), []);
+  const banners = useAsync(() => getBanners('PANEL', role), [role]);
 
   const k = resumen.data?.kpis;
   const porEstado = ordenes.data?.porEstado || {};

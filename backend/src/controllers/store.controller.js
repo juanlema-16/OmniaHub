@@ -24,7 +24,7 @@ export const checkout = asyncHandler(async (req, res) => {
 });
 
 export const banners = asyncHandler(async (req, res) => {
-  sendOk(res, await storeService.activeBanners(req.validated.query.ubicacion), 'Banners activos');
+  sendOk(res, await storeService.activeBanners(req.validated.query), 'Banners activos');
 });
 
 export const policies = asyncHandler(async (req, res) => {

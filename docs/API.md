@@ -213,7 +213,7 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
-| GET | `/public/banners?ubicacion=LANDING\|PANEL` | Público | Banners activos y vigentes |
+| GET | `/public/banners?ubicacion=LANDING\|PANEL&rol=` | Público | Banners activos y vigentes. En `PANEL` con `rol` devuelve los dirigidos a ese rol o a todos; sin `rol`, solo los dirigidos a todos. `LANDING` es pública y no distingue roles |
 | GET | `/public/policies` | Público | Lista de políticas |
 | GET | `/public/policies/:slug` | Público | `terminos-y-condiciones`, `privacidad`, `cookies` o `envios-y-devoluciones` |
 
@@ -237,8 +237,8 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 | PATCH | `/admin/carriers/:id` | admin | `{ nombre, logo, activa }` |
 | PUT | `/admin/carriers/:id/tarifas` | admin | `{ tarifas: [{ departamento, precio, dias }] }`. Solo cambia los departamentos enviados |
 | GET | `/admin/banners` | admin | Todos los banners |
-| POST | `/admin/banners` *(multipart)* | admin | Crea un banner con `imagen` (archivo) o `imagenUrl`, `titulo`, `subtitulo`, `link`, `ubicacion`, `inicio`, `fin`, `activo` |
-| PATCH | `/admin/banners/:id` *(multipart)* | admin | Edita un banner |
+| POST | `/admin/banners` *(multipart)* | admin | Crea un banner con `imagen` (archivo) o `imagenUrl`, `titulo`, `subtitulo`, `link`, `ubicacion`, `roles` (lista separada por comas; vacío = todos los roles), `inicio`, `fin`, `activo` |
+| PATCH | `/admin/banners/:id` *(multipart)* | admin | Edita un banner. Para quitar la fecha de fin se envía `fin` vacío (multipart) o `null` (JSON) |
 | DELETE | `/admin/banners/:id` | admin | Elimina un banner |
 | GET | `/admin/policies` | admin | Políticas con quién las actualizó |
 | PUT | `/admin/policies/:slug` | admin | `{ titulo?, contenido }` |

@@ -57,6 +57,12 @@ const ubicacionesField = z.preprocess(
   (v) => (typeof v === 'string' ? v.split(',').map((s) => s.trim()).filter(Boolean) : v),
   z.array(z.enum(BANNER_UBICACION, { error: 'La ubicación debe ser LANDING o PANEL' })).min(1, { error: 'Elige al menos una ubicación' })
 );
+const rolesField = z.preprocess(
+  (v) => (typeof v === 'string' ? v.split(',').map((x) => x.trim()).filter(Boolean) : v),
+  z.array(z.enum(ROLES, { error: 'Rol no válido' }))
+);
+// Texto vacío (multipart) o null quitan la fecha de fin
+const finField = z.preprocess((v) => (v === '' || v === 'null' ? null : v), fecha('La fecha de fin').nullable());
 const linkField = z.string().trim().max(300).refine((v) => v === '' || v.startsWith('/') || /^https:\/\//.test(v), { error: 'El enlace debe empezar con / o https://' });
 
 const bannerFields = {
@@ -65,8 +71,9 @@ const bannerFields = {
   imagenUrl: z.string().trim().url({ error: 'La URL de la imagen no es válida' }).optional(),
   link: linkField.optional(),
   ubicacion: ubicacionesField.optional(),
+  roles: rolesField.optional(),
   inicio: fecha('La fecha de inicio').optional(),
-  fin: fecha('La fecha de fin').nullable().optional(),
+  fin: finField.optional(),
   activo: booleanish.optional(),
 };
 const finDespuesDeInicio = (d) => !d.inicio || !d.fin || d.fin >= d.inicio;
