@@ -53,10 +53,43 @@ src/
 └── seed/            datos de prueba
 ```
 
-Todas las respuestas siguen el formato `{ ok: true, data, message }` o `{ ok: false, message, errors }`.
+Cada módulo sigue el patrón **model → validator → service → controller → route**. La lógica de negocio vive en `services/` (por ejemplo, `wallet.service.js` es el único lugar que mueve saldos y siempre crea una `Transaction`).
+
+Todas las respuestas siguen el formato `{ ok: true, data, message }` o `{ ok: false, message, errors }`, con errores de validación como `[{ campo, mensaje }]`. La paginación es `?page=1&limit=10` → `{ items, total, page, pages }`.
+
+## Datos de prueba
+
+`npm run seed` borra la base y crea:
+
+- 10 usuarios demo (contraseña `Demo123*`): admin, 2 proveedores, 4 dropshippers (uno con KYC pendiente), 2 transportadoras y el cliente demo, más clientes para las reseñas.
+- 6 categorías, 20 productos con ilustraciones SVG propias (`src/seed/assets`), 3 tiendas con productos importados.
+- Tarifas de RutaExpress y Veloz GT para los 22 departamentos, cupón `BIENVENIDO10`, órdenes en todos los estados con transacciones de billetera coherentes, facturas, reseñas, tickets, banners, políticas y configuración (comisión 3 %, retiro mínimo Q100).
+
+La lista de usuarios está en el [README principal](../README.md#usuarios-demo).
+
+## Seguridad
+
+- Contraseñas con bcrypt; el campo `password` nunca se devuelve.
+- JWT en `Authorization: Bearer <token>` y `authorize(...roles)` en cada ruta.
+- zod en todas las entradas, helmet, CORS limitado a `CLIENT_URL`, rate limit general y de 5 intentos de login cada 15 minutos.
+- KYC aprobado obligatorio para publicar, vender y retirar.
+
+## Archivos
+
+- **Públicos** (imágenes de productos, logos, banners): `backend/uploads/`, servidos en `/uploads`.
+- **Privados** (documentos de KYC y comprobantes de recarga): `backend/private-uploads/`, fuera de la carpeta estática. Solo se entregan por `/api/kyc/archivo/:archivo` y `/api/wallet/comprobantes/:archivo` al dueño o al admin.
+- **Ilustraciones del seed:** versionadas en `src/seed/assets` y servidas en `/uploads/seed`.
+
+Las dos carpetas de subidas están en `.gitignore` y se crean solas al subir el primer archivo.
+
+## Endpoints
+
+La lista completa, agrupada por módulo y con el rol que puede usar cada ruta, está en [`docs/API.md`](../docs/API.md).
 
 ## Comprobar que funciona
 
 ```bash
 curl http://localhost:4000/api/health
 ```
+
+Debe responder `{ "ok": true, "data": { "status": "ok", "db": "conectada", … } }`.

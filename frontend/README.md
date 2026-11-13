@@ -48,6 +48,23 @@ src/
 └── utils/        formatQ, fechas y constantes
 ```
 
+## Rutas principales
+
+| Ruta | Quién | Contenido |
+|---|---|---|
+| `/` | Público | Landing con cómo funciona, beneficios y tiendas destacadas |
+| `/login`, `/registro` | Público | Acceso (con botones de usuarios demo) y registro con verificación de correo |
+| `/tienda/:slug` | Público | Tienda de un dropshipper, detalle de producto, carrito y checkout (este último para clientes) |
+| `/politicas/:slug` | Público | Términos, privacidad, cookies y envíos |
+| `/admin`, `/proveedor`, `/dropshipper`, `/transportadora`, `/cliente` | Cada rol | Panel con el mismo layout; el menú de cada rol está en `src/routes/panelConfig.jsx` |
+
+## Comportamiento
+
+- El token se guarda en `localStorage` y axios lo agrega en cada petición; ante un 401 la sesión se cierra.
+- El carrito se guarda por tienda en `localStorage` y se revisa contra la API al abrir el carrito y el checkout.
+- **Modo oscuro:** interruptor sol/luna en el header, guardado en `localStorage` y, la primera vez, según la preferencia del sistema. Se aplica con la clase `dark` en `<html>`.
+- El proxy de Vite envía `/api` y `/uploads` al backend (`localhost:4000`).
+
 ## Identidad visual
 
 Los colores están definidos como tokens de Tailwind en `src/index.css`:
