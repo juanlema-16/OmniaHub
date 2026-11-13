@@ -93,7 +93,7 @@ export default function FacturasPage() {
         ]
       : []),
     { key: 'total', header: 'Total', align: 'right', render: (f) => <span className="font-semibold text-slate-900">{formatQ(f.total)}</span> },
-    { key: 'ver', header: '', render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
+    { key: 'ver', header: '', sticky: true, render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
   ];
 
   return (

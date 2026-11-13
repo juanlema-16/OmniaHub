@@ -95,6 +95,7 @@ export default function AuditoriaPage() {
       key: 'ver',
       header: '',
       align: 'right',
+      sticky: true,
       render: (r) => (
         <Button size="sm" variant="ghost" onClick={() => setDetalle(r)} aria-label={`Ver detalle de ${accionLegible(r.accion)}`}>
           Ver

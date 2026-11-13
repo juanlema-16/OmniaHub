@@ -97,7 +97,7 @@ export default function SoportePage() {
         </div>
       ),
     },
-    { key: 'ver', header: '', render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
+    { key: 'ver', header: '', sticky: true, render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
   ];
 
   return (
