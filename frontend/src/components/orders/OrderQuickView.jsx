@@ -106,7 +106,7 @@ export default function OrderQuickView({ orderId, onClose, renderAcciones }) {
                       )}
                       <Linea label="Envío" value={`− ${formatQ(o.costoEnvio)}`} />
                       {o.comision !== undefined && <Linea label="Comisión de la plataforma" value={`− ${formatQ(o.comision)}`} />}
-                      <Linea label="Tu ganancia" value={formatQ(o.gananciaDropshipper)} className={`font-semibold ${o.gananciaDropshipper < 0 ? 'text-danger' : 'text-success'}`} />
+                      <Linea label={user?.role === 'dropshipper' ? 'Tu ganancia' : 'Ganancia del dropshipper'} value={formatQ(o.gananciaDropshipper)} className={`font-semibold ${o.gananciaDropshipper < 0 ? 'text-danger' : 'text-success'}`} />
                     </>
                   )}
                 </div>
