@@ -7,6 +7,7 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import Alert from '../ui/Alert';
 import Estrellas, { EstrellasInput } from '../ui/Estrellas';
+import ImagenProducto from '../ui/ImagenProducto';
 
 // Califica los productos de una orden entregada. resenas: reseñas ya hechas por este cliente.
 export default function CalificarModal({ orden, resenas, onClose, onSaved }) {
@@ -95,7 +96,7 @@ export default function CalificarModal({ orden, resenas, onClose, onSaved }) {
           return (
             <section key={item.product} className="rounded-xl border border-slate-200 p-4">
               <div className="flex items-center gap-3">
-                <img src={item.imagen} alt="" className="h-14 w-14 shrink-0 rounded-lg border border-slate-200 object-cover" />
+                <ImagenProducto src={item.imagen} respaldo={item.imagenActual} className="h-14 w-14 rounded-lg" />
                 <p className="font-semibold text-slate-900">{item.nombre}</p>
               </div>
               {previa ? (

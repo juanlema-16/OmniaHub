@@ -14,7 +14,7 @@ import Tabs from '../../components/ui/Tabs';
 import Table from '../../components/ui/Table';
 import Select from '../../components/ui/Select';
 import Input from '../../components/ui/Input';
-import Badge, { OrderStatusBadge } from '../../components/ui/Badge';
+import { OrderStatusBadge } from '../../components/ui/Badge';
 import Alert from '../../components/ui/Alert';
 import OrderQuickView from '../../components/orders/OrderQuickView';
 import CrearOrdenModal from '../../components/orders/CrearOrdenModal';
@@ -22,6 +22,7 @@ import OrdenAcciones from '../../components/dropshipper/OrdenAcciones';
 import { formatQ } from '../../utils/formatQ';
 import { formatFecha, formatFechaHora } from '../../utils/dates';
 import { ORDER_STATUS, TIPO_PAGO } from '../../utils/constants';
+import ImagenProducto from '../../components/ui/ImagenProducto';
 
 const EXTRA = { transportadora: '', tipoPago: '', origen: '', desde: '', hasta: '' };
 
@@ -88,7 +89,7 @@ export default function PedidosPage() {
       header: 'Producto',
       render: (o) => (
         <div className="flex max-w-56 items-center gap-2.5">
-          <img src={o.items[0]?.imagen} alt="" className="h-9 w-9 shrink-0 rounded-md border border-slate-200 object-cover" />
+          <ImagenProducto src={o.items[0]?.imagen} respaldo={o.items[0]?.imagenActual} className="h-9 w-9" />
           <div className="min-w-0">
             <p className="truncate text-slate-800">{o.items[0]?.nombre}</p>
             <p className="text-xs text-slate-500">
@@ -102,21 +103,13 @@ export default function PedidosPage() {
       key: 'cliente',
       header: 'Cliente',
       render: (o) => (
-        <div>
-          <p className="text-slate-800">
+        <div className="max-w-44">
+          <p className="truncate text-slate-800">
             {o.cliente.nombres} {o.cliente.apellidos}
           </p>
-          <p className="text-xs text-slate-500">{o.cliente.telefono}</p>
-        </div>
-      ),
-    },
-    {
-      key: 'destino',
-      header: 'Destino',
-      render: (o) => (
-        <div>
-          <p className="text-slate-800">{o.destino.municipio}</p>
-          <p className="text-xs text-slate-500">{o.destino.departamento}</p>
+          <p className="truncate text-xs text-slate-500">
+            {o.destino.municipio}, {o.destino.departamento}
+          </p>
         </div>
       ),
     },
@@ -130,8 +123,16 @@ export default function PedidosPage() {
         </div>
       ),
     },
-    { key: 'tipoPago', header: 'Pago', render: (o) => <Badge tone={o.tipoPago === 'CON_RECAUDO' ? 'sky' : 'violet'}>{TIPO_PAGO[o.tipoPago]}</Badge> },
-    { key: 'estado', header: 'Estado', render: (o) => <OrderStatusBadge estado={o.estado} /> },
+    {
+      key: 'estado',
+      header: 'Estado',
+      render: (o) => (
+        <div className="flex flex-col items-start gap-1">
+          <OrderStatusBadge estado={o.estado} />
+          <span className="text-xs text-slate-500">{TIPO_PAGO[o.tipoPago]}</span>
+        </div>
+      ),
+    },
     {
       key: 'total',
       header: 'Total',
@@ -143,7 +144,7 @@ export default function PedidosPage() {
         </div>
       ),
     },
-    { key: 'ver', header: '', render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
+    { key: 'ver', header: '', sticky: true, render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
   ];
 
   return (

@@ -14,7 +14,7 @@ import Tabs from '../../components/ui/Tabs';
 import Table from '../../components/ui/Table';
 import Select from '../../components/ui/Select';
 import Input from '../../components/ui/Input';
-import Badge, { OrderStatusBadge } from '../../components/ui/Badge';
+import { OrderStatusBadge } from '../../components/ui/Badge';
 import Alert from '../../components/ui/Alert';
 import OrderQuickView from '../../components/orders/OrderQuickView';
 import CorregirEstadoModal, { puedeCorregir } from '../../components/admin/CorregirEstadoModal';
@@ -97,7 +97,7 @@ export default function OrdenesPage() {
       key: 'partes',
       header: 'Dropshipper / proveedor',
       render: (o) => (
-        <div className="max-w-52">
+        <div className="max-w-44">
           <p className="truncate text-slate-800">{o.dropshipper?.tienda?.nombre || `${o.dropshipper?.nombre ?? ''} ${o.dropshipper?.apellido ?? ''}`}</p>
           <p className="truncate text-xs text-slate-500">{o.proveedor?.empresa?.nombre || 'Proveedor'}</p>
         </div>
@@ -107,11 +107,11 @@ export default function OrdenesPage() {
       key: 'cliente',
       header: 'Cliente',
       render: (o) => (
-        <div>
-          <p className="text-slate-800">
+        <div className="max-w-44">
+          <p className="truncate text-slate-800">
             {o.cliente.nombres} {o.cliente.apellidos}
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="truncate text-xs text-slate-500">
             {o.destino.municipio}, {o.destino.departamento}
           </p>
         </div>
@@ -127,8 +127,16 @@ export default function OrdenesPage() {
         </div>
       ),
     },
-    { key: 'tipoPago', header: 'Pago', render: (o) => <Badge tone={o.tipoPago === 'CON_RECAUDO' ? 'sky' : 'violet'}>{TIPO_PAGO[o.tipoPago]}</Badge> },
-    { key: 'estado', header: 'Estado', render: (o) => <OrderStatusBadge estado={o.estado} /> },
+    {
+      key: 'estado',
+      header: 'Estado',
+      render: (o) => (
+        <div className="flex flex-col items-start gap-1">
+          <OrderStatusBadge estado={o.estado} />
+          <span className="text-xs text-slate-500">{TIPO_PAGO[o.tipoPago]}</span>
+        </div>
+      ),
+    },
     {
       key: 'total',
       header: 'Total',
@@ -140,7 +148,7 @@ export default function OrdenesPage() {
         </div>
       ),
     },
-    { key: 'ver', header: '', render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
+    { key: 'ver', header: '', sticky: true, render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
   ];
 
   return (

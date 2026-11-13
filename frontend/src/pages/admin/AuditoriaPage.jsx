@@ -14,7 +14,7 @@ import AuditoriaDetalle, { accionLegible } from '../../components/admin/Auditori
 import { formatFechaHora } from '../../utils/dates';
 import { ROLES } from '../../utils/constants';
 
-const ENTIDADES = ['Order', 'User', 'TopUp', 'Withdrawal', 'BankAccount', 'CashSession', 'Setting', 'Carrier', 'Banner', 'Policy'];
+const ENTIDADES = ['Order', 'User', 'TopUp', 'Withdrawal', 'BankAccount', 'CashSession', 'Setting', 'Carrier', 'Banner', 'Policy', 'Review', 'Ticket'];
 const ETIQUETA_ENTIDAD = {
   Order: 'Orden',
   User: 'Usuario',
@@ -26,6 +26,8 @@ const ETIQUETA_ENTIDAD = {
   Carrier: 'Transportadora',
   Banner: 'Banner',
   Policy: 'Política',
+  Review: 'Reseña',
+  Ticket: 'Ticket',
 };
 const EXTRA = { entidad: '', desde: '', hasta: '' };
 
@@ -85,13 +87,15 @@ export default function AuditoriaPage() {
       header: 'Resumen',
       render: (r) => {
         const claves = r.detalle ? Object.keys(r.detalle) : [];
-        return <span className="block max-w-56 truncate text-xs text-slate-500">{claves.length ? claves.map(accionLegible).join(', ') : 'Sin detalle'}</span>;
+        const texto = r.resumen || (claves.length ? claves.map(accionLegible).join(', ') : 'Sin detalle');
+        return <span className="block max-w-80 truncate text-slate-600" title={texto}>{texto}</span>;
       },
     },
     {
       key: 'ver',
       header: '',
       align: 'right',
+      sticky: true,
       render: (r) => (
         <Button size="sm" variant="ghost" onClick={() => setDetalle(r)} aria-label={`Ver detalle de ${accionLegible(r.accion)}`}>
           Ver
