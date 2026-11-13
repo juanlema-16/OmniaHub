@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import User from '../models/User.js';
 import { withTransaction } from '../utils/transaction.js';
 import { ApiError } from '../utils/ApiError.js';
@@ -11,6 +12,7 @@ const ROLES_KYC = ['proveedor', 'dropshipper'];
 
 // Los documentos de identidad no se sirven como estáticos: solo el dueño y el admin pueden verlos
 const kycFileUrl = (filename) => `/api/kyc/archivo/${filename}`;
+const nombreDeArchivo = (url) => /^\/api\/kyc\/archivo\/([\w.-]+)$/.exec(url || '')?.[1];
 
 export const submitKyc = async (user, files = {}) => {
   if (user.kyc?.status === 'aprobado') throw ApiError.badRequest('Tu identidad ya está verificada');
@@ -24,12 +26,15 @@ export const submitKyc = async (user, files = {}) => {
     );
   }
 
+  // Al reenviar tras un rechazo, los documentos anteriores ya no sirven: se borran del disco
+  const anteriores = KYC_CAMPOS.map((campo) => nombreDeArchivo(user.kyc?.[campo])).filter(Boolean);
   user.kyc = {
     status: 'pendiente',
     ...Object.fromEntries(KYC_CAMPOS.map((campo) => [campo, kycFileUrl(files[campo][0].filename)])),
     enviadoEn: new Date(),
   };
   await user.save();
+  for (const archivo of anteriores) fs.rm(uploadPath('kyc', archivo), { force: true }, () => {});
 
   await notifyRole('admin', {
     titulo: 'KYC pendiente de revisión',
