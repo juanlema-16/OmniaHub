@@ -15,7 +15,7 @@ import { fileUrl, removeFilesByUrl } from '../middlewares/upload.js';
 import { createWallet, getWalletSummary } from './wallet.service.js';
 import { getSettings } from './setting.service.js';
 import { notify } from './notification.service.js';
-import { logAudit } from './audit.service.js';
+import { conResumen, logAudit } from './audit.service.js';
 
 const fechaFiltro = (desde, hasta) => {
   const f = {};
@@ -182,11 +182,12 @@ export const updatePolicy = async (admin, slug, { titulo, contenido }) => {
 };
 
 // ───── Auditoría
-export const listAudit = ({ accion, entidad, user, desde, hasta, page, limit }) => {
+export const listAudit = async ({ accion, entidad, user, desde, hasta, page, limit }) => {
   const filter = {};
   if (accion) filter.accion = new RegExp(escapeRegex(accion), 'i');
   if (entidad) filter.entidad = entidad;
   if (user) filter.user = user;
   if (desde || hasta) filter.fecha = fechaFiltro(desde, hasta);
-  return paginate(AuditLog, filter, { page, limit, sort: { fecha: -1 }, populate: { path: 'user', select: 'nombre apellido email role' } });
+  const data = await paginate(AuditLog, filter, { page, limit, sort: { fecha: -1 }, populate: { path: 'user', select: 'nombre apellido email role' } });
+  return { ...data, items: await conResumen(data.items) };
 };

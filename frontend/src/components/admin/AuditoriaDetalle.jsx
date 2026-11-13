@@ -3,8 +3,11 @@ import Badge from '../ui/Badge';
 import { formatFechaHora } from '../../utils/dates';
 import { ROLES } from '../../utils/constants';
 
+// Siglas que deben ir siempre en mayúsculas al convertir RECARGA_APROBADA → "Recarga aprobada"
+const SIGLAS = { kyc: 'KYC', pos: 'POS', nit: 'NIT', dpi: 'DPI' };
+
 export const accionLegible = (accion = '') => {
-  const texto = accion.toLowerCase().replace(/_/g, ' ');
+  const texto = accion.toLowerCase().replace(/_/g, ' ').replace(/\b(kyc|pos|nit|dpi)\b/g, (s) => SIGLAS[s]);
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 };
 
@@ -73,6 +76,7 @@ export default function AuditoriaDetalle({ registro, onClose }) {
               </dd>
             </div>
           </dl>
+          {registro.resumen && <p className="rounded-lg bg-primary-50 px-3 py-2 text-sm font-medium text-slate-800">{registro.resumen}</p>}
           <div>
             <h3 className="mb-2 text-sm font-semibold text-slate-900">Detalle</h3>
             {tieneDetalle ? (
