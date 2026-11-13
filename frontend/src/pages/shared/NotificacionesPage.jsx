@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import useAsync from '../../hooks/useAsync';
 import * as notificationsApi from '../../api/notifications';
 import { getErrorMessage } from '../../api/axios';
-import { rutaDisponible } from '../../routes/panelConfig';
+import { resolverLink, rutaDisponible } from '../../routes/panelConfig';
 import PageHeader from '../../components/ui/PageHeader';
 import Tabs from '../../components/ui/Tabs';
 import Button from '../../components/ui/Button';
@@ -34,7 +34,7 @@ export default function NotificacionesPage() {
         await notificationsApi.markRead(n._id);
         setData((d) => ({ ...d, noLeidas: Math.max(0, d.noLeidas - 1), items: d.items.map((x) => (x._id === n._id ? { ...x, leida: true } : x)) }));
       }
-      if (rutaDisponible(user.role, n.link)) navigate(n.link);
+      if (rutaDisponible(user.role, n.link)) navigate(resolverLink(user.role, n.link));
     } catch (err) {
       toast.error(getErrorMessage(err));
     }

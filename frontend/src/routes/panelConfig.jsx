@@ -144,11 +144,24 @@ export const menuDe = (role) => (PANELES[role] || []).filter((item) => item.elem
 
 export const rutasDe = (role) => [...menuDe(role), ...(RUTAS_OCULTAS[role] || []), ...RUTAS_EXTRA];
 
-// ¿Existe ya la página para este enlace? (las notificaciones traen links a módulos futuros)
+// Los enlaces de las notificaciones se guardan en genérico ("/billetera", "/dropshipper/ordenes/<id>"):
+// aquí se convierten a la ruta real del panel de cada rol
+export const resolverLink = (role, link) => {
+  if (!link) return link;
+  if (link.startsWith('/billetera')) return `/${role}${link.replace('/billetera/retiros', '/billetera?tab=retiros')}`;
+  if (link === '/admin/recargas') return '/admin/solicitudes?tab=recargas';
+  if (link === '/admin/retiros') return '/admin/solicitudes?tab=retiros';
+  const orden = link.match(/^\/(\w+)\/ordenes\/\w+$/);
+  if (orden) return orden[1] === 'transportadora' ? '/transportadora/guias' : `/${orden[1]}/ordenes`;
+  return link;
+};
+
+// ¿Existe ya la página para este enlace?
 export const rutaDisponible = (role, link) => {
   if (!link) return false;
   const base = `/${role}`;
-  if (!link.startsWith(base)) return false;
-  const resto = link.slice(base.length).replace(/^\//, '').split('/')[0];
+  const ruta = resolverLink(role, link).split('?')[0];
+  if (!ruta.startsWith(base)) return false;
+  const resto = ruta.slice(base.length).replace(/^\//, '').split('/')[0];
   return rutasDe(role).some((r) => r.path === resto);
 };

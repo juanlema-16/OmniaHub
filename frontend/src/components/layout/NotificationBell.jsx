@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Bell, CheckCheck } from 'lucide-react';
 import useNotifications from '../../hooks/useNotifications';
 import useClickOutside from '../../hooks/useClickOutside';
-import { rutaDisponible } from '../../routes/panelConfig';
+import { resolverLink, rutaDisponible } from '../../routes/panelConfig';
 import { formatRelativa } from '../../utils/dates';
 import { NOTIFICATION_TONE } from '../../utils/constants';
 import { DOT } from '../ui/Badge';
@@ -26,7 +26,7 @@ export default function NotificationBell({ role }) {
     if (!n.leida) await marcarLeida(n._id);
     if (rutaDisponible(role, n.link)) {
       setAbierto(false);
-      navigate(n.link);
+      navigate(resolverLink(role, n.link));
     }
   };
 
