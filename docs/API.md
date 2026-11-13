@@ -206,6 +206,7 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 |---|---|---|---|
 | GET | `/store/:slug` | Público | Datos de la tienda y sus productos a precio de venta con su `rating` (nunca muestra el precio proveedor). Filtros: `search`, `categoria`, `orden` |
 | GET | `/store/:slug/products/:productId` | Público | Detalle de un producto de la tienda |
+| POST | `/store/:slug/cart/validate` | Público | Revisa un carrito `{ items: [{ product, cantidad }] }` y devuelve, por producto, `disponible`, `motivo` (`NO_DISPONIBLE` \| `AGOTADO`), `nombre`, `imagen`, `precio` y `stock` actuales para que el navegador lo actualice |
 | POST | `/store/:slug/coupon` | Público | Valida un cupón contra el carrito `{ codigo, items }` y devuelve el descuento |
 | POST | `/store/:slug/checkout` | cliente | Crea una orden con origen `TIENDA` `{ destino, items, transportadora, metodoPago: CONTRAENTREGA \| TARJETA, cupon?, cliente? }`. Los precios salen de la tienda, no del navegador |
 

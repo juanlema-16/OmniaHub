@@ -3,6 +3,8 @@ import { Link, Navigate, useLocation, useNavigate, useOutletContext } from 'reac
 import toast from 'react-hot-toast';
 import { BadgeCheck, Banknote, Clock, CreditCard, MapPin, Tag, Truck, X, Zap } from 'lucide-react';
 import useAsync from '../../hooks/useAsync';
+import useValidarCarrito from '../../hooks/useValidarCarrito';
+import AvisosCarrito from '../../components/store/AvisosCarrito';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { checkStoreCoupon, storeCheckout } from '../../api/store';
@@ -15,6 +17,7 @@ import Textarea from '../../components/ui/Textarea';
 import Alert from '../../components/ui/Alert';
 import Skeleton from '../../components/ui/Skeleton';
 import { DEPARTAMENTOS, ROLES } from '../../utils/constants';
+import { municipiosDe } from '../../utils/municipios';
 import { formatQ } from '../../utils/formatQ';
 import { erroresDeApi, reglas, validar } from '../../utils/validation';
 import { plural } from '../../utils/plural';
@@ -25,7 +28,7 @@ const ESQUEMA = {
   telefono: [reglas.requerido('El teléfono'), reglas.telefono],
   email: [reglas.email],
   departamento: [(v) => (!v ? 'Selecciona el departamento' : null)],
-  municipio: [reglas.requerido('El municipio'), reglas.minimo('El municipio', 2)],
+  municipio: [(v) => (!v ? 'Selecciona el municipio' : null)],
   direccion: [reglas.requerido('La dirección', 'a'), reglas.minimo('La dirección', 5)],
   transportadora: [(v) => (!v ? 'Elige una transportadora' : null)],
 };
@@ -93,6 +96,7 @@ export default function CheckoutPage() {
   const { autenticado, user } = useAuth();
   const navigate = useNavigate();
   const carrito = useCart(slug);
+  const { validando: revisandoCarrito, revalidar } = useValidarCarrito(slug);
 
   const [form, setForm] = useState({ nombres: '', apellidos: '', telefono: '', email: '', departamento: '', municipio: '', direccion: '', referencias: '', transportadora: '' });
   const [metodoPago, setMetodoPago] = useState('CONTRAENTREGA');
@@ -133,7 +137,8 @@ export default function CheckoutPage() {
 
   const cambiar = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value, ...(name === 'departamento' ? { transportadora: '' } : {}) }));
+    // Al cambiar de departamento, el municipio elegido ya no aplica
+    setForm((f) => ({ ...f, [name]: value, ...(name === 'departamento' ? { transportadora: '', municipio: '' } : {}) }));
     setErrores((er) => ({ ...er, [name]: undefined }));
     setError('');
   };
@@ -191,6 +196,8 @@ export default function CheckoutPage() {
     } catch (err) {
       setErrores(erroresDeApi(err));
       setError(getErrorMessage(err));
+      // Si el problema es un producto del carrito, se revisa de nuevo para dejarlo al día
+      if (err.response?.data?.errors?.some((e) => e.campo?.startsWith('items.'))) revalidar();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setEnviando(false);
@@ -200,8 +207,9 @@ export default function CheckoutPage() {
   return (
     <form onSubmit={enviar} noValidate className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Finalizar compra</h1>
+      <AvisosCarrito avisos={carrito.avisos} onCerrar={carrito.descartarAvisos} className="mt-4" />
       {error && (
-        <Alert tone="error" className="mt-4">
+        <Alert tone="error" title="No pudimos crear tu pedido" className="mt-4">
           {error}
         </Alert>
       )}
@@ -224,7 +232,18 @@ export default function CheckoutPage() {
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <Select label="Departamento" name="departamento" value={form.departamento} onChange={cambiar} error={errores.departamento} placeholder="Selecciona" options={DEPARTAMENTOS} required />
-              <Input label="Municipio" name="municipio" value={form.municipio} onChange={cambiar} error={errores.municipio} placeholder="Ej. Mixco" required />
+              <Select
+                label="Municipio"
+                name="municipio"
+                value={form.municipio}
+                onChange={cambiar}
+                error={errores.municipio}
+                placeholder={form.departamento ? 'Selecciona' : 'Elige primero el departamento'}
+                options={municipiosDe(form.departamento)}
+                disabled={!form.departamento}
+                autoComplete="address-level2"
+                required
+              />
               <Input className="sm:col-span-2" label="Dirección" name="direccion" value={form.direccion} onChange={cambiar} error={errores.direccion} placeholder="Calle, número, zona o colonia" autoComplete="street-address" required />
               <Textarea className="sm:col-span-2" label="Referencias" name="referencias" value={form.referencias} onChange={cambiar} rows={2} maxLength={200} placeholder="Ej. Portón negro, frente a la iglesia" />
             </div>
@@ -371,7 +390,7 @@ export default function CheckoutPage() {
             </div>
           </dl>
 
-          <Button type="submit" size="lg" fullWidth loading={enviando}>
+          <Button type="submit" size="lg" fullWidth loading={enviando} disabled={revisandoCarrito}>
             Confirmar pedido
           </Button>
           <p className="text-center text-xs text-slate-500">

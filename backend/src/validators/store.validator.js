@@ -28,6 +28,7 @@ const itemsTienda = z
   .max(20)
   .refine((items) => new Set(items.map((i) => i.product)).size === items.length, { error: 'Un producto aparece más de una vez en el carrito' });
 
+export const cartValidateSchema = z.object({ items: itemsTienda });
 export const couponCheckSchema = z.object({ codigo: codigoField, items: itemsTienda });
 
 export const checkoutSchema = z.object({

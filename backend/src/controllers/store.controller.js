@@ -18,6 +18,10 @@ export const checkCoupon = asyncHandler(async (req, res) => {
   sendOk(res, data, `Cupón ${data.codigo} aplicado: -Q ${data.descuento.toFixed(2)}`);
 });
 
+export const validateCart = asyncHandler(async (req, res) => {
+  sendOk(res, await storeService.validateCart(req.validated.params.slug, req.body.items), 'Carrito revisado');
+});
+
 export const checkout = asyncHandler(async (req, res) => {
   const order = await storeService.checkout(req.validated.params.slug, req.user, req.body);
   sendOk(res, orderForRole(order, 'cliente'), `¡Gracias por tu compra! Tu pedido ${order.numero} fue recibido`, 201);
