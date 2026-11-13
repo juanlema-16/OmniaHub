@@ -24,7 +24,7 @@ import {
 const {
   User, Wallet, Transaction, Category, Product, StoreProduct, Order, Carrier, CarrierPreference, Coupon,
   Customer, Invoice, BankAccount, TopUp, InventoryMovement, Purchase, Notification, Banner, Policy,
-  Setting, AuditLog, Counter, Ticket, Review, Favorite,
+  Setting, AuditLog, Counter, Ticket, Review, Favorite, Withdrawal,
 } = models;
 
 const HORA = 60 * 60 * 1000;
@@ -423,8 +423,18 @@ const run = async () => {
   });
 
   const bankAccounts = [
-    { user: users.proveedor._id, banco: 'Banco Industrial', tipoCuenta: 'MONETARIA', numeroCuenta: '0012345678', titular: 'Distribuidora Maya' },
-    { user: users.dropshipper._id, banco: 'Banrural', tipoCuenta: 'AHORRO', numeroCuenta: '4401234567', titular: 'Diego Herrera' },
+    { _id: oid(), user: users.proveedor._id, banco: 'Banco Industrial', tipoCuenta: 'MONETARIA', numeroCuenta: '0012345678', titular: 'Distribuidora Maya' },
+    { _id: oid(), user: users.dropshipper._id, banco: 'Banrural', tipoCuenta: 'AHORRO', numeroCuenta: '4401234567', titular: 'Diego Herrera' },
+  ];
+
+  // Un retiro pendiente para mostrar la revisión del admin. Igual que en la API, el monto queda reservado
+  // (sale del saldo disponible y pasa al reservado, sin transacción hasta que el admin decide)
+  const walletProveedor = wallets.get(String(users.proveedor._id));
+  const montoRetiro = 300;
+  walletProveedor.saldoDisponible = round2(walletProveedor.saldoDisponible - montoRetiro);
+  walletProveedor.saldoReservado = round2(walletProveedor.saldoReservado + montoRetiro);
+  const withdrawals = [
+    conFecha({ _id: oid(), user: users.proveedor._id, monto: montoRetiro, bankAccount: bankAccounts[0]._id, concepto: 'Retiro de las ventas de la semana', estado: 'PENDIENTE' }, haceDias(0, -3)),
   ];
 
   const banners = [
@@ -553,6 +563,7 @@ const run = async () => {
   await Invoice.insertMany(invoices);
   await TopUp.insertMany(topUps);
   await BankAccount.insertMany(bankAccounts);
+  await Withdrawal.insertMany(withdrawals);
   await Notification.insertMany(notifications);
   await AuditLog.insertMany(auditLogs);
   await Banner.insertMany(banners);

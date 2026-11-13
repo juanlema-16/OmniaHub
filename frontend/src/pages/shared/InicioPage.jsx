@@ -81,13 +81,23 @@ function Pendientes({ role, k }) {
   if (role === 'proveedor' && k.productosStockBajo) avisos.push(`${plural(k.productosStockBajo, 'producto')} con stock bajo`);
   if (role === 'transportadora' && k.novedadesActivas) avisos.push(n(k.novedadesActivas, 'novedad', 'novedades', 'activa', 'activas'));
   if (role === 'admin') {
-    if (k.recargasPendientes) avisos.push(`${plural(k.recargasPendientes, 'recarga')} por aprobar`);
-    if (k.retirosPendientes) avisos.push(`${plural(k.retirosPendientes, 'retiro')} por aprobar`);
+    if (k.kycPendientes) avisos.push({ texto: `${plural(k.kycPendientes, 'verificación de identidad', 'verificaciones de identidad')} por revisar`, to: '/admin/kyc' });
+    if (k.recargasPendientes) avisos.push({ texto: `${plural(k.recargasPendientes, 'recarga')} por aprobar`, to: '/admin/solicitudes?tab=recargas' });
+    if (k.retirosPendientes) avisos.push({ texto: `${plural(k.retirosPendientes, 'retiro')} por aprobar`, to: '/admin/solicitudes?tab=retiros' });
   }
   if (!avisos.length) return null;
   return (
     <Alert tone="warning" title="Tienes pendientes" className="mb-6">
-      {avisos.join(' · ')}
+      {avisos.map((a, i) => (
+        <span key={typeof a === 'string' ? a : a.texto}>
+          {i > 0 && ' · '}
+          {typeof a === 'string' ? a : (
+            <Link to={a.to} className="font-medium underline underline-offset-2 hover:no-underline">
+              {a.texto}
+            </Link>
+          )}
+        </span>
+      ))}
     </Alert>
   );
 }
