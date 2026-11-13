@@ -334,6 +334,43 @@ Mezcla feature/frontend-tienda en dev con --no-ff y haz push.
 
 ---
 
+## BLOQUE EXTRA · Extras — rama `feature/extras`
+
+### Prompt 12B — Tickets de soporte, reseñas, favoritos y modo oscuro
+
+```
+Crea la rama feature/extras desde dev. Implementa los 4 extras de la sección 6.12 de CLAUDE.md, cada uno completo (backend + frontend) y con su propio commit, siguiendo el patrón y los componentes existentes:
+
+1. Tickets de soporte
+   - Backend: modelo Ticket, crear, listar los míos, ver detalle, responder, y para el admin listar todos con filtros (estado, prioridad, categoría), responder y cambiar estado. Notificación a la otra parte en cada respuesta.
+   - Frontend: página "Soporte" en el menú de todos los roles (lista + crear ticket + vista de conversación tipo chat) y bandeja de tickets en el panel del admin.
+   - Commit: feat(tickets): sistema de tickets de soporte con conversación y estados
+
+2. Reseñas
+   - Backend: modelo Review, crear (solo cliente con orden ENTREGADA de ese producto, una vez por producto y orden), listar por producto, promedio y cantidad en catálogo y tienda pública, y ocultar para el admin. Agrega 6-8 reseñas al seed.
+   - Frontend: estrellas y promedio en las tarjetas y el detalle de producto (tienda y catálogo), lista de reseñas en el detalle, botón "Calificar" en los pedidos entregados del cliente, y moderación en el admin.
+   - Commit: feat(reviews): reseñas con calificación de productos entregados
+
+3. Favoritos
+   - Backend: modelo Favorite, marcar/desmarcar y filtro favoritos=true en el catálogo.
+   - Frontend: corazón en las tarjetas del catálogo y el interruptor "Solo favoritos" (ver docs/referencias-dropi/04-catalogo-encabezado-filtros.jpg).
+   - Commit: feat(favorites): productos favoritos en el catálogo del dropshipper
+
+4. Modo oscuro
+   - Interruptor sol/luna en el header y en la tienda pública, guardado en localStorage y con la preferencia del sistema como valor inicial. Revisa TODAS las pantallas, componentes, modales, tablas y gráficas para que se vean bien en oscuro.
+   - Commit: feat(ui): modo oscuro en toda la aplicación
+
+Actualiza docs/API.md con los endpoints nuevos (commit docs(api): endpoints de tickets, reseñas y favoritos). Dame la lista de cómo validar cada extra. Luego mezcla feature/extras en dev con --no-ff y haz push.
+```
+
+**✅ Valida antes de seguir**
+- [ ] **Tickets:** como dropshipper crea un ticket; como admin respóndelo y cámbialo a RESUELTO; el dropshipper ve la respuesta y la notificación
+- [ ] **Reseñas:** como `cliente@omniahub.test`, califica un producto de un pedido entregado; las estrellas aparecen en la tienda. Intentar calificarlo otra vez da error
+- [ ] **Favoritos:** marca 2 productos con el corazón y activa "Solo favoritos" → solo salen esos 2
+- [ ] **Modo oscuro:** actívalo y recorre dashboard, catálogo, modal de orden, billetera, POS y tienda pública; recarga la página y debe seguir en oscuro
+
+---
+
 ## BLOQUE 4 · Release — rama `release/v1.0.0` (2:40 – 3:00)
 
 ### Prompt 13 — Revisión final con subagente revisor y entrega
@@ -342,7 +379,7 @@ Mezcla feature/frontend-tienda en dev con --no-ff y haz push.
 Crea la rama release/v1.0.0 desde dev.
 
 1. Lanza el subagente code-reviewer (está en .claude/agents), que no ha visto el código. Debe leer CLAUDE.md y revisar el código contra las reglas de negocio (sección 6, sobre todo el reparto de la billetera en 6.4), la seguridad (sección 5), los negativos (sección 13) y la salida (sección 14). Debe devolver una lista de problemas ordenados por gravedad, sin corregirlos.
-2. Mientras tanto, tú recorre el flujo completo con los usuarios del seed llamando a la API: cliente compra en la tienda tienda-demo con el cupón BIENVENIDO10 → el dropshipper confirma → el proveedor genera la guía → la transportadora marca en tránsito y entregado → verifica las transacciones de las 4 billeteras y la factura.
+2. Mientras tanto, tú recorre el flujo completo con los usuarios del seed llamando a la API (y revisa también tickets, reseñas, favoritos y modo oscuro): cliente compra en la tienda tienda-demo con el cupón BIENVENIDO10 → el dropshipper confirma → el proveedor genera la guía → la transportadora marca en tránsito y entregado → verifica las transacciones de las 4 billeteras y la factura.
 3. Corrige cada problema encontrado con un commit fix por cada uno, usando la skill verification-before-completion antes de dar algo por arreglado.
 4. Revisa que no queden console.log ni código muerto.
 5. Completa el README.md raíz según la sección 14 y los README de backend y frontend. Commit: docs: readme completo con instalación, usuarios demo y flujo del dinero
@@ -352,7 +389,7 @@ Crea la rama release/v1.0.0 desde dev.
 
 **✅ Valida antes de entregar**
 - [ ] Haz tú mismo el flujo completo una vez más, cambiando de usuario
-- [ ] En GitHub: ramas `main`, `dev`, las 5 `feature/*` y `release/v1.0.0`, y el tag `v1.0.0`
+- [ ] En GitHub: ramas `main`, `dev`, las 6 `feature/*` y `release/v1.0.0`, y el tag `v1.0.0`
 - [ ] El README tiene instalación y usuarios demo
 - [ ] El `.env` **no** está en GitHub
 
