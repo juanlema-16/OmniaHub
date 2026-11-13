@@ -63,6 +63,9 @@ export const COUPON_TIPO = ['PORCENTAJE', 'FIJO'];
 export const INVENTORY_TIPO = ['ENTRADA_COMPRA', 'SALIDA_VENTA', 'AJUSTE', 'DEVOLUCION'];
 export const CASH_SESSION_ESTADO = ['ABIERTA', 'CERRADA'];
 export const METODO_PAGO_POS = ['EFECTIVO', 'TARJETA'];
+export const TICKET_CATEGORIA = ['PEDIDO', 'PAGO', 'CUENTA', 'TECNICO', 'OTRO'];
+export const TICKET_PRIORIDAD = ['BAJA', 'MEDIA', 'ALTA'];
+export const TICKET_ESTADO = ['ABIERTO', 'EN_PROCESO', 'RESUELTO', 'CERRADO'];
 export const BANNER_UBICACION = ['LANDING', 'PANEL'];
 export const POLICY_SLUGS = ['terminos-y-condiciones', 'privacidad', 'cookies', 'envios-y-devoluciones'];
 

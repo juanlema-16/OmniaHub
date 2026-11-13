@@ -20,7 +20,7 @@ import {
 const {
   User, Wallet, Transaction, Category, Product, StoreProduct, Order, Carrier, CarrierPreference, Coupon,
   Customer, Invoice, BankAccount, TopUp, InventoryMovement, Purchase, Notification, Banner, Policy,
-  Setting, AuditLog, Counter,
+  Setting, AuditLog, Counter, Ticket,
 } = models;
 
 const HORA = 60 * 60 * 1000;
@@ -446,6 +446,50 @@ const run = async () => {
     },
   ];
 
+  const mensajeDe = (u, texto, fecha) => ({ autor: u._id, rol: u.role, texto, fecha });
+  const tickets = [
+    {
+      numero: 'TCK-000001',
+      user: users.dropshipper._id,
+      asunto: 'Mi recarga de Q 500 sigue pendiente',
+      categoria: 'PAGO',
+      prioridad: 'MEDIA',
+      estado: 'ABIERTO',
+      mensajes: [mensajeDe(users.dropshipper, 'Hola, hice una transferencia hace unas horas y todavía no se acredita en mi billetera. ¿Pueden revisarla?', haceDias(0, -3))],
+      createdAt: haceDias(0, -3),
+      updatedAt: haceDias(0, -3),
+    },
+    {
+      numero: 'TCK-000002',
+      user: users.cliente._id,
+      asunto: 'No me ha llegado mi pedido',
+      categoria: 'PEDIDO',
+      prioridad: 'ALTA',
+      estado: 'EN_PROCESO',
+      mensajes: [
+        mensajeDe(users.cliente, 'Buenas tardes, mi pedido lleva varios días sin moverse y no tengo noticias de la transportadora.', haceDias(2)),
+        mensajeDe(users.admin, 'Hola María, ya contactamos a la transportadora para confirmar dónde está tu paquete. Te avisamos en cuanto tengamos respuesta.', haceDias(1, -20)),
+      ],
+      createdAt: haceDias(2),
+      updatedAt: haceDias(1, -20),
+    },
+    {
+      numero: 'TCK-000003',
+      user: users.proveedor._id,
+      asunto: 'No puedo subir más de 3 fotos a un producto',
+      categoria: 'TECNICO',
+      prioridad: 'BAJA',
+      estado: 'RESUELTO',
+      mensajes: [
+        mensajeDe(users.proveedor, 'Al editar un producto el sistema no me deja agregar la cuarta imagen.', haceDias(5)),
+        mensajeDe(users.admin, 'Cada producto admite hasta 3 imágenes. Puedes quitar una y subir otra en su lugar.', haceDias(4, -22)),
+        mensajeDe(users.proveedor, 'Perfecto, gracias. Ya lo resolví.', haceDias(4, -20)),
+      ],
+      createdAt: haceDias(5),
+      updatedAt: haceDias(4, -20),
+    },
+  ];
+
   const policies = POLICIES.map((p) => ({ ...p, actualizadoEn: haceDias(30), actualizadoPor: users.admin._id }));
 
   const settings = [
@@ -457,6 +501,7 @@ const run = async () => {
     { _id: 'order', seq: orders.length },
     { _id: 'guia', seq: guiaSeq },
     { _id: 'invoice', seq: invoices.length },
+    { _id: 'ticket', seq: tickets.length },
   ];
 
   console.info('Insertando datos…');
@@ -479,6 +524,7 @@ const run = async () => {
   await Notification.insertMany(notifications);
   await AuditLog.insertMany(auditLogs);
   await Banner.insertMany(banners);
+  await Ticket.insertMany(tickets);
   await Policy.insertMany(policies);
   await Setting.insertMany(settings);
   await Counter.insertMany(counters);

@@ -18,6 +18,7 @@ export const nextSequence = async (key, session = null) => {
 export const generarNumeroOrden = async (session) => formatNumeroOrden(await nextSequence('order', session));
 export const generarGuia = async (session) => formatGuia(await nextSequence('guia', session));
 export const generarNumeroFactura = async (session) => formatNumeroFactura(await nextSequence('invoice', session));
+export const generarNumeroTicket = async () => `TCK-${pad(await nextSequence('ticket'))}`;
 
 export const slugify = (text) =>
   text
