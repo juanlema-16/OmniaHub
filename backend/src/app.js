@@ -35,6 +35,7 @@ app.use(
 const privado = (req, res, next) => next(ApiError.notFound('Archivo no encontrado'));
 app.use('/uploads/kyc', privado);
 app.use('/uploads/comprobantes', privado);
+app.use('/uploads/seed', express.static(path.join(__dirname, 'seed', 'assets')));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.get('/api/health', (req, res) => {

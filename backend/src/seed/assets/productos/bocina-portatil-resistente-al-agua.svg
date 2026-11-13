@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Bocina portátil resistente al agua">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EEF2FF"/><stop offset="1" stop-color="#C7D2FE"/></linearGradient></defs>
+<rect width="600" height="600" fill="url(#bg)"/>
+<circle cx="70" cy="90" r="150" fill="#fff" opacity=".4"/><circle cx="560" cy="540" r="190" fill="#fff" opacity=".28"/><circle cx="520" cy="60" r="56" fill="#fff" opacity=".3"/>
+<ellipse cx="300" cy="474" rx="170" ry="16" fill="#0F172A" opacity=".13"/>
+<defs><linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14B8A6"/><stop offset="1" stop-color="#0F766E"/></linearGradient><pattern id="d" width="17" height="17" patternUnits="userSpaceOnUse"><circle cx="8.5" cy="8.5" r="2.8" fill="#99F6E4"/></pattern></defs>
+<path d="M215 252C215 190 385 190 385 252" fill="none" stroke="#134E4A" stroke-width="15" stroke-linecap="round"/>
+<rect x="125" y="250" width="350" height="200" rx="76" fill="url(#t)"/>
+<rect x="160" y="276" width="280" height="148" rx="50" fill="url(#d)" opacity=".95"/>
+<circle cx="300" cy="436" r="5" fill="#5EEAD4"/>
+<g fill="#38BDF8"><path d="M492 168q-17 26 0 40 17-14 0-40z"/><path d="M526 226q-12 18 0 28 12-10 0-28z"/><path d="M96 190q-12 18 0 28 12-10 0-28z"/></g>
+</svg>

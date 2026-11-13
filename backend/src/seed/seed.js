@@ -15,6 +15,8 @@ import {
   USERS,
   ZONAS,
   placeholder,
+  imagenProducto,
+  logoSeed,
 } from './data.js';
 
 const {
@@ -75,7 +77,7 @@ const buildCarriers = (users) =>
       {
         _id: oid(),
         nombre: c.nombre,
-        logo: placeholder(c.nombre, '200x200'),
+        logo: logoSeed(key),
         user: users[key]._id,
         activa: true,
         tarifas: DEPARTAMENTOS.map((departamento) => ({
@@ -108,7 +110,7 @@ const run = async () => {
       sku: `OH-${p.prov === 1 ? 'DM' : 'IQ'}-${String(i + 1).padStart(3, '0')}`,
       descripcion: p.desc,
       categoria: categoryBySlug[p.cat],
-      imagenes: [placeholder(p.nombre)],
+      imagenes: [imagenProducto(p.nombre)],
       precioProveedor: p.pp,
       precioSugerido: p.ps,
       stock: p.stock,

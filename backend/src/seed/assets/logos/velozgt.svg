@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Veloz GT">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBBF24"/><stop offset="1" stop-color="#EA580C"/></linearGradient></defs>
+<rect width="200" height="200" rx="44" fill="url(#g)"/>
+<path d="M112 36L58 112h38l-14 52 62-80h-40z" fill="#fff"/>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Estilo Chapín">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F472B6"/><stop offset="1" stop-color="#BE185D"/></linearGradient></defs>
+<rect width="200" height="200" rx="44" fill="url(#g)"/>
+<path d="M100 52l14 30 33 4-24 23 6 33-29-16-29 16 6-33-24-23 33-4z" fill="#fff"/><text x="100" y="170" text-anchor="middle" font-family="Inter,Arial,Helvetica,sans-serif" font-size="26" font-weight="800" fill="#fff">EC</text>
+</svg>
