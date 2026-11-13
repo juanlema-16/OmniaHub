@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMaxYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#064E3B"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.5" r="0.45">
+      <stop offset="0" stop-color="#6EE7B7" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#6EE7B7" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="hex" width="56" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(1.1)">
+      <path d="M14 0h28l14 24.25L42 48.5H14L0 24.25Z" fill="none" stroke="#fff" stroke-opacity="0.07" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <rect width="1200" height="400" fill="url(#hex)"/>
+  <rect width="1200" height="400" fill="url(#glow)"/>
+  <!-- Bodega del proveedor en el centro, conectada a varias tiendas -->
+  <g stroke="#A7F3D0" stroke-opacity="0.6" stroke-width="2.5" stroke-dasharray="6 8">
+    <path d="M930 205 L760 90"/><path d="M930 205 L740 310"/><path d="M930 205 L1110 85"/><path d="M930 205 L1120 320"/><path d="M930 205 L640 200"/>
+  </g>
+  <g transform="translate(860 140)">
+    <path d="M0 50 L70 10 L140 50 V130 H0Z" fill="#ECFDF5"/>
+    <path d="M0 50 L70 10 L140 50" fill="none" stroke="#065F46" stroke-width="6" stroke-linejoin="round"/>
+    <rect x="45" y="78" width="50" height="52" rx="4" fill="#10B981"/>
+    <path d="M45 95h50M45 112h50" stroke="#ECFDF5" stroke-width="3"/>
+  </g>
+  <g>
+    <g transform="translate(722 58)"><rect width="76" height="62" rx="12" fill="#fff"/><path d="M14 22h48l-5 30H19Z" fill="#6366F1"/><path d="M28 22v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#6366F1" stroke-width="4"/></g>
+    <g transform="translate(702 280)"><rect width="76" height="62" rx="12" fill="#fff"/><path d="M14 22h48l-5 30H19Z" fill="#F472B6"/><path d="M28 22v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#F472B6" stroke-width="4"/></g>
+    <g transform="translate(1072 54)"><rect width="76" height="62" rx="12" fill="#fff"/><path d="M14 22h48l-5 30H19Z" fill="#F59E0B"/><path d="M28 22v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#F59E0B" stroke-width="4"/></g>
+    <g transform="translate(1082 290)"><rect width="76" height="62" rx="12" fill="#fff"/><path d="M14 22h48l-5 30H19Z" fill="#0EA5E9"/><path d="M28 22v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#0EA5E9" stroke-width="4"/></g>
+    <circle cx="640" cy="200" r="9" fill="#fff" fill-opacity="0.7"/>
+  </g>
+</svg>

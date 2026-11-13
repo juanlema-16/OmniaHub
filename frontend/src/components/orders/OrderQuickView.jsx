@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getOrder } from '../../api/orders';
 import { formatQ } from '../../utils/formatQ';
 import { TIPO_PAGO } from '../../utils/constants';
+import ImagenProducto from '../ui/ImagenProducto';
 
 const Dato = ({ icon: Icon, titulo, children }) => (
   <div className="flex gap-3">
@@ -84,8 +85,11 @@ export default function OrderQuickView({ orderId, onClose, renderAcciones }) {
               <ul className="mt-1 divide-y divide-slate-100 rounded-lg border border-slate-200">
                 {o.items.map((i) => (
                   <li key={i.product} className="flex items-center justify-between gap-3 px-3 py-2">
-                    <span className="truncate">
-                      {i.cantidad} × {i.nombre}
+                    <span className="flex min-w-0 items-center gap-2.5">
+                      <ImagenProducto src={i.imagen} respaldo={i.imagenActual} className="h-8 w-8" />
+                      <span className="truncate">
+                        {i.cantidad} × {i.nombre}
+                      </span>
                     </span>
                     {i.precioVenta !== undefined && <span className="shrink-0 font-medium">{formatQ(i.precioVenta * i.cantidad)}</span>}
                   </li>
@@ -102,7 +106,7 @@ export default function OrderQuickView({ orderId, onClose, renderAcciones }) {
                       )}
                       <Linea label="Envío" value={`− ${formatQ(o.costoEnvio)}`} />
                       {o.comision !== undefined && <Linea label="Comisión de la plataforma" value={`− ${formatQ(o.comision)}`} />}
-                      <Linea label="Tu ganancia" value={formatQ(o.gananciaDropshipper)} className={`font-semibold ${o.gananciaDropshipper < 0 ? 'text-danger' : 'text-success'}`} />
+                      <Linea label={user?.role === 'dropshipper' ? 'Tu ganancia' : 'Ganancia del dropshipper'} value={formatQ(o.gananciaDropshipper)} className={`font-semibold ${o.gananciaDropshipper < 0 ? 'text-danger' : 'text-success'}`} />
                     </>
                   )}
                 </div>

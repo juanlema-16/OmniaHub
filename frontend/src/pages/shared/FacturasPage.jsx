@@ -19,6 +19,18 @@ import { formatQ } from '../../utils/formatQ';
 
 const FILTROS = { desde: '', hasta: '', origen: '' };
 
+// Cada rol factura algo distinto: el proveedor solo sus ventas del POS (las ventas en línea las factura el
+// dropshipper al entregarse la orden), el cliente recibe las de sus compras y el admin ve todas
+const TEXTOS = {
+  proveedor: {
+    descripcion: 'Las facturas de tus ventas en caja (POS). Las ventas en línea las factura el dropshipper al entregarse cada orden.',
+    vacio: 'Se generan solas cada vez que cobras una venta en el punto de venta.',
+  },
+  dropshipper: { descripcion: 'Las facturas que emites a tus clientes cuando se entrega cada orden.', vacio: 'Se generan solas cuando una orden se entrega.' },
+  cliente: { descripcion: 'Las facturas de tus compras.', vacio: 'Recibirás la factura cuando se entregue tu pedido.' },
+  admin: { descripcion: 'Todas las facturas de la plataforma: órdenes entregadas y ventas en caja.', vacio: 'Se generan solas cuando una orden se entrega o se cobra una venta en el punto de venta.' },
+};
+
 // Facturas emitidas (dropshipper, proveedor), recibidas (cliente) o todas (admin)
 export default function FacturasPage() {
   const { user } = useAuth();
@@ -81,14 +93,14 @@ export default function FacturasPage() {
         ]
       : []),
     { key: 'total', header: 'Total', align: 'right', render: (f) => <span className="font-semibold text-slate-900">{formatQ(f.total)}</span> },
-    { key: 'ver', header: '', render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
+    { key: 'ver', header: '', sticky: true, render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
   ];
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Facturas"
-        description={user.role === 'cliente' ? 'Las facturas de tus compras.' : user.role === 'admin' ? 'Todas las facturas de la plataforma.' : 'Las facturas que emites al entregar una orden o al vender en caja.'}
+        description={TEXTOS[user.role]?.descripcion}
         actions={
           user.role !== 'cliente' && (
             <Button variant="secondary" icon={Download} loading={exportando} disabled={!facturas.data?.total} onClick={descargar}>
@@ -109,7 +121,7 @@ export default function FacturasPage() {
           <div className="grid gap-3 border-b border-slate-100 bg-slate-50/60 p-4 sm:grid-cols-3">
             <Input label="Desde" name="desde" type="date" value={filtros.desde} max={filtros.hasta || undefined} onChange={cambiar} error={fechasInvalidas ? 'La fecha inicial no puede ser mayor a la final' : undefined} />
             <Input label="Hasta" name="hasta" type="date" value={filtros.hasta} min={filtros.desde || undefined} onChange={cambiar} />
-            {user.role !== 'cliente' && (
+            {user.role === 'admin' && (
               <Select
                 label="Origen"
                 name="origen"
@@ -139,7 +151,7 @@ export default function FacturasPage() {
         pagination={facturas.data && { page: facturas.data.page, pages: facturas.data.pages, total: facturas.data.total, onPageChange: setPage }}
         emptyIcon={Receipt}
         emptyTitle={hayFiltros ? 'No hay facturas con esos filtros' : 'Aún no hay facturas'}
-        emptyDescription={hayFiltros ? 'Prueba con otras fechas o quita los filtros.' : 'Se generan solas cuando una orden se entrega o vendes en el punto de venta.'}
+        emptyDescription={hayFiltros ? 'Prueba con otras fechas o quita los filtros.' : TEXTOS[user.role]?.vacio}
       />
 
       <FacturaModal facturaId={abierta} onClose={() => setAbierta(null)} />

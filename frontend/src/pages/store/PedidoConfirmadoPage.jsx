@@ -9,6 +9,7 @@ import Timeline from '../../components/ui/Timeline';
 import { OrderStatusBadge } from '../../components/ui/Badge';
 import { formatQ } from '../../utils/formatQ';
 import { formatFechaHora } from '../../utils/dates';
+import ImagenProducto from '../../components/ui/ImagenProducto';
 
 export default function PedidoConfirmadoPage() {
   const { slug } = useOutletContext();
@@ -45,7 +46,7 @@ export default function PedidoConfirmadoPage() {
               <ul className="mt-3 divide-y divide-slate-100">
                 {o.items.map((i) => (
                   <li key={i.product} className="flex items-center gap-3 py-2.5">
-                    <img src={i.imagen} alt="" className="h-12 w-12 shrink-0 rounded-lg border border-slate-200 object-cover" />
+                    <ImagenProducto src={i.imagen} respaldo={i.imagenActual} className="h-12 w-12 rounded-lg" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-slate-900">{i.nombre}</p>
                       <p className="text-xs text-slate-500">

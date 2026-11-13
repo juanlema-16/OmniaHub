@@ -1,7 +1,7 @@
 // tabs: [{ value, label, count? }]
 export default function Tabs({ tabs, value, onChange, className = '' }) {
   return (
-    <div className={`overflow-x-auto border-b border-slate-200 ${className}`}>
+    <div className={`overflow-x-auto overflow-y-hidden border-b border-slate-200 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}>
       <nav className="-mb-px flex min-w-max gap-1" role="tablist">
         {tabs.map((t) => {
           const activo = t.value === value;

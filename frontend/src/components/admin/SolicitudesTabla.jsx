@@ -36,10 +36,10 @@ export default function SolicitudesTabla({ tipo, version, onChange }) {
     key: 'usuario',
     header: 'Usuario',
     render: (s) => (
-      <div>
-        <p className="font-medium text-slate-900">{nombreSolicitante(s.user)}</p>
-        <p className="text-xs text-slate-500">
-          {s.user?.email} · {ROLES[s.user?.role]?.label}
+      <div className="max-w-52">
+        <p className="truncate font-medium text-slate-900">{nombreSolicitante(s.user)}</p>
+        <p className="truncate text-xs text-slate-500" title={s.user?.email}>
+          {ROLES[s.user?.role]?.label} · {s.user?.email}
         </p>
       </div>
     ),
@@ -62,6 +62,7 @@ export default function SolicitudesTabla({ tipo, version, onChange }) {
     key: 'acciones',
     header: 'Acciones',
     align: 'right',
+    sticky: true,
     render: (s) =>
       s.estado === 'PENDIENTE' ? (
         <div className="flex justify-end gap-2">
