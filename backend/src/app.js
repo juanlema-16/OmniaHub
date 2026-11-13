@@ -7,7 +7,6 @@ import rateLimit from 'express-rate-limit';
 import { env } from './config/env.js';
 import { dbStatus } from './config/db.js';
 import { errorHandler, notFound } from './middlewares/errorHandler.js';
-import { ApiError } from './utils/ApiError.js';
 import routes from './routes/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -31,10 +30,7 @@ app.use(
   })
 );
 
-// Documentos KYC y comprobantes de pago son privados: solo se entregan por la API con autenticación
-const privado = (req, res, next) => next(ApiError.notFound('Archivo no encontrado'));
-app.use('/uploads/kyc', privado);
-app.use('/uploads/comprobantes', privado);
+// Solo archivos públicos (productos, logos, banners). KYC y comprobantes viven en private-uploads y se piden por la API
 app.use('/uploads/seed', express.static(path.join(__dirname, 'seed', 'assets')));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 

@@ -14,7 +14,7 @@ const proveedorConKyc = [authorize('proveedor'), requireKyc];
 router.use(auth);
 
 router.get('/mine', authorize('proveedor'), validate({ query: listMineQuery }), productController.listMine);
-router.get('/:id', validate({ params: idParams }), productController.getOne);
+router.get('/:id', authorize('proveedor', 'dropshipper', 'admin'), validate({ params: idParams }), productController.getOne);
 router.post(
   '/',
   ...proveedorConKyc,

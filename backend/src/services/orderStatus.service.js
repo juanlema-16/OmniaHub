@@ -40,6 +40,7 @@ const NOTA_POR_DEFECTO = {
 // Estados en los que el producto ya salió del inventario
 const STOCK_FUERA = ['PENDIENTE', 'GUIA_GENERADA', 'EN_TRANSITO', 'NOVEDAD', 'ENTREGADO'];
 const CON_GUIA = ['GUIA_GENERADA', 'EN_TRANSITO', 'NOVEDAD', 'ENTREGADO', 'DEVOLUCION'];
+const ESTADOS_FINALES = ['CANCELADO', 'DEVOLUCION'];
 
 const costoProveedorDe = (order) => round2(order.items.reduce((s, i) => s + i.precioProveedor * i.cantidad, 0));
 
@@ -47,6 +48,10 @@ const assertPermitido = (user, order, to) => {
   if (user.role === 'admin') {
     if (order.efectos?.repartido) {
       throw ApiError.badRequest('La orden ya fue entregada y el dinero repartido; no se puede cambiar su estado');
+    }
+    // Cancelada o devuelta, la orden ya liquidó su dinero (reembolso o flete): reabrirla repartiría dinero sin respaldo
+    if (ESTADOS_FINALES.includes(order.estado)) {
+      throw ApiError.badRequest(`La orden está en ${order.estado} y su dinero ya se liquidó; no se puede reabrir. Crea una orden nueva.`);
     }
     return;
   }

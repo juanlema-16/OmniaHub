@@ -11,6 +11,6 @@ router.get('/:slug', validate({ params: slugParams, query: storeQuery }), storeC
 router.get('/:slug/products/:productId', validate({ params: storeProductParams }), storeController.getProduct);
 router.post('/:slug/coupon', validate({ params: slugParams, body: couponCheckSchema }), storeController.checkCoupon);
 router.post('/:slug/cart/validate', validate({ params: slugParams, body: cartValidateSchema }), storeController.validateCart);
-router.post('/:slug/checkout', auth, validate({ params: slugParams, body: checkoutSchema }), storeController.checkout);
+router.post('/:slug/checkout', auth, authorize('cliente'), validate({ params: slugParams, body: checkoutSchema }), storeController.checkout);
 
 export default router;

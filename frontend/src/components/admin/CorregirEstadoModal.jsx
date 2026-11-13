@@ -18,7 +18,8 @@ const ESQUEMA = {
 };
 
 // Una orden entregada ya repartió el dinero: el backend no permite sacarla de ENTREGADO
-export const puedeCorregir = (orden) => orden.estado !== 'ENTREGADO' && !orden.efectos?.repartido;
+// Entregada, cancelada o devuelta, la orden ya liquidó su dinero y no se puede reabrir
+export const puedeCorregir = (orden) => !['ENTREGADO', 'CANCELADO', 'DEVOLUCION'].includes(orden.estado) && !orden.efectos?.repartido;
 
 // Corrección manual del estado de una orden. Queda en la auditoría con la nota.
 export default function CorregirEstadoModal({ orden, onClose, onDone }) {

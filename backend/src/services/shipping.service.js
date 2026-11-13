@@ -4,12 +4,6 @@ import { ApiError } from '../utils/ApiError.js';
 
 export const listCarriers = () => Carrier.find({ activa: true }).sort({ nombre: 1 }).select('nombre logo tarifas activa');
 
-export const getCarrierForUser = async (userId, session = null) => {
-  const carrier = await Carrier.findOne({ user: userId }).session(session);
-  if (!carrier) throw ApiError.forbidden('Tu usuario no está asociado a una transportadora');
-  return carrier;
-};
-
 // Devuelve la tarifa de una transportadora activa para el departamento, o lanza 400
 export const getTarifa = async (carrierId, departamento, session = null) => {
   const carrier = await Carrier.findOne({ _id: carrierId, activa: true }).session(session);

@@ -7,14 +7,18 @@ import { ApiError } from '../utils/ApiError.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const UPLOADS_DIR = path.resolve(__dirname, '..', '..', 'uploads');
+// Documentos de identidad y comprobantes de pago: fuera de la carpeta pública, solo se entregan por la API con permiso
+export const PRIVATE_UPLOADS_DIR = path.resolve(__dirname, '..', '..', 'private-uploads');
+const CARPETAS_PRIVADAS = ['kyc', 'comprobantes'];
+const baseDe = (folder) => (CARPETAS_PRIVADAS.includes(folder) ? PRIVATE_UPLOADS_DIR : UPLOADS_DIR);
 
 const IMAGE_TYPES = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };
 const PDF_TYPES = { 'application/pdf': '.pdf' };
 
-export const uploadPath = (folder, filename) => path.join(UPLOADS_DIR, folder, filename);
+export const uploadPath = (folder, filename) => path.join(baseDe(folder), folder, filename);
 
 export const imageUpload = (folder, { maxMB = 5, allowPdf = false } = {}) => {
-  const dir = path.join(UPLOADS_DIR, folder);
+  const dir = path.join(baseDe(folder), folder);
   fs.mkdirSync(dir, { recursive: true });
   const types = allowPdf ? { ...IMAGE_TYPES, ...PDF_TYPES } : IMAGE_TYPES;
 

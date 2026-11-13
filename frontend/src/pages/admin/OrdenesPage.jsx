@@ -24,10 +24,13 @@ import { ORDER_STATUS, TIPO_PAGO } from '../../utils/constants';
 
 const EXTRA = { transportadora: '', tipoPago: '', origen: '', desde: '', hasta: '' };
 
-// Pie del detalle: el admin puede corregir el estado salvo en órdenes ya entregadas
+// Pie del detalle: el admin puede corregir el estado salvo en órdenes que ya liquidaron su dinero
 function AccionesAdmin({ orden, onChange }) {
   const [corregir, setCorregir] = useState(false);
-  if (!puedeCorregir(orden)) return <p className="text-sm text-slate-500">Orden entregada: el dinero ya se repartió y su estado no se puede cambiar.</p>;
+  if (!puedeCorregir(orden)) {
+    const motivo = orden.estado === 'ENTREGADO' ? 'Orden entregada: el dinero ya se repartió' : `${orden.estado === 'CANCELADO' ? 'Orden cancelada' : 'Orden en devolución'}: su dinero ya se liquidó`;
+    return <p className="text-sm text-slate-500">{motivo} y su estado no se puede cambiar.</p>;
+  }
   return (
     <>
       <Button variant="secondary" icon={Wrench} onClick={() => setCorregir(true)}>

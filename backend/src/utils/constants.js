@@ -69,14 +69,6 @@ export const TICKET_ESTADO = ['ABIERTO', 'EN_PROCESO', 'RESUELTO', 'CERRADO'];
 export const BANNER_UBICACION = ['LANDING', 'PANEL'];
 export const POLICY_SLUGS = ['terminos-y-condiciones', 'privacidad', 'cookies', 'envios-y-devoluciones'];
 
-export const MOTIVOS_NOVEDAD = [
-  'Cliente ausente',
-  'Dirección incorrecta',
-  'Rechazó el pedido',
-  'Teléfono no contesta',
-  'Zona de difícil acceso',
-];
-
 export const SETTINGS_DEFAULT = {
   comisionPorcentaje: 3,
   montoMinimoRetiro: 100,

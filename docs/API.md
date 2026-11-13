@@ -51,7 +51,7 @@ Base URL: `http://localhost:4000/api`
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
 | GET | `/products/mine` | proveedor | Mis productos. Filtros: `search`, `categoria`, `activo`, `stockBajo` |
-| GET | `/products/:id` | Autenticado | Detalle (el proveedor solo ve los suyos) |
+| GET | `/products/:id` | proveedor, dropshipper, admin | Detalle con precio proveedor (el proveedor solo ve los suyos). El cliente usa el detalle de la tienda, que nunca muestra ese precio |
 | POST | `/products` *(multipart)* | proveedor + KYC | Publica un producto con hasta 5 `imagenes`. El stock inicial queda como movimiento `AJUSTE` |
 | PATCH | `/products/:id` *(multipart)* | proveedor + KYC | Edita datos, agrega `imagenes` o quita con `imagenesEliminar` (JSON). Cambiar el stock genera un `AJUSTE` |
 | DELETE | `/products/:id` | proveedor + KYC | Desactiva el producto y lo retira de las tiendas (no se borra para conservar el historial) |
