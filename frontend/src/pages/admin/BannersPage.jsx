@@ -14,6 +14,7 @@ import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/ui/EmptyState';
 import ConfirmarModal from '../../components/admin/ConfirmarModal';
 import BannerFormModal, { UBICACIONES } from '../../components/admin/BannerFormModal';
+import { ROLES } from '../../utils/constants';
 import { formatFecha } from '../../utils/dates';
 
 // Estado real según activo y fechas de vigencia
@@ -112,6 +113,12 @@ export default function BannersPage() {
                       <dt className="font-medium text-slate-600">Ubicación:</dt>
                       <dd>{b.ubicacion.map((u) => UBICACIONES[u]).join(' y ')}</dd>
                     </div>
+                    {b.ubicacion.includes('PANEL') && (
+                      <div className="flex gap-1.5">
+                        <dt className="font-medium text-slate-600">Roles:</dt>
+                        <dd>{b.roles?.length ? b.roles.map((r) => ROLES[r]?.label || r).join(', ') : 'Todos'}</dd>
+                      </div>
+                    )}
                     <div className="flex gap-1.5">
                       <dt className="font-medium text-slate-600">Vigencia:</dt>
                       <dd>

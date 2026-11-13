@@ -6,6 +6,8 @@ import useAsync from '../../hooks/useAsync';
 import { useCart } from '../../context/CartContext';
 import { getStoreProduct } from '../../api/store';
 import Button from '../../components/ui/Button';
+import { ResumenEstrellas } from '../../components/ui/Estrellas';
+import ResenasProducto from '../../components/reviews/ResenasProducto';
 import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/ui/EmptyState';
 import { formatQ } from '../../utils/formatQ';
@@ -81,6 +83,9 @@ export default function ProductoPage() {
             <div>
               {p.categoria && <p className="text-sm font-medium text-primary">{p.categoria.nombre}</p>}
               <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">{p.nombre}</h1>
+              <div className="mt-2">
+                <ResumenEstrellas rating={p.rating} size="h-5 w-5" />
+              </div>
               <p className="mt-4 text-4xl font-bold text-slate-900">{formatQ(p.precio)}</p>
               <p className={`mt-2 text-sm font-medium ${p.disponible ? 'text-success' : 'text-danger'}`}>{p.disponible ? (p.stock <= 5 ? `Quedan solo ${plural(p.stock, 'unidad', 'unidades')}` : 'Disponible') : 'Agotado'}</p>
 
@@ -120,6 +125,11 @@ export default function ProductoPage() {
             </div>
           </div>
         )
+      )}
+      {p && (
+        <div className="mt-10">
+          <ResenasProducto productId={p._id} />
+        </div>
       )}
     </div>
   );

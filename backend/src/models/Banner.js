@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { BANNER_UBICACION } from '../utils/constants.js';
+import { BANNER_UBICACION, ROLES } from '../utils/constants.js';
 
 const bannerSchema = new Schema(
   {
@@ -8,6 +8,8 @@ const bannerSchema = new Schema(
     imagen: { type: String, required: [true, 'La imagen es obligatoria'] },
     link: String,
     ubicacion: { type: [String], enum: BANNER_UBICACION, default: ['LANDING', 'PANEL'] },
+    // Roles que ven el banner en su panel; vacío = todos. La landing es pública y no usa roles
+    roles: { type: [String], enum: ROLES, default: [] },
     inicio: { type: Date, default: Date.now },
     fin: {
       type: Date,

@@ -5,7 +5,7 @@ const VARIANTES = {
   secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 shadow-sm',
   ghost: 'text-slate-600 hover:bg-slate-100',
   danger: 'bg-danger text-white hover:bg-red-600 shadow-sm',
-  success: 'bg-success text-white hover:bg-emerald-600 shadow-sm',
+  success: 'bg-[#047857] text-white hover:bg-[#065f46] shadow-sm',
   soft: 'bg-primary-50 text-primary hover:bg-primary-100',
 };
 

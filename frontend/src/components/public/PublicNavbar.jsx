@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { homeFor } from '../../utils/constants';
 import Logo from '../ui/Logo';
+import ThemeToggle from '../ui/ThemeToggle';
 
 // Barra superior de la parte pública. "enlaces" son anclas de la misma página (landing)
 export default function PublicNavbar({ enlaces = [] }) {
@@ -22,6 +23,7 @@ export default function PublicNavbar({ enlaces = [] }) {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           {autenticado ? (
             <Link to={homeFor(user.role)} className={`${boton} bg-primary text-white hover:bg-primary-hover`}>
               Ir a mi panel

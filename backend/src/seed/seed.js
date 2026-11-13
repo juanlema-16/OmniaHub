@@ -20,7 +20,7 @@ import {
 const {
   User, Wallet, Transaction, Category, Product, StoreProduct, Order, Carrier, CarrierPreference, Coupon,
   Customer, Invoice, BankAccount, TopUp, InventoryMovement, Purchase, Notification, Banner, Policy,
-  Setting, AuditLog, Counter,
+  Setting, AuditLog, Counter, Ticket, Review, Favorite,
 } = models;
 
 const HORA = 60 * 60 * 1000;
@@ -210,6 +210,8 @@ const run = async () => {
   const customers = new Map();
   let guiaSeq = 0;
 
+  const userDelCliente = (c) => (c.esUsuario ? users.cliente._id : c.usuario ? users[c.usuario]._id : undefined);
+
   ORDERS.forEach((o, i) => {
     const product = products[o.producto];
     const carrier = carriers[o.carrier];
@@ -236,7 +238,7 @@ const run = async () => {
       dropshipper: dropId,
       proveedor: proveedorId,
       cliente: {
-        user: o.cliente.esUsuario ? users.cliente._id : undefined,
+        user: userDelCliente(o.cliente),
         nombres: o.cliente.nombres,
         apellidos: o.cliente.apellidos,
         telefono: o.cliente.telefono,
@@ -270,7 +272,7 @@ const run = async () => {
     const ref = `Orden ${numero}`;
 
     evento(creada, () => {
-      cambiar('PENDIENTE_CONFIRMACION', creada, o.cliente.esUsuario ? users.cliente._id : dropId, o.origen === 'TIENDA' ? 'Compra en la tienda en línea' : 'Orden creada desde el panel');
+      cambiar('PENDIENTE_CONFIRMACION', creada, userDelCliente(o.cliente) ?? dropId, o.origen === 'TIENDA' ? 'Compra en la tienda en línea' : 'Orden creada desde el panel');
       if (o.tipoPago === 'SIN_RECAUDO') {
         mover({ user: dropId, tipo: 'SALIDA', concepto: 'ORDEN_SIN_RECAUDO', monto: round2(costoProveedor + costoEnvio + comision), descripcion: `${ref}: producto + envío + comisión`, fecha: creada, order: order._id, createdBy: dropId });
         order.efectos.salidaSinRecaudo = true;
@@ -429,9 +431,81 @@ const run = async () => {
       imagen: '/banners/vende-mas.svg',
       link: '/registro',
       ubicacion: ['LANDING', 'PANEL'],
+      roles: ['proveedor', 'dropshipper'],
       inicio: haceDias(1),
       fin: haceDias(-90),
       activo: true,
+    },
+    {
+      titulo: 'Compra fácil, paga al recibir',
+      subtitulo: 'Envíos a los 22 departamentos y pago contra entrega en las tiendas de OmniaHub.',
+      imagen: '/banners/compra-facil.svg',
+      link: '/tienda/tienda-demo',
+      ubicacion: ['PANEL'],
+      roles: ['cliente'],
+      inicio: haceDias(1),
+      activo: true,
+    },
+  ];
+
+  const ordenDe = (numero) => orders.find((o) => o.numero === numero);
+  const resena = (numero, clave, rating, comentario, dias, visible = true) => {
+    const o = ordenDe(numero);
+    return { product: o.items[0].product, cliente: users[clave]._id, order: o._id, rating, comentario, visible, createdAt: haceDias(dias), updatedAt: haceDias(dias) };
+  };
+  const reviews = [
+    resena('ORD-000001', 'jose', 5, 'Muy buen reloj, la batería dura varios días y la pantalla se ve excelente.', 9),
+    resena('ORD-000003', 'cliente', 5, 'Excelente sonido y llegaron rápido. Los uso todos los días.', 7),
+    resena('ORD-000004', 'luis', 4, 'Buena calidad, cierran bien. Solo la tapa es un poco rígida.', 6),
+    resena('ORD-000005', 'karla', 5, 'Las bandas son resistentes y vienen con bolsa. Muy recomendadas.', 5),
+    resena('ORD-000006', 'andrea', 2, 'Producto malo, pésimo servicio. No lo recomiendo a nadie, qué estafa.', 4, false),
+    resena('ORD-000013', 'luis', 3, 'Funciona bien, aunque tarda en cargar y hace bastante ruido.', 3),
+    resena('ORD-000014', 'karla', 5, 'Alisa en pocos minutos y deja el cabello suave. Me encantó.', 2),
+  ];
+
+  const favorites = [0, 1, 8].map((i) => ({ dropshipper: users.dropshipper._id, product: products[i]._id }));
+
+  const mensajeDe = (u, texto, fecha) => ({ autor: u._id, rol: u.role, texto, fecha });
+  const tickets = [
+    {
+      numero: 'TCK-000001',
+      user: users.dropshipper._id,
+      asunto: 'Mi recarga de Q 500 sigue pendiente',
+      categoria: 'PAGO',
+      prioridad: 'MEDIA',
+      estado: 'ABIERTO',
+      mensajes: [mensajeDe(users.dropshipper, 'Hola, hice una transferencia hace unas horas y todavía no se acredita en mi billetera. ¿Pueden revisarla?', haceDias(0, -3))],
+      createdAt: haceDias(0, -3),
+      updatedAt: haceDias(0, -3),
+    },
+    {
+      numero: 'TCK-000002',
+      user: users.cliente._id,
+      asunto: 'No me ha llegado mi pedido',
+      categoria: 'PEDIDO',
+      prioridad: 'ALTA',
+      estado: 'EN_PROCESO',
+      mensajes: [
+        mensajeDe(users.cliente, 'Buenas tardes, mi pedido lleva varios días sin moverse y no tengo noticias de la transportadora.', haceDias(2)),
+        mensajeDe(users.admin, 'Hola María, ya contactamos a la transportadora para confirmar dónde está tu paquete. Te avisamos en cuanto tengamos respuesta.', haceDias(1, -20)),
+      ],
+      createdAt: haceDias(2),
+      updatedAt: haceDias(1, -20),
+    },
+    {
+      numero: 'TCK-000003',
+      user: users.proveedor._id,
+      asunto: 'No puedo subir más de 3 fotos a un producto',
+      categoria: 'TECNICO',
+      prioridad: 'BAJA',
+      estado: 'RESUELTO',
+      mensajes: [
+        mensajeDe(users.proveedor, 'Al editar un producto el sistema no me deja agregar la cuarta imagen.', haceDias(5)),
+        mensajeDe(users.admin, 'Cada producto admite hasta 3 imágenes. Puedes quitar una y subir otra en su lugar.', haceDias(4, -22)),
+        mensajeDe(users.proveedor, 'Perfecto, gracias. Ya lo resolví.', haceDias(4, -20)),
+      ],
+      createdAt: haceDias(5),
+      updatedAt: haceDias(4, -20),
     },
   ];
 
@@ -446,6 +520,7 @@ const run = async () => {
     { _id: 'order', seq: orders.length },
     { _id: 'guia', seq: guiaSeq },
     { _id: 'invoice', seq: invoices.length },
+    { _id: 'ticket', seq: tickets.length },
   ];
 
   console.info('Insertando datos…');
@@ -468,6 +543,9 @@ const run = async () => {
   await Notification.insertMany(notifications);
   await AuditLog.insertMany(auditLogs);
   await Banner.insertMany(banners);
+  await Ticket.insertMany(tickets);
+  await Review.insertMany(reviews);
+  await Favorite.insertMany(favorites);
   await Policy.insertMany(policies);
   await Setting.insertMany(settings);
   await Counter.insertMany(counters);

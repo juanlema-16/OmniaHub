@@ -6,6 +6,7 @@ import {
   FileText,
   Home,
   LayoutDashboard,
+  LifeBuoy,
   Megaphone,
   Package,
   PackageSearch,
@@ -14,6 +15,7 @@ import {
   Search,
   Settings,
   ShieldCheck,
+  Star,
   ShoppingBag,
   ShoppingCart,
   Store,
@@ -30,6 +32,8 @@ import KycPage from '../pages/shared/KycPage';
 import BilleteraPage from '../pages/shared/BilleteraPage';
 import ReportesPage from '../pages/shared/ReportesPage';
 import FacturasPage from '../pages/shared/FacturasPage';
+import SoportePage from '../pages/shared/SoportePage';
+import AdminResenasPage from '../pages/admin/ResenasPage';
 import ClientePedidosPage from '../pages/cliente/PedidosPage';
 import DashboardPage from '../pages/dropshipper/DashboardPage';
 import CatalogoPage from '../pages/dropshipper/CatalogoPage';
@@ -64,6 +68,7 @@ import TransNovedadesPage from '../pages/transportadora/NovedadesPage';
 // Un ítem aparece en el Sidebar en cuanto tiene "element"; los demás son los módulos que
 // llegan en los siguientes prompts y se activan al registrar su página aquí.
 const inicio = { label: 'Inicio', icon: Home, path: '', element: <InicioPage />, section: 'General' };
+const soporte = { label: 'Soporte', icon: LifeBuoy, path: 'soporte', element: <SoportePage />, section: 'Cuenta' };
 const notificaciones = { label: 'Notificaciones', icon: Bell, path: 'notificaciones', element: <NotificacionesPage />, section: 'Cuenta' };
 const verificacion = { label: 'Verificación', icon: ShieldCheck, path: 'kyc', element: <KycPage />, section: 'Cuenta' };
 const billetera = { label: 'Billetera', icon: Wallet, path: 'billetera', element: <BilleteraPage />, section: 'Finanzas' };
@@ -86,6 +91,7 @@ export const PANELES = {
     reportes,
     facturas,
     verificacion,
+    soporte,
     notificaciones,
   ],
   proveedor: [
@@ -100,6 +106,7 @@ export const PANELES = {
     reportes,
     facturas,
     verificacion,
+    soporte,
     notificaciones,
   ],
   transportadora: [
@@ -108,6 +115,7 @@ export const PANELES = {
     { label: 'Novedades', icon: TriangleAlert, path: 'novedades', element: <TransNovedadesPage />, section: 'Operación' },
     billetera,
     reportes,
+    soporte,
     notificaciones,
   ],
   admin: [
@@ -116,6 +124,7 @@ export const PANELES = {
     { label: 'Usuarios', icon: Users, path: 'usuarios', element: <AdminUsuariosPage />, section: 'Gestión' },
     { label: 'KYC', icon: ShieldCheck, path: 'kyc', element: <AdminKycPage />, section: 'Gestión' },
     { label: 'Órdenes', icon: ClipboardList, path: 'ordenes', element: <AdminOrdenesPage />, section: 'Gestión' },
+    { label: 'Reseñas', icon: Star, path: 'resenas', element: <AdminResenasPage />, section: 'Gestión' },
     { label: 'Recargas y retiros', icon: Wallet, path: 'solicitudes', element: <AdminSolicitudesPage />, section: 'Finanzas' },
     { label: 'Transportadoras', icon: Truck, path: 'transportadoras', element: <AdminTransportadorasPage />, section: 'Configuración' },
     { label: 'Publicidad', icon: Megaphone, path: 'banners', element: <AdminBannersPage />, section: 'Configuración' },
@@ -125,12 +134,14 @@ export const PANELES = {
     billetera,
     reportes,
     facturas,
+    soporte,
     notificaciones,
   ],
   cliente: [
     inicio,
     { label: 'Mis pedidos', icon: PackageSearch, path: 'pedidos', element: <ClientePedidosPage />, section: 'Compras' },
     { label: 'Facturas', icon: Receipt, path: 'facturas', element: <FacturasPage />, section: 'Compras' },
+    soporte,
     notificaciones,
   ],
 };

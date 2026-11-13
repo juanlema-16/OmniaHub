@@ -15,6 +15,7 @@ export const catalogQuery = z
     precioMin: precioFiltro('El precio mínimo').optional(),
     precioMax: precioFiltro('El precio máximo').optional(),
     conStock: booleanish.optional(),
+    favoritos: booleanish.optional(),
     stockMin: enteroNoNegativo('El stock mínimo').optional(),
     verificado: booleanish.optional(),
     orden: z.enum(ORDEN_CATALOGO, { error: 'Orden no válido' }).default('recientes'),

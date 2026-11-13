@@ -35,3 +35,154 @@
     background: #fff;
   }
 }
+
+/* ───── Modo oscuro ─────
+   La clase "dark" va en <html>. En lugar de repetir "dark:" en cientos de clases, se redefinen las variables de
+   color de Tailwind: cada utilidad (bg-slate-50, text-red-700, border-emerald-200…) se adapta sola.
+   La variante dark: sigue disponible para ajustes puntuales. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --chart-grid: #e2e8f0;
+  --chart-cursor: #f1f5f9;
+  --toast-bg: #ffffff;
+  --toast-fg: #1e293b;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --chart-grid: #334155;
+  --chart-cursor: #1e293b;
+  --toast-bg: #1e293b;
+  --toast-fg: #e2e8f0;
+
+  --color-surface: #0b1120;
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+
+  /* Escala de grises invertida: los fondos claros pasan a oscuros y los textos oscuros a claros */
+  --color-slate-50: #131c31;
+  --color-slate-100: #1b2740;
+  --color-slate-200: #2a3852;
+  --color-slate-300: #3a4a66;
+  --color-slate-400: #66758f;
+  --color-slate-500: #94a3b8;
+  --color-slate-600: #b3bfd0;
+  --color-slate-700: #cbd5e1;
+  --color-slate-800: #e2e8f0;
+  --color-slate-900: #f1f5f9;
+
+  /* Colores de estado: fondos translúcidos y textos más claros para mantener el contraste */
+  --color-red-50: rgb(239 68 68 / 0.14);
+  --color-red-100: rgb(239 68 68 / 0.22);
+  --color-red-200: rgb(239 68 68 / 0.38);
+  --color-red-700: #fca5a5;
+  --color-red-800: #fecaca;
+  --color-emerald-50: rgb(16 185 129 / 0.14);
+  --color-emerald-100: rgb(16 185 129 / 0.22);
+  --color-emerald-200: rgb(16 185 129 / 0.38);
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+  --color-amber-50: rgb(245 158 11 / 0.14);
+  --color-amber-100: rgb(245 158 11 / 0.22);
+  --color-amber-200: rgb(245 158 11 / 0.38);
+  --color-amber-700: #fcd34d;
+  --color-amber-800: #fde68a;
+  --color-orange-50: rgb(249 115 22 / 0.14);
+  --color-orange-100: rgb(249 115 22 / 0.22);
+  --color-orange-200: rgb(249 115 22 / 0.38);
+  --color-orange-600: #fdba74;
+  --color-orange-700: #fdba74;
+  --color-sky-50: rgb(14 165 233 / 0.14);
+  --color-sky-100: rgb(14 165 233 / 0.22);
+  --color-sky-200: rgb(14 165 233 / 0.38);
+  --color-sky-600: #7dd3fc;
+  --color-sky-700: #7dd3fc;
+  --color-sky-800: #bae6fd;
+  --color-violet-50: rgb(139 92 246 / 0.16);
+  --color-violet-100: rgb(139 92 246 / 0.24);
+  --color-violet-200: rgb(139 92 246 / 0.4);
+  --color-violet-700: #c4b5fd;
+  --color-indigo-50: rgb(99 102 241 / 0.16);
+}
+
+/* "white" también se usa como color de texto sobre fondos de color, por eso no se redefine su variable:
+   solo cambian los fondos, anillos y bordes que usan blanco como superficie. */
+.dark .bg-white {
+  background-color: #0f172a;
+}
+.dark .bg-white\/95 {
+  background-color: rgb(15 23 42 / 0.95);
+}
+.dark .bg-white\/90 {
+  background-color: rgb(15 23 42 / 0.9);
+}
+.dark .hover\:bg-white:hover {
+  background-color: #0f172a;
+}
+.dark .ring-white {
+  --tw-ring-color: #0f172a;
+}
+.dark .shadow-sm,
+.dark .shadow,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl {
+  --tw-shadow-color: rgb(0 0 0 / 0.5);
+}
+
+/* Fondos de acento del color de marca (usados por menús, chips y filas activas) */
+.dark .bg-primary-50 {
+  background-color: rgb(99 102 241 / 0.16);
+}
+.dark .bg-primary-100,
+.dark .hover\:bg-primary-100:hover,
+.dark .hover\:bg-primary-50:hover {
+  background-color: rgb(99 102 241 / 0.26);
+}
+.dark .ring-primary-100,
+.dark .border-primary-100 {
+  --tw-ring-color: rgb(99 102 241 / 0.4);
+  border-color: rgb(99 102 241 / 0.4);
+}
+.dark .focus\:ring-primary-100:focus {
+  --tw-ring-color: rgb(99 102 241 / 0.4);
+}
+.dark .text-primary,
+.dark .hover\:text-primary:hover {
+  color: #a5b4fc;
+}
+.dark .bg-primary .text-primary,
+.dark .bg-white .text-primary {
+  color: #a5b4fc;
+}
+
+/* Fondos oscuros que en modo claro eran "tinta": en oscuro se mantienen oscuros */
+.dark .bg-slate-900 {
+  background-color: #020617;
+}
+.dark .bg-slate-900\/50 {
+  background-color: rgb(0 0 0 / 0.65);
+}
+.dark .bg-slate-900\/60 {
+  background-color: rgb(0 0 0 / 0.7);
+}
+.dark .text-slate-300 {
+  color: #64748b;
+}
+.dark .disabled\:bg-slate-300:disabled {
+  background-color: #3a4a66;
+}
+
+/* Imágenes: un poco menos brillantes para no deslumbrar */
+.dark img:not([src$='.svg']) {
+  filter: brightness(0.9);
+}
+
+/* Entradas nativas (calendario, scroll) en oscuro */
+.dark input,
+.dark select,
+.dark textarea {
+  color-scheme: dark;
+}

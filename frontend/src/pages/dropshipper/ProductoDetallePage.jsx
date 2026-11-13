@@ -11,6 +11,11 @@ import Alert from '../../components/ui/Alert';
 import Skeleton from '../../components/ui/Skeleton';
 import Avatar from '../../components/ui/Avatar';
 import EmptyState from '../../components/ui/EmptyState';
+import { ResumenEstrellas } from '../../components/ui/Estrellas';
+import ResenasProducto from '../../components/reviews/ResenasProducto';
+import BotonFavorito from '../../components/dropshipper/BotonFavorito';
+import { addFavorite, removeFavorite } from '../../api/favorites';
+import { getErrorMessage } from '../../api/axios';
 import ImportarModal from '../../components/dropshipper/ImportarModal';
 import CrearOrdenModal from '../../components/orders/CrearOrdenModal';
 import { formatQ } from '../../utils/formatQ';
@@ -18,6 +23,17 @@ import { formatQ } from '../../utils/formatQ';
 export default function ProductoDetallePage() {
   const { id } = useParams();
   const { data: p, setData, cargando, error } = useAsync(() => getCatalogProduct(id), [id]);
+
+  const alternarFavorito = async () => {
+    const nuevo = !p.favorito;
+    setData((d) => ({ ...d, favorito: nuevo }));
+    try {
+      await (nuevo ? addFavorite(p._id) : removeFavorite(p._id));
+    } catch (err) {
+      setData((d) => ({ ...d, favorito: !nuevo }));
+      toast.error(getErrorMessage(err));
+    }
+  };
   const [imagen, setImagen] = useState(0);
   const [importar, setImportar] = useState(false);
   const [enviar, setEnviar] = useState(false);
@@ -94,7 +110,13 @@ export default function ProductoDetallePage() {
               </Badge>
             )}
           </div>
-          <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">{p.nombre}</h1>
+          <div className="mt-3 flex items-start justify-between gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">{p.nombre}</h1>
+            <BotonFavorito activo={p.favorito} nombre={p.nombre} onClick={alternarFavorito} className="shrink-0" />
+          </div>
+          <div className="mt-1.5">
+            <ResumenEstrellas rating={p.rating} size="h-4 w-4" />
+          </div>
           <button
             type="button"
             onClick={() => navigator.clipboard?.writeText(p.sku).then(() => toast.success('SKU copiado'))}
@@ -167,6 +189,8 @@ export default function ProductoDetallePage() {
           <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{p.descripcion}</p>
         </Card>
       )}
+
+      <ResenasProducto productId={p._id} />
 
       {p.relacionados?.length > 0 && (
         <section>

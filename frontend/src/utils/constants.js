@@ -80,3 +80,12 @@ export const METODO_RECARGA = {
 
 export const BANCOS = ['Banco Industrial', 'Banrural', 'BAM', 'G&T Continental', 'BAC Credomatic', 'Banco Promerica'];
 export const TIPO_CUENTA = { MONETARIA: 'Monetaria', AHORRO: 'Ahorro' };
+
+export const TICKET_CATEGORIA = { PEDIDO: 'Pedido', PAGO: 'Pago', CUENTA: 'Cuenta', TECNICO: 'Problema técnico', OTRO: 'Otro' };
+export const TICKET_PRIORIDAD = { BAJA: { label: 'Baja', tone: 'slate' }, MEDIA: { label: 'Media', tone: 'sky' }, ALTA: { label: 'Alta', tone: 'red' } };
+export const TICKET_ESTADO = {
+  ABIERTO: { label: 'Abierto', tone: 'amber' },
+  EN_PROCESO: { label: 'En proceso', tone: 'sky' },
+  RESUELTO: { label: 'Resuelto', tone: 'green' },
+  CERRADO: { label: 'Cerrado', tone: 'slate' },
+};

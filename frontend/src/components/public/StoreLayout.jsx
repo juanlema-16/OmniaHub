@@ -9,6 +9,7 @@ import PublicFooter from './PublicFooter';
 import CookieBanner from './CookieBanner';
 import Skeleton from '../ui/Skeleton';
 import EmptyState from '../ui/EmptyState';
+import ThemeToggle from '../ui/ThemeToggle';
 
 // Encabezado y pie comunes de /tienda/:slug. Comparte los datos de la tienda con sus páginas.
 export default function StoreLayout() {
@@ -33,6 +34,7 @@ export default function StoreLayout() {
             {cargando && !tienda ? <Skeleton className="h-5 w-32" /> : <span className="truncate text-lg font-bold text-slate-900">{tienda?.nombre || 'Tienda'}</span>}
           </Link>
           <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
             {autenticado ? (
               <Link to={homeFor(user.role)} className="inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
                 <UserRound className="h-4 w-4" aria-hidden="true" /> <span className="hidden sm:inline">Mi cuenta</span>

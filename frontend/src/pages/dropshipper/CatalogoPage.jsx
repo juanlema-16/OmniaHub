@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BadgeCheck, ChevronLeft, ChevronRight, PackageSearch, RotateCcw, Search, Warehouse } from 'lucide-react';
+import { BadgeCheck, ChevronLeft, ChevronRight, PackageSearch, Heart, RotateCcw, Search, Warehouse } from 'lucide-react';
 import useAsync from '../../hooks/useAsync';
 import useDebounce from '../../hooks/useDebounce';
 import { getCatalog, getCategories, getProveedores } from '../../api/catalog';
@@ -12,11 +12,14 @@ import Alert from '../../components/ui/Alert';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
 import ProductCard from '../../components/dropshipper/ProductCard';
+import toast from 'react-hot-toast';
+import { getErrorMessage } from '../../api/axios';
+import { addFavorite, removeFavorite } from '../../api/favorites';
 import ImportarModal from '../../components/dropshipper/ImportarModal';
 import CrearOrdenModal from '../../components/orders/CrearOrdenModal';
 import { plural } from '../../utils/plural';
 
-const FILTROS = { search: '', categoria: '', proveedor: '', precioMin: '', precioMax: '', conStock: true, verificado: false, orden: 'recientes' };
+const FILTROS = { search: '', categoria: '', proveedor: '', precioMin: '', precioMax: '', conStock: true, verificado: false, favoritos: false, orden: 'recientes' };
 
 const ORDENES = [
   { value: 'recientes', label: 'Más recientes' },
@@ -48,6 +51,7 @@ export default function CatalogoPage() {
     precioMax: precioMax || undefined,
     conStock: filtros.conStock || undefined,
     verificado: filtros.verificado || undefined,
+    favoritos: filtros.favoritos || undefined,
     orden: filtros.orden,
     page,
     limit: LIMITE,
@@ -55,7 +59,7 @@ export default function CatalogoPage() {
   const catalogo = useAsync(() => getCatalog(params), [JSON.stringify(params)]);
 
   // Cualquier filtro nuevo vuelve a la primera página
-  useEffect(() => setPage(1), [busqueda, filtros.categoria, filtros.proveedor, precioMin, precioMax, filtros.conStock, filtros.verificado, filtros.orden]);
+  useEffect(() => setPage(1), [busqueda, filtros.categoria, filtros.proveedor, precioMin, precioMax, filtros.conStock, filtros.verificado, filtros.favoritos, filtros.orden]);
 
   const cambiar = (campo, valor) => setFiltros((f) => ({ ...f, [campo]: valor }));
   const hayFiltros = JSON.stringify(filtros) !== JSON.stringify(FILTROS);
@@ -64,6 +68,19 @@ export default function CatalogoPage() {
   // Al importar, la tarjeta cambia a "En tu tienda" sin recargar todo el catálogo
   const marcarImportado = (productoId, storeProduct) =>
     catalogo.setData((d) => d && { ...d, items: d.items.map((p) => (p._id === productoId ? { ...p, importado: true, storeProduct } : p)) });
+
+  // Marca o desmarca al instante y revierte si el servidor falla; en la vista de favoritos la tarjeta desaparece
+  const alternarFavorito = async (p) => {
+    const nuevo = !p.favorito;
+    catalogo.setData((d) => d && { ...d, items: d.items.map((x) => (x._id === p._id ? { ...x, favorito: nuevo } : x)) });
+    try {
+      await (nuevo ? addFavorite(p._id) : removeFavorite(p._id));
+      if (!nuevo && filtros.favoritos) catalogo.setData((d) => d && { ...d, total: d.total - 1, items: d.items.filter((x) => x._id !== p._id) });
+    } catch (err) {
+      catalogo.setData((d) => d && { ...d, items: d.items.map((x) => (x._id === p._id ? { ...x, favorito: !nuevo } : x)) });
+      toast.error(getErrorMessage(err));
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -118,6 +135,7 @@ export default function CatalogoPage() {
             />
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Switch checked={filtros.favoritos} onChange={(v) => cambiar('favoritos', v)} label={<span className="inline-flex items-center gap-1.5"><Heart className="h-4 w-4 fill-orange-500 text-orange-500" aria-hidden="true" /> Solo favoritos</span>} />
             <Switch checked={filtros.conStock} onChange={(v) => cambiar('conStock', v)} label="Solo con stock" />
             <Switch checked={filtros.verificado} onChange={(v) => cambiar('verificado', v)} label="Solo verificados" />
           </div>
@@ -161,7 +179,7 @@ export default function CatalogoPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {catalogo.cargando && Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-[26rem] w-full" />)}
-        {!catalogo.cargando && datos?.items.map((p) => <ProductCard key={p._id} producto={p} onImportar={setImportar} onEnviar={setEnviar} />)}
+        {!catalogo.cargando && datos?.items.map((p) => <ProductCard key={p._id} producto={p} onImportar={setImportar} onEnviar={setEnviar} onFavorito={alternarFavorito} />)}
       </div>
       {!catalogo.cargando && datos?.items.length === 0 && (
         <div className="rounded-xl border border-slate-200 bg-white">

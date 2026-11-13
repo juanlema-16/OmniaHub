@@ -1,12 +1,14 @@
+import { ResumenEstrellas } from '../ui/Estrellas';
 import { Link } from 'react-router-dom';
 import { BadgeCheck, Check, Send, Store } from 'lucide-react';
+import BotonFavorito from './BotonFavorito';
 import { formatQ } from '../../utils/formatQ';
 
 // Tarjeta del catálogo: precio proveedor, sugerido, stock y las dos acciones principales
-export default function ProductCard({ producto: p, onImportar, onEnviar }) {
+export default function ProductCard({ producto: p, onImportar, onEnviar, onFavorito }) {
   const agotado = p.stock <= 0;
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+    <article className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <Link to={`/dropshipper/catalogo/${p._id}`} className="relative block aspect-square overflow-hidden bg-slate-50">
         <img src={p.imagenes?.[0]} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
         <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
@@ -16,12 +18,13 @@ export default function ProductCard({ producto: p, onImportar, onEnviar }) {
             </span>
           )}
           {p.importado && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#047857] px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
               <Check className="h-3 w-3" aria-hidden="true" /> En tu tienda
             </span>
           )}
         </div>
       </Link>
+      {onFavorito && <BotonFavorito activo={p.favorito} nombre={p.nombre} onClick={() => onFavorito(p)} className="absolute right-2 top-2 z-10" />}
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-center justify-between text-xs">
@@ -31,6 +34,9 @@ export default function ProductCard({ producto: p, onImportar, onEnviar }) {
         <Link to={`/dropshipper/catalogo/${p._id}`} className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-slate-900 hover:text-primary">
           {p.nombre}
         </Link>
+        <div className="mt-1">
+          <ResumenEstrellas rating={p.rating} />
+        </div>
         <p className="mt-1 truncate text-xs text-slate-500">
           Proveedor: <span className="font-medium text-primary">{p.proveedor?.empresa?.nombre}</span>
         </p>

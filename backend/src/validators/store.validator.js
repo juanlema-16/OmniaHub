@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BANNER_UBICACION, POLICY_SLUGS } from '../utils/constants.js';
+import { BANNER_UBICACION, POLICY_SLUGS, ROLES } from '../utils/constants.js';
 import { paginationQuery } from '../utils/pagination.js';
 import { objectId } from './common.validator.js';
 import { codigoField } from './coupon.validator.js';
@@ -40,5 +40,8 @@ export const checkoutSchema = z.object({
   cupon: codigoField.optional(),
 });
 
-export const bannersQuery = z.object({ ubicacion: z.enum(BANNER_UBICACION, { error: 'Ubicación no válida' }).default('LANDING') });
+export const bannersQuery = z.object({
+  ubicacion: z.enum(BANNER_UBICACION, { error: 'Ubicación no válida' }).default('LANDING'),
+  rol: z.enum(ROLES, { error: 'Rol no válido' }).optional(),
+});
 export const policyParams = z.object({ slug: z.enum(POLICY_SLUGS, { error: 'Política no encontrada' }) });
