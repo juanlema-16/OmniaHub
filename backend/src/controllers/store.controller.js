@@ -1,6 +1,7 @@
 import * as storeService from '../services/store.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendOk } from '../utils/response.js';
+import { orderForRole } from '../utils/orderView.js';
 
 export const getStore = asyncHandler(async (req, res) => {
   const data = await storeService.getStore(req.validated.params.slug, req.validated.query);
@@ -19,7 +20,7 @@ export const checkCoupon = asyncHandler(async (req, res) => {
 
 export const checkout = asyncHandler(async (req, res) => {
   const order = await storeService.checkout(req.validated.params.slug, req.user, req.body);
-  sendOk(res, order, `¡Gracias por tu compra! Tu pedido ${order.numero} fue recibido`, 201);
+  sendOk(res, orderForRole(order, 'cliente'), `¡Gracias por tu compra! Tu pedido ${order.numero} fue recibido`, 201);
 });
 
 export const banners = asyncHandler(async (req, res) => {
