@@ -17,6 +17,7 @@ import Textarea from '../../components/ui/Textarea';
 import Alert from '../../components/ui/Alert';
 import Skeleton from '../../components/ui/Skeleton';
 import { DEPARTAMENTOS, ROLES } from '../../utils/constants';
+import { municipiosDe } from '../../utils/municipios';
 import { formatQ } from '../../utils/formatQ';
 import { erroresDeApi, reglas, validar } from '../../utils/validation';
 import { plural } from '../../utils/plural';
@@ -27,7 +28,7 @@ const ESQUEMA = {
   telefono: [reglas.requerido('El teléfono'), reglas.telefono],
   email: [reglas.email],
   departamento: [(v) => (!v ? 'Selecciona el departamento' : null)],
-  municipio: [reglas.requerido('El municipio'), reglas.minimo('El municipio', 2)],
+  municipio: [(v) => (!v ? 'Selecciona el municipio' : null)],
   direccion: [reglas.requerido('La dirección', 'a'), reglas.minimo('La dirección', 5)],
   transportadora: [(v) => (!v ? 'Elige una transportadora' : null)],
 };
@@ -136,7 +137,8 @@ export default function CheckoutPage() {
 
   const cambiar = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value, ...(name === 'departamento' ? { transportadora: '' } : {}) }));
+    // Al cambiar de departamento, el municipio elegido ya no aplica
+    setForm((f) => ({ ...f, [name]: value, ...(name === 'departamento' ? { transportadora: '', municipio: '' } : {}) }));
     setErrores((er) => ({ ...er, [name]: undefined }));
     setError('');
   };
@@ -230,7 +232,18 @@ export default function CheckoutPage() {
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <Select label="Departamento" name="departamento" value={form.departamento} onChange={cambiar} error={errores.departamento} placeholder="Selecciona" options={DEPARTAMENTOS} required />
-              <Input label="Municipio" name="municipio" value={form.municipio} onChange={cambiar} error={errores.municipio} placeholder="Ej. Mixco" required />
+              <Select
+                label="Municipio"
+                name="municipio"
+                value={form.municipio}
+                onChange={cambiar}
+                error={errores.municipio}
+                placeholder={form.departamento ? 'Selecciona' : 'Elige primero el departamento'}
+                options={municipiosDe(form.departamento)}
+                disabled={!form.departamento}
+                autoComplete="address-level2"
+                required
+              />
               <Input className="sm:col-span-2" label="Dirección" name="direccion" value={form.direccion} onChange={cambiar} error={errores.direccion} placeholder="Calle, número, zona o colonia" autoComplete="street-address" required />
               <Textarea className="sm:col-span-2" label="Referencias" name="referencias" value={form.referencias} onChange={cambiar} rows={2} maxLength={200} placeholder="Ej. Portón negro, frente a la iglesia" />
             </div>
