@@ -33,7 +33,21 @@ Construir una plataforma completa y profesional donde **5 roles** trabajan sobre
 - **Cupones, clientes, facturación** (`FAC-000001`, imprimible), **Caja/POS** con arqueo, **inventario y compras**, **reportes** con gráficas y CSV.
 - **Tienda pública** por dropshipper (`/tienda/:slug`) con carrito validado contra la API, cupón, checkout y confirmación; directorio "Explorar tiendas" y tiendas destacadas en la landing.
 - **Publicidad** (banners por ubicación y rol), **políticas** editables, **banner de cookies** y **notificaciones** internas.
-- **Extras:** tickets de soporte con conversación y estados, reseñas de productos entregados (con moderación del admin), favoritos en el catálogo y **modo oscuro** en toda la aplicación.
+
+### Extras y mejoras
+
+Además de los módulos base, la versión 1.0.0 incluye:
+
+| Funcionalidad | Qué hace |
+|---|---|
+| **Tickets de soporte** | Cualquier usuario abre un ticket con asunto, categoría (pedido, pago, cuenta, técnico u otro), prioridad y una orden relacionada opcional. Es una conversación con el admin que pasa por `ABIERTO → EN_PROCESO → RESUELTO → CERRADO`, y cada respuesta notifica a la otra parte. Cada usuario solo ve sus tickets; el admin los ve todos. |
+| **Reseñas** | Solo un cliente con una orden **entregada** puede calificar ese producto, una vez por producto y orden, de 1 a 5 estrellas con comentario. La tienda y el catálogo muestran el promedio y la cantidad de reseñas, y el admin puede ocultar las inapropiadas. |
+| **Favoritos** | El dropshipper marca productos del catálogo con un corazón y los filtra con el interruptor "Solo favoritos". |
+| **Modo oscuro** | Interruptor sol/luna en el header, guardado en el navegador y, la primera vez, según la preferencia del sistema. Cubre paneles, tienda pública, modales, tablas y gráficas con buen contraste. |
+| **Explorar tiendas** | El cliente tiene un directorio de tiendas activas con KYC aprobado (logo, productos y calificación), la sección "Mis tiendas" en su Inicio con las tiendas donde ya compró, el botón "Ir a comprar" en su banner y "Volver a comprar en [tienda]" en el detalle del pedido. La landing muestra las tiendas destacadas. |
+| **Municipios validados** | Una sola lista con los 340 municipios de Guatemala (`GET /api/public/municipios`). En el checkout y en el modal de crear orden, el municipio se elige de una lista que depende del departamento, y el backend rechaza un municipio que no pertenece a su departamento. |
+| **Carrito validado** | Al abrir el carrito o el checkout se revisa cada producto contra la API: se quitan los que ya no se venden, se actualizan precios y stock con un aviso de lo que cambió, y si el checkout falla el mensaje dice qué producto tiene el problema y por qué. |
+| **Pulido visual** | Logo con variante para fondos de color, ilustraciones SVG propias para los 20 productos y los logos de tiendas y transportadoras, y pie de la tienda con "Con tecnología de OmniaHub". |
 
 ## Stack
 
@@ -197,6 +211,15 @@ main      ← versión estable: solo recibe release/v1.0.0 (tag v1.0.0)
      ├─ fix/pulido-visual          logo, tiendas, ilustraciones, municipios y explorar tiendas
      └─ release/v1.0.0             revisión final, correcciones y documentación
 ```
+
+**Ramas `feature/*`:** cada una construyó un bloque del proyecto, en el orden de [`docs/PROMPTS.md`](docs/PROMPTS.md), y se mezcló en `dev` al terminar.
+
+**Ramas `fix/*`:** correcciones y mejoras que aparecieron al probar el proyecto completo, después de que sus features ya estaban en `dev`. Nacieron de `dev`, llevan un commit por cambio y volvieron a `dev` con `--no-ff`:
+
+- **`fix/carrito-checkout`**: el carrito y el checkout se validan contra la API (productos que ya no existen o cambiaron de precio o stock, con un aviso claro), los errores del checkout dicen qué producto falla y por qué, y el municipio del checkout pasa a ser una lista que depende del departamento.
+- **`fix/pulido-visual`**: variante del logo para fondos de color, la tienda demo renombrada a **Chapín Store** (`chapin-store`) con el crédito "Con tecnología de OmniaHub" en su pie, ilustraciones SVG propias para los productos, la lista única de 340 municipios validada en el backend y usada también en el modal de crear orden, y el módulo para que el cliente explore tiendas (directorio, "Mis tiendas", accesos para volver a comprar, tiendas destacadas en la landing y dos tiendas más en el seed). Se mezcló dos veces en `dev`, porque la exploración de tiendas se agregó después del primer merge.
+
+**`release/v1.0.0`:** revisión final con el subagente `code-reviewer`, prueba del flujo completo por la API, un commit `fix` por cada problema encontrado (reapertura de órdenes canceladas, precio proveedor visible para clientes, archivos KYC accesibles sin sesión, entre otros) y la documentación. Se mezcló en `main` con el tag `v1.0.0` y de vuelta en `dev`.
 
 Nunca se programa directo en `main` ni en `dev`. Los commits siguen Conventional Commits en español: `tipo(alcance): descripción` (`feat`, `fix`, `docs`, `chore`…).
 
