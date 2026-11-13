@@ -25,7 +25,7 @@ Construir en **3 horas** una plataforma web **completa y profesional** de dropsh
 **El proyecto está terminado cuando:**
 1. Cada rol puede registrarse o iniciar sesión y ve su propio panel.
 2. Funciona el **flujo completo de punta a punta**: un cliente compra en la tienda de un dropshipper → el dropshipper confirma → el proveedor genera la guía → la transportadora entrega → el dinero se reparte automáticamente en las 4 billeteras y se genera la factura.
-3. Están todos los módulos: login, dashboard, catálogo, inventario, compras, proveedores, clientes, órdenes, envíos, novedades, billetera (recargas y retiros), cupones, caja/POS, facturación, reportes, KYC, publicidad, políticas y cookies.
+3. Están todos los módulos: login, dashboard, catálogo, inventario, compras, proveedores, clientes, órdenes, envíos, novedades, billetera (recargas y retiros), cupones, caja/POS, facturación, reportes, KYC, publicidad, políticas y cookies, más los extras: tickets de soporte, reseñas, favoritos y modo oscuro.
 4. El historial de Git muestra ramas `main`, `dev` y `feature/*` con commits convencionales.
 5. Cualquier persona puede instalarlo y probarlo siguiendo el README, con los usuarios demo del seed.
 
@@ -266,6 +266,12 @@ Estados alternos: `NOVEDAD`, `DEVOLUCION`, `CANCELADO`.
 - **Reportes**: ventas por período, productos más vendidos, órdenes por estado, ganancias. Con gráficas y exportación CSV.
 - **Landing pública** que explica la plataforma con botones a registro y login.
 
+### 6.12 Extras (obligatorios en esta versión)
+- **Tickets de soporte:** cualquier usuario autenticado crea un ticket (asunto, categoría `PEDIDO` | `PAGO` | `CUENTA` | `TECNICO` | `OTRO`, prioridad `BAJA` | `MEDIA` | `ALTA`, mensaje inicial y orden relacionada opcional). Es una conversación con mensajes del usuario y del admin. Estados: `ABIERTO → EN_PROCESO → RESUELTO → CERRADO`. El admin ve todos, responde y cambia el estado; el usuario solo ve los suyos. Cada respuesta notifica a la otra parte.
+- **Reseñas:** solo un cliente con una orden **ENTREGADA** que incluya ese producto puede reseñarlo, **una vez por producto y orden**: calificación de 1 a 5 estrellas y comentario. En la tienda pública y en el catálogo se muestran el promedio y la cantidad de reseñas. El admin puede ocultar una reseña inapropiada.
+- **Favoritos:** el dropshipper marca o desmarca productos del catálogo con un corazón. En el catálogo hay un interruptor "Solo favoritos" (ver `04-catalogo-encabezado-filtros.jpg`).
+- **Modo oscuro:** interruptor en el header (sol/luna), guardado en localStorage y, la primera vez, según la preferencia del sistema. Se aplica a **todas** las pantallas (paneles, tienda pública, modales, tablas, gráficas) con la variante `dark:` de Tailwind, manteniendo buen contraste.
+
 ---
 
 ## 7. Modelo de datos (colecciones Mongoose)
@@ -294,6 +300,9 @@ Estados alternos: `NOVEDAD`, `DEVOLUCION`, `CANCELADO`.
 - **Policy**: slug, titulo, contenido, actualizadoEn.
 - **Setting**: key, value (comisionPorcentaje, montoMinimoRetiro).
 - **AuditLog**: user, accion, entidad, entidadId, detalle, fecha.
+- **Ticket**: numero (`TCK-000001`), user, asunto, categoria, prioridad, estado, order?, mensajes[{autor, rol, texto, fecha}], cerradoEn.
+- **Review**: product, cliente, order, rating (1-5), comentario, visible. Índice único (cliente, product, order).
+- **Favorite**: dropshipper, product. Índice único (dropshipper, product).
 
 Departamentos de Guatemala (22) en una constante compartida: Alta Verapaz, Baja Verapaz, Chimaltenango, Chiquimula, El Progreso, Escuintla, Guatemala, Huehuetenango, Izabal, Jalapa, Jutiapa, Petén, Quetzaltenango, Quiché, Retalhuleu, Sacatepéquez, San Marcos, Santa Rosa, Sololá, Suchitepéquez, Totonicapán, Zacapa.
 
@@ -308,8 +317,10 @@ Departamentos de Guatemala (22) en una constante compartida: Alta Verapaz, Baja 
 | admin | admin@omniahub.test |
 | proveedor | proveedor@omniahub.test (KYC aprobado) |
 | proveedor | proveedor2@omniahub.test (KYC aprobado) |
-| dropshipper | dropshipper@omniahub.test (KYC aprobado, tienda "Tienda Demo", slug `tienda-demo`) |
+| dropshipper | dropshipper@omniahub.test (KYC aprobado, tienda "Chapín Store", slug `chapin-store`) |
 | dropshipper | nuevo@omniahub.test (KYC pendiente, para mostrar la aprobación) |
+| dropshipper | dropshipper2@omniahub.test (KYC aprobado, tienda "Casa Nova GT", slug `casa-nova-gt`) |
+| dropshipper | dropshipper3@omniahub.test (KYC aprobado, tienda "Bella Antigua", slug `bella-antigua`) |
 | transportadora | rutaexpress@omniahub.test |
 | transportadora | velozgt@omniahub.test |
 | cliente | cliente@omniahub.test |
@@ -358,6 +369,7 @@ main      ← versión estable y entregable. Solo recibe merges desde dev al fin
      ├─ feature/frontend-base      (layout, componentes UI, autenticación)
      ├─ feature/frontend-paneles   (paneles de los 5 roles y billetera)
      ├─ feature/frontend-tienda    (landing, tienda pública, checkout, cookies, políticas)
+     ├─ feature/extras             (tickets de soporte, reseñas, favoritos y modo oscuro)
      └─ release/v1.0.0             (prueba final, correcciones, README y API.md → se mezcla en main y en dev)
 ```
 

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMaxYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3730A3"/>
+      <stop offset="1" stop-color="#6366F1"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.45" r="0.45">
+      <stop offset="0" stop-color="#A5B4FC" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#A5B4FC" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="hex" width="56" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(1.1)">
+      <path d="M14 0h28l14 24.25L42 48.5H14L0 24.25Z" fill="none" stroke="#fff" stroke-opacity="0.07" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <rect width="1200" height="400" fill="url(#hex)"/>
+  <rect width="1200" height="400" fill="url(#glow)"/>
+  <g stroke="#C7D2FE" stroke-opacity="0.6" stroke-width="2.5" stroke-dasharray="6 8">
+    <path d="M940 190 L780 95"/><path d="M940 190 L770 300"/><path d="M940 190 L1100 90"/><path d="M940 190 L1110 300"/><path d="M780 95 L640 170"/><path d="M770 300 L640 170"/>
+  </g>
+  <g fill="#fff">
+    <circle cx="780" cy="95" r="10" fill-opacity="0.9"/><circle cx="770" cy="300" r="10" fill-opacity="0.9"/>
+    <circle cx="1100" cy="90" r="10" fill-opacity="0.9"/><circle cx="1110" cy="300" r="10" fill-opacity="0.9"/>
+    <circle cx="640" cy="170" r="7" fill-opacity="0.6"/>
+  </g>
+  <g transform="translate(940 190)">
+    <circle r="78" fill="#fff" fill-opacity="0.12"/>
+    <path d="M0-56 48.5-28v56L0 56-48.5 28v-56Z" fill="#fff"/>
+    <path d="M0-30 26-15v30L0 30-26 15v-30Z" fill="#4F46E5"/>
+    <circle r="9" fill="#fff"/>
+  </g>
+  <g transform="translate(1030 250) rotate(-8)">
+    <rect x="-34" y="-28" width="68" height="56" rx="6" fill="#FDE68A"/>
+    <rect x="-34" y="-28" width="68" height="16" rx="6" fill="#F59E0B"/>
+    <rect x="-6" y="-28" width="12" height="56" fill="#FBBF24"/>
+  </g>
+  <g transform="translate(840 245) rotate(6)">
+    <rect x="-26" y="-22" width="52" height="44" rx="5" fill="#A7F3D0"/>
+    <rect x="-26" y="-22" width="52" height="12" rx="5" fill="#10B981"/>
+    <rect x="-5" y="-22" width="10" height="44" fill="#34D399"/>
+  </g>
+  <g transform="translate(1040 120)">
+    <rect x="-46" y="-20" width="70" height="40" rx="6" fill="#fff"/>
+    <path d="M24-10h16l12 14v16H24Z" fill="#E0E7FF"/>
+    <circle cx="-26" cy="22" r="8" fill="#312E81"/><circle cx="36" cy="22" r="8" fill="#312E81"/>
+    <rect x="-36" y="-8" width="36" height="6" rx="3" fill="#C7D2FE"/>
+  </g>
+</svg>
