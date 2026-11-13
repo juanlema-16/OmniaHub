@@ -18,6 +18,7 @@ import GenerarGuiaModal from '../../components/proveedor/GenerarGuiaModal';
 import { formatQ } from '../../utils/formatQ';
 import { formatFecha, formatFechaHora } from '../../utils/dates';
 import { ORDER_STATUS, TIPO_PAGO } from '../../utils/constants';
+import ImagenProducto from '../../components/ui/ImagenProducto';
 
 const EXTRA = { transportadora: '', tipoPago: '', desde: '', hasta: '' };
 const ESTADOS_PROVEEDOR = ['PENDIENTE', 'GUIA_GENERADA', 'EN_TRANSITO', 'NOVEDAD', 'ENTREGADO', 'DEVOLUCION', 'CANCELADO'];
@@ -78,7 +79,7 @@ export default function OrdenesPage() {
       header: 'Productos',
       render: (o) => (
         <div className="flex max-w-48 items-center gap-2.5">
-          <img src={o.items[0]?.imagen} alt="" className="h-9 w-9 shrink-0 rounded-md border border-slate-200 object-cover" />
+          <ImagenProducto src={o.items[0]?.imagen} respaldo={o.items[0]?.imagenActual} className="h-9 w-9" />
           <div className="min-w-0">
             <p className="truncate text-slate-800">{o.items[0]?.nombre}</p>
             <p className="text-xs text-slate-500">

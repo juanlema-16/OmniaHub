@@ -26,12 +26,14 @@ export const create = asyncHandler(async (req, res) => {
 
 export const list = asyncHandler(async (req, res) => {
   const data = await orderService.listOrders(req.user, req.validated.query);
-  sendOk(res, { ...data, items: data.items.map((o) => orderForRole(o, req.user.role)) }, 'Órdenes');
+  const items = await orderService.conImagenesActuales(data.items.map((o) => orderForRole(o, req.user.role)));
+  sendOk(res, { ...data, items }, 'Órdenes');
 });
 
 export const getOne = asyncHandler(async (req, res) => {
   const order = await orderService.getOrderForUser(req.user, req.validated.params.id);
-  sendOk(res, orderForRole(order, req.user.role), `Orden ${order.numero}`);
+  const [conImagen] = await orderService.conImagenesActuales([orderForRole(order, req.user.role)]);
+  sendOk(res, conImagen, `Orden ${order.numero}`);
 });
 
 export const changeStatus = asyncHandler(async (req, res) => {

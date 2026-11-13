@@ -313,3 +313,13 @@ export const getOrderForUser = async (user, id) => {
   if (!exists) throw ApiError.notFound('Orden no encontrada');
   return getOrderPopulated(id);
 };
+
+// Cada item lleva también la imagen vigente del producto: si la que guardó la orden ya no existe, el frontend usa esta
+export const conImagenesActuales = async (ordenes) => {
+  const planas = ordenes.map((o) => (typeof o?.toJSON === 'function' ? o.toJSON() : o));
+  const ids = [...new Set(planas.flatMap((o) => (o?.items || []).map((i) => String(i.product?._id ?? i.product))))];
+  if (!ids.length) return planas;
+  const productos = await Product.find({ _id: { $in: ids } }).select('imagenes').lean();
+  const imagenDe = new Map(productos.map((p) => [String(p._id), p.imagenes?.[0]]));
+  return planas.map((o) => (o ? { ...o, items: o.items.map((i) => ({ ...i, imagenActual: imagenDe.get(String(i.product?._id ?? i.product)) })) } : o));
+};

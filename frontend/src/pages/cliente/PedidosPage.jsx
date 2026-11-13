@@ -17,6 +17,7 @@ import Badge from '../../components/ui/Badge';
 import { formatQ } from '../../utils/formatQ';
 import { formatFecha } from '../../utils/dates';
 import { ORDER_STATUS } from '../../utils/constants';
+import ImagenProducto from '../../components/ui/ImagenProducto';
 
 export default function PedidosPage() {
   const [estado, setEstado] = useState('');
@@ -51,7 +52,7 @@ export default function PedidosPage() {
       header: 'Productos',
       render: (o) => (
         <div className="flex max-w-64 items-center gap-2.5">
-          <img src={o.items[0]?.imagen} alt="" className="h-10 w-10 shrink-0 rounded-md border border-slate-200 object-cover" />
+          <ImagenProducto src={o.items[0]?.imagen} respaldo={o.items[0]?.imagenActual} className="h-10 w-10" />
           <div className="min-w-0">
             <p className="truncate text-slate-800">{o.items[0]?.nombre}</p>
             {o.items.length > 1 && <p className="text-xs text-slate-500">y {o.items.length - 1} más</p>}
