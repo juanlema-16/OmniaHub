@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { getStore } from '../../api/store';
 import { homeFor } from '../../utils/constants';
-import PublicFooter from './PublicFooter';
+import StoreFooter from './StoreFooter';
 import CookieBanner from './CookieBanner';
 import Skeleton from '../ui/Skeleton';
 import EmptyState from '../ui/EmptyState';
@@ -75,7 +75,7 @@ export default function StoreLayout() {
           <Outlet context={{ tienda, slug }} />
         )}
       </main>
-      <PublicFooter />
+      <StoreFooter tienda={tienda} />
       <CookieBanner />
     </div>
   );

@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { connectDB, disconnectDB } from '../config/db.js';
 import * as models from '../models/index.js';
 import { DEPARTAMENTOS, SETTINGS_DEFAULT } from '../utils/constants.js';
+import { municipioDe } from '../utils/municipios.js';
 import { formatGuia, formatNumeroFactura, formatNumeroOrden, round2 } from '../utils/codes.js';
 import {
   CARRIERS,
@@ -15,6 +16,8 @@ import {
   USERS,
   ZONAS,
   placeholder,
+  imagenProducto,
+  logoSeed,
 } from './data.js';
 
 const {
@@ -75,7 +78,7 @@ const buildCarriers = (users) =>
       {
         _id: oid(),
         nombre: c.nombre,
-        logo: placeholder(c.nombre, '200x200'),
+        logo: logoSeed(key),
         user: users[key]._id,
         activa: true,
         tarifas: DEPARTAMENTOS.map((departamento) => ({
@@ -108,7 +111,7 @@ const run = async () => {
       sku: `OH-${p.prov === 1 ? 'DM' : 'IQ'}-${String(i + 1).padStart(3, '0')}`,
       descripcion: p.desc,
       categoria: categoryBySlug[p.cat],
-      imagenes: [placeholder(p.nombre)],
+      imagenes: [imagenProducto(p.nombre)],
       precioProveedor: p.pp,
       precioSugerido: p.ps,
       stock: p.stock,
@@ -221,6 +224,8 @@ const run = async () => {
     const subtotal = round2(o.precioVenta * o.cantidad);
     const descuento = o.cupon ? round2(subtotal * (coupon.valor / 100)) : 0;
     const total = round2(subtotal - descuento);
+    // Los destinos del seed deben cumplir la misma regla que la API: el municipio pertenece al departamento
+    if (!municipioDe(o.destino.departamento, o.destino.municipio)) throw new Error(`Municipio no válido en el seed: ${o.destino.municipio} (${o.destino.departamento})`);
     const costoEnvio = carrier.tarifas.find((t) => t.departamento === o.destino.departamento).precio;
     const comision = round2(total * comisionPct);
     const costoProveedor = round2(product.precioProveedor * o.cantidad);
@@ -440,7 +445,7 @@ const run = async () => {
       titulo: 'Compra fácil, paga al recibir',
       subtitulo: 'Envíos a los 22 departamentos y pago contra entrega en las tiendas de OmniaHub.',
       imagen: '/banners/compra-facil.svg',
-      link: '/tienda/tienda-demo',
+      link: '/tienda/chapin-store',
       ubicacion: ['PANEL'],
       roles: ['cliente'],
       inicio: haceDias(1),

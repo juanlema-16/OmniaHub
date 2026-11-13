@@ -2,6 +2,7 @@ import * as storeService from '../services/store.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendOk } from '../utils/response.js';
 import { orderForRole } from '../utils/orderView.js';
+import { MUNICIPIOS } from '../utils/municipios.js';
 
 export const getStore = asyncHandler(async (req, res) => {
   const data = await storeService.getStore(req.validated.params.slug, req.validated.query);
@@ -29,6 +30,10 @@ export const checkout = asyncHandler(async (req, res) => {
 
 export const banners = asyncHandler(async (req, res) => {
   sendOk(res, await storeService.activeBanners(req.validated.query), 'Banners activos');
+});
+
+export const municipios = asyncHandler(async (req, res) => {
+  sendOk(res, MUNICIPIOS, 'Municipios por departamento');
 });
 
 export const policies = asyncHandler(async (req, res) => {

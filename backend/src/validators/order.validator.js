@@ -4,6 +4,7 @@ import { paginationQuery } from '../utils/pagination.js';
 import { booleanish, fecha, objectId, precio } from './common.validator.js';
 import { emailField, telefonoField } from './auth.validator.js';
 import { departamentoField } from './shipping.validator.js';
+import { municipioDe } from '../utils/municipios.js';
 
 const texto = (label, min, max) =>
   z
@@ -19,12 +20,20 @@ export const clienteSchema = z.object({
   email: z.union([z.literal(''), emailField]).optional().transform((v) => v || undefined),
 });
 
-export const destinoSchema = z.object({
-  departamento: departamentoField,
-  municipio: texto('El municipio', 2, 80),
-  direccion: texto('La dirección', 5, 200),
-  referencias: z.string().trim().max(200).optional(),
-});
+// El municipio debe pertenecer al departamento; se guarda con su nombre oficial (tildes y mayúsculas)
+export const destinoSchema = z
+  .object({
+    departamento: departamentoField,
+    municipio: texto('El municipio', 2, 80),
+    direccion: texto('La dirección', 5, 200),
+    referencias: z.string().trim().max(200).optional(),
+  })
+  .superRefine((d, ctx) => {
+    if (!municipioDe(d.departamento, d.municipio)) {
+      ctx.addIssue({ code: 'custom', path: ['municipio'], message: `"${d.municipio}" no es un municipio de ${d.departamento}` });
+    }
+  })
+  .transform((d) => ({ ...d, municipio: municipioDe(d.departamento, d.municipio) }));
 
 export const itemsSchema = z
   .array(

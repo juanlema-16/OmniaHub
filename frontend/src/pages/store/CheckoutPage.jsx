@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { BadgeCheck, Banknote, Clock, CreditCard, MapPin, Tag, Truck, X, Zap } from 'lucide-react';
 import useAsync from '../../hooks/useAsync';
 import useValidarCarrito from '../../hooks/useValidarCarrito';
+import useMunicipios from '../../hooks/useMunicipios';
 import AvisosCarrito from '../../components/store/AvisosCarrito';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -17,7 +18,6 @@ import Textarea from '../../components/ui/Textarea';
 import Alert from '../../components/ui/Alert';
 import Skeleton from '../../components/ui/Skeleton';
 import { DEPARTAMENTOS, ROLES } from '../../utils/constants';
-import { municipiosDe } from '../../utils/municipios';
 import { formatQ } from '../../utils/formatQ';
 import { erroresDeApi, reglas, validar } from '../../utils/validation';
 import { plural } from '../../utils/plural';
@@ -97,6 +97,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const carrito = useCart(slug);
   const { validando: revisandoCarrito, revalidar } = useValidarCarrito(slug);
+  const { municipiosDe, cargando: cargandoMunicipios } = useMunicipios();
 
   const [form, setForm] = useState({ nombres: '', apellidos: '', telefono: '', email: '', departamento: '', municipio: '', direccion: '', referencias: '', transportadora: '' });
   const [metodoPago, setMetodoPago] = useState('CONTRAENTREGA');
@@ -240,7 +241,7 @@ export default function CheckoutPage() {
                 error={errores.municipio}
                 placeholder={form.departamento ? 'Selecciona' : 'Elige primero el departamento'}
                 options={municipiosDe(form.departamento)}
-                disabled={!form.departamento}
+                disabled={!form.departamento || cargandoMunicipios}
                 autoComplete="address-level2"
                 required
               />

@@ -2,6 +2,11 @@
 
 export const PASSWORD_DEMO = 'Demo123*';
 
+// Ilustraciones SVG propias de seed/assets, servidas por el backend en /uploads/seed
+export const slugArchivo = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export const imagenProducto = (nombre) => `/uploads/seed/productos/${slugArchivo(nombre)}.svg`;
+export const logoSeed = (nombre) => `/uploads/seed/logos/${nombre}.svg`;
+
 export const placeholder = (texto, size = '600x600') =>
   `https://placehold.co/${size}/EEF2FF/4F46E5/png?text=${encodeURIComponent(texto)}`;
 
@@ -35,7 +40,7 @@ export const USERS = {
     email: 'dropshipper@omniahub.test',
     telefono: '55510004',
     role: 'dropshipper',
-    tienda: { nombre: 'Tienda Demo', slug: 'tienda-demo', logo: placeholder('TD', '200x200') },
+    tienda: { nombre: 'Chapín Store', slug: 'chapin-store', logo: logoSeed('chapin-store') },
   },
   nuevo: {
     nombre: 'Valeria',
@@ -43,7 +48,7 @@ export const USERS = {
     email: 'nuevo@omniahub.test',
     telefono: '55510005',
     role: 'dropshipper',
-    tienda: { nombre: 'Estilo Chapín', slug: 'estilo-chapin', logo: placeholder('EC', '200x200') },
+    tienda: { nombre: 'Estilo Chapín', slug: 'estilo-chapin', logo: logoSeed('estilo-chapin') },
   },
   rutaexpress: {
     nombre: 'Marco',

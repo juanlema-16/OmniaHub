@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Cama ortopédica para perro">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0F9FF"/><stop offset="1" stop-color="#BAE6FD"/></linearGradient></defs>
+<rect width="600" height="600" fill="url(#bg)"/>
+<circle cx="70" cy="90" r="150" fill="#fff" opacity=".4"/><circle cx="560" cy="540" r="190" fill="#fff" opacity=".28"/><circle cx="520" cy="60" r="56" fill="#fff" opacity=".3"/>
+<ellipse cx="300" cy="474" rx="170" ry="16" fill="#0F172A" opacity=".13"/>
+<defs><linearGradient id="c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDE68A"/><stop offset="1" stop-color="#FCD34D"/></linearGradient></defs>
+<ellipse cx="300" cy="392" rx="196" ry="80" fill="#B45309"/>
+<path d="M106 388C106 268 190 246 300 246S494 268 494 388Z" fill="#92400E"/>
+<ellipse cx="300" cy="384" rx="150" ry="52" fill="url(#c)"/>
+<ellipse cx="300" cy="368" rx="150" ry="40" fill="#78350F" opacity=".18"/>
+<path d="M112 392C132 470 468 470 488 392" fill="none" stroke="#D97706" stroke-width="30" stroke-linecap="round"/>
+<g fill="#D97706"><ellipse cx="300" cy="398" rx="22" ry="17"/><circle cx="268" cy="376" r="8"/><circle cx="291" cy="364" r="8"/><circle cx="315" cy="364" r="8"/><circle cx="337" cy="376" r="8"/></g>
+<g fill="#fff"><rect x="272" y="190" width="56" height="16" rx="8"/><circle cx="268" cy="192" r="11"/><circle cx="268" cy="204" r="11"/><circle cx="332" cy="192" r="11"/><circle cx="332" cy="204" r="11"/></g>
+</svg>
