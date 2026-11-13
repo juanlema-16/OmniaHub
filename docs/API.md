@@ -188,7 +188,7 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
 | GET | `/reports/summary` | admin, dropshipper, proveedor, transportadora | KPIs del rol, órdenes por estado, serie diaria y productos más vendidos (el dropshipper también ve sus departamentos con más entregas). El admin también ve usuarios por rol, comisiones, pendientes y mejores tiendas. Período: `desde`, `hasta` (por defecto, últimos 30 días) |
-| GET | `/reports/orders/export` | ídem | Órdenes del período en CSV, con columnas según el rol. Filtro: `estado` |
+| GET | `/reports/orders/export` | ídem | Órdenes en CSV, con columnas según el rol. Acepta los mismos filtros que `GET /orders` (`estado`, `desde`, `hasta`, `transportadora`, `tipoPago`, `origen`, `novedad`, `search`), sin paginación |
 
 ## Notificaciones
 

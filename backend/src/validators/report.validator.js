@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { ORDER_STATUS } from '../utils/constants.js';
 import { fecha } from './common.validator.js';
+import { listOrdersQuery } from './order.validator.js';
 
 const periodo = {
   desde: fecha('La fecha inicial').optional(),
@@ -11,6 +11,5 @@ const errorOrden = { error: 'La fecha inicial no puede ser mayor a la final', pa
 
 export const reportQuery = z.object(periodo).refine(enOrden, errorOrden);
 
-export const exportOrdersQuery = z
-  .object({ ...periodo, estado: z.enum(ORDER_STATUS, { error: 'Estado no válido' }).optional() })
-  .refine(enOrden, errorOrden);
+// Mismos filtros que el listado de órdenes, sin paginación
+export const exportOrdersQuery = listOrdersQuery.omit({ page: true, limit: true }).refine(enOrden, errorOrden);

@@ -60,7 +60,8 @@ export default function PedidosPage() {
   const descargar = async () => {
     setExportando(true);
     try {
-      await exportOrders({ desde: extra.desde || undefined, hasta: extra.hasta || undefined, estado: estado && !estado.includes(',') ? estado : undefined });
+      // Los mismos filtros que ve la tabla, sin paginación
+      await exportOrders({ estado: estado || undefined, search: search || undefined, ...Object.fromEntries(Object.entries(extra).filter(([, v]) => v)) });
       toast.success('Descargando el reporte de órdenes');
     } catch (err) {
       toast.error(getErrorMessage(err));

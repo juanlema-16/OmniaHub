@@ -7,7 +7,7 @@ import Withdrawal from '../models/Withdrawal.js';
 import { ApiError } from '../utils/ApiError.js';
 import { round2 } from '../utils/codes.js';
 import { fechaGt, toCsv } from '../utils/csv.js';
-import { scopeFor } from './order.service.js';
+import { aplicarEstados, buildOrderFilter, scopeFor } from './order.service.js';
 
 const TZ = 'America/Guatemala';
 const DIA = 24 * 60 * 60 * 1000;
@@ -234,9 +234,8 @@ export const summary = async (user, query) => {
 
 export const exportOrdersCsv = async (user, query) => {
   if (user.role === 'cliente') throw ApiError.forbidden();
-  const { rango } = periodo(query);
-  const filter = { ...(await scopeFor(user)), createdAt: rango };
-  if (query.estado) filter.estado = query.estado;
+  const { scope, filter } = await buildOrderFilter(user, query);
+  if (query.estado) aplicarEstados(filter, scope, query.estado);
   const orders = await Order.find(filter).sort({ createdAt: -1 }).limit(5000).populate('transportadora', 'nombre').lean();
 
   const columnas = [
