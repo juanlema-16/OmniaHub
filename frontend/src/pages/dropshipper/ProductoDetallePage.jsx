@@ -11,6 +11,8 @@ import Alert from '../../components/ui/Alert';
 import Skeleton from '../../components/ui/Skeleton';
 import Avatar from '../../components/ui/Avatar';
 import EmptyState from '../../components/ui/EmptyState';
+import { ResumenEstrellas } from '../../components/ui/Estrellas';
+import ResenasProducto from '../../components/reviews/ResenasProducto';
 import ImportarModal from '../../components/dropshipper/ImportarModal';
 import CrearOrdenModal from '../../components/orders/CrearOrdenModal';
 import { formatQ } from '../../utils/formatQ';
@@ -95,6 +97,9 @@ export default function ProductoDetallePage() {
             )}
           </div>
           <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">{p.nombre}</h1>
+          <div className="mt-1.5">
+            <ResumenEstrellas rating={p.rating} size="h-4 w-4" />
+          </div>
           <button
             type="button"
             onClick={() => navigator.clipboard?.writeText(p.sku).then(() => toast.success('SKU copiado'))}
@@ -167,6 +172,8 @@ export default function ProductoDetallePage() {
           <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{p.descripcion}</p>
         </Card>
       )}
+
+      <ResenasProducto productId={p._id} />
 
       {p.relacionados?.length > 0 && (
         <section>

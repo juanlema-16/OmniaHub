@@ -11,6 +11,7 @@ import { round2 } from '../utils/codes.js';
 import { proveedoresHabilitados } from './catalog.service.js';
 import { validateCoupon } from './coupon.service.js';
 import { createOrder } from './order.service.js';
+import { ratingDe, ratingsPorProducto } from './review.service.js';
 
 const SORTS = { recientes: { createdAt: -1 }, precio_asc: { precioVenta: 1 }, precio_desc: { precioVenta: -1 } };
 
@@ -24,7 +25,7 @@ const findStore = async (slug) => {
 const tiendaPublica = (d) => ({ nombre: d.tienda.nombre, slug: d.tienda.slug, logo: d.tienda.logo, vendedor: `${d.nombre} ${d.apellido}` });
 
 // Nunca se expone el precio del proveedor en la tienda pública
-const productoPublico = (sp) => ({
+const productoPublico = (sp, rating) => ({
   _id: sp.product._id,
   nombre: sp.product.nombre,
   descripcion: sp.product.descripcion,
@@ -33,6 +34,7 @@ const productoPublico = (sp) => ({
   precio: sp.precioVenta,
   stock: sp.product.stock,
   disponible: sp.product.stock > 0,
+  rating,
 });
 
 const productosVendibles = async (filtro = {}) =>
@@ -50,7 +52,8 @@ export const getStore = async (slug, { search, categoria, orden, page, limit }) 
     { dropshipper: dropshipper._id, activo: true, product: { $in: await productosVendibles(filtro) } },
     { page, limit, sort: { ...SORTS[orden], _id: 1 }, populate: { path: 'product', select: 'nombre descripcion imagenes stock categoria', populate: { path: 'categoria', select: 'nombre slug icono' } } }
   );
-  return { tienda: tiendaPublica(dropshipper), ...result, items: result.items.map(productoPublico) };
+  const ratings = await ratingsPorProducto(result.items.map((sp) => sp.product._id));
+  return { tienda: tiendaPublica(dropshipper), ...result, items: result.items.map((sp) => productoPublico(sp, ratingDe(ratings, sp.product._id))) };
 };
 
 export const getStoreProduct = async (slug, productId) => {
@@ -64,7 +67,8 @@ export const getStoreProduct = async (slug, productId) => {
       })
     : null;
   if (!sp) throw ApiError.notFound('Producto no disponible en esta tienda');
-  return { tienda: tiendaPublica(dropshipper), producto: productoPublico(sp) };
+  const ratings = await ratingsPorProducto([sp.product._id]);
+  return { tienda: tiendaPublica(dropshipper), producto: productoPublico(sp, ratingDe(ratings, sp.product._id)) };
 };
 
 // Precios siempre desde la tienda (StoreProduct), nunca desde lo que envía el navegador

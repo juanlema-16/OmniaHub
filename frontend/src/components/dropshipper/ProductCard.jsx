@@ -1,3 +1,4 @@
+import { ResumenEstrellas } from '../ui/Estrellas';
 import { Link } from 'react-router-dom';
 import { BadgeCheck, Check, Send, Store } from 'lucide-react';
 import { formatQ } from '../../utils/formatQ';
@@ -31,6 +32,9 @@ export default function ProductCard({ producto: p, onImportar, onEnviar }) {
         <Link to={`/dropshipper/catalogo/${p._id}`} className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-slate-900 hover:text-primary">
           {p.nombre}
         </Link>
+        <div className="mt-1">
+          <ResumenEstrellas rating={p.rating} />
+        </div>
         <p className="mt-1 truncate text-xs text-slate-500">
           Proveedor: <span className="font-medium text-primary">{p.proveedor?.empresa?.nombre}</span>
         </p>

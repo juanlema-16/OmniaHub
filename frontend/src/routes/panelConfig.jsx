@@ -15,6 +15,7 @@ import {
   Search,
   Settings,
   ShieldCheck,
+  Star,
   ShoppingBag,
   ShoppingCart,
   Store,
@@ -32,6 +33,7 @@ import BilleteraPage from '../pages/shared/BilleteraPage';
 import ReportesPage from '../pages/shared/ReportesPage';
 import FacturasPage from '../pages/shared/FacturasPage';
 import SoportePage from '../pages/shared/SoportePage';
+import AdminResenasPage from '../pages/admin/ResenasPage';
 import ClientePedidosPage from '../pages/cliente/PedidosPage';
 import DashboardPage from '../pages/dropshipper/DashboardPage';
 import CatalogoPage from '../pages/dropshipper/CatalogoPage';
@@ -122,6 +124,7 @@ export const PANELES = {
     { label: 'Usuarios', icon: Users, path: 'usuarios', element: <AdminUsuariosPage />, section: 'Gestión' },
     { label: 'KYC', icon: ShieldCheck, path: 'kyc', element: <AdminKycPage />, section: 'Gestión' },
     { label: 'Órdenes', icon: ClipboardList, path: 'ordenes', element: <AdminOrdenesPage />, section: 'Gestión' },
+    { label: 'Reseñas', icon: Star, path: 'resenas', element: <AdminResenasPage />, section: 'Gestión' },
     { label: 'Recargas y retiros', icon: Wallet, path: 'solicitudes', element: <AdminSolicitudesPage />, section: 'Finanzas' },
     { label: 'Transportadoras', icon: Truck, path: 'transportadoras', element: <AdminTransportadorasPage />, section: 'Configuración' },
     { label: 'Publicidad', icon: Megaphone, path: 'banners', element: <AdminBannersPage />, section: 'Configuración' },

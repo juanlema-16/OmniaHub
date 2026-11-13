@@ -20,7 +20,7 @@ import {
 const {
   User, Wallet, Transaction, Category, Product, StoreProduct, Order, Carrier, CarrierPreference, Coupon,
   Customer, Invoice, BankAccount, TopUp, InventoryMovement, Purchase, Notification, Banner, Policy,
-  Setting, AuditLog, Counter, Ticket,
+  Setting, AuditLog, Counter, Ticket, Review,
 } = models;
 
 const HORA = 60 * 60 * 1000;
@@ -210,6 +210,8 @@ const run = async () => {
   const customers = new Map();
   let guiaSeq = 0;
 
+  const userDelCliente = (c) => (c.esUsuario ? users.cliente._id : c.usuario ? users[c.usuario]._id : undefined);
+
   ORDERS.forEach((o, i) => {
     const product = products[o.producto];
     const carrier = carriers[o.carrier];
@@ -236,7 +238,7 @@ const run = async () => {
       dropshipper: dropId,
       proveedor: proveedorId,
       cliente: {
-        user: o.cliente.esUsuario ? users.cliente._id : undefined,
+        user: userDelCliente(o.cliente),
         nombres: o.cliente.nombres,
         apellidos: o.cliente.apellidos,
         telefono: o.cliente.telefono,
@@ -270,7 +272,7 @@ const run = async () => {
     const ref = `Orden ${numero}`;
 
     evento(creada, () => {
-      cambiar('PENDIENTE_CONFIRMACION', creada, o.cliente.esUsuario ? users.cliente._id : dropId, o.origen === 'TIENDA' ? 'Compra en la tienda en línea' : 'Orden creada desde el panel');
+      cambiar('PENDIENTE_CONFIRMACION', creada, userDelCliente(o.cliente) ?? dropId, o.origen === 'TIENDA' ? 'Compra en la tienda en línea' : 'Orden creada desde el panel');
       if (o.tipoPago === 'SIN_RECAUDO') {
         mover({ user: dropId, tipo: 'SALIDA', concepto: 'ORDEN_SIN_RECAUDO', monto: round2(costoProveedor + costoEnvio + comision), descripcion: `${ref}: producto + envío + comisión`, fecha: creada, order: order._id, createdBy: dropId });
         order.efectos.salidaSinRecaudo = true;
@@ -446,6 +448,21 @@ const run = async () => {
     },
   ];
 
+  const ordenDe = (numero) => orders.find((o) => o.numero === numero);
+  const resena = (numero, clave, rating, comentario, dias, visible = true) => {
+    const o = ordenDe(numero);
+    return { product: o.items[0].product, cliente: users[clave]._id, order: o._id, rating, comentario, visible, createdAt: haceDias(dias), updatedAt: haceDias(dias) };
+  };
+  const reviews = [
+    resena('ORD-000001', 'jose', 5, 'Muy buen reloj, la batería dura varios días y la pantalla se ve excelente.', 9),
+    resena('ORD-000003', 'cliente', 5, 'Excelente sonido y llegaron rápido. Los uso todos los días.', 7),
+    resena('ORD-000004', 'luis', 4, 'Buena calidad, cierran bien. Solo la tapa es un poco rígida.', 6),
+    resena('ORD-000005', 'karla', 5, 'Las bandas son resistentes y vienen con bolsa. Muy recomendadas.', 5),
+    resena('ORD-000006', 'andrea', 2, 'Producto malo, pésimo servicio. No lo recomiendo a nadie, qué estafa.', 4, false),
+    resena('ORD-000013', 'luis', 3, 'Funciona bien, aunque tarda en cargar y hace bastante ruido.', 3),
+    resena('ORD-000014', 'karla', 5, 'Alisa en pocos minutos y deja el cabello suave. Me encantó.', 2),
+  ];
+
   const mensajeDe = (u, texto, fecha) => ({ autor: u._id, rol: u.role, texto, fecha });
   const tickets = [
     {
@@ -525,6 +542,7 @@ const run = async () => {
   await AuditLog.insertMany(auditLogs);
   await Banner.insertMany(banners);
   await Ticket.insertMany(tickets);
+  await Review.insertMany(reviews);
   await Policy.insertMany(policies);
   await Setting.insertMany(settings);
   await Counter.insertMany(counters);

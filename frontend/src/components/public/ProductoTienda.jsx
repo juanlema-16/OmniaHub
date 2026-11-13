@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Check, ShoppingCart } from 'lucide-react';
+import { ResumenEstrellas } from '../ui/Estrellas';
 import { formatQ } from '../../utils/formatQ';
 
 export default function ProductoTienda({ slug, producto, enCarrito, onAgregar }) {
@@ -15,6 +16,9 @@ export default function ProductoTienda({ slug, producto, enCarrito, onAgregar })
         <Link to={`/tienda/${slug}/producto/${producto._id}`} className="mt-0.5 line-clamp-2 font-semibold text-slate-900 hover:text-primary">
           {producto.nombre}
         </Link>
+        <div className="mt-1">
+          <ResumenEstrellas rating={producto.rating} />
+        </div>
         <div className="mt-auto flex items-end justify-between gap-2 pt-3">
           <p className="text-xl font-bold text-slate-900">{formatQ(producto.precio)}</p>
           <button

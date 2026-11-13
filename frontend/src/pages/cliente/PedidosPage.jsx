@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ShoppingBag } from 'lucide-react';
+import { ChevronRight, ShoppingBag, Star } from 'lucide-react';
 import useAsync from '../../hooks/useAsync';
 import useDebounce from '../../hooks/useDebounce';
 import { listOrders } from '../../api/orders';
+import { listMyReviews } from '../../api/reviews';
 import PageHeader from '../../components/ui/PageHeader';
 import Tabs from '../../components/ui/Tabs';
 import Table from '../../components/ui/Table';
 import Alert from '../../components/ui/Alert';
 import { OrderStatusBadge } from '../../components/ui/Badge';
 import OrderQuickView from '../../components/orders/OrderQuickView';
+import CalificarModal from '../../components/reviews/CalificarModal';
+import Button from '../../components/ui/Button';
+import Badge from '../../components/ui/Badge';
 import { formatQ } from '../../utils/formatQ';
 import { formatFecha } from '../../utils/dates';
 import { ORDER_STATUS } from '../../utils/constants';
@@ -20,9 +24,11 @@ export default function PedidosPage() {
   const search = useDebounce(texto, 350);
   const [page, setPage] = useState(1);
   const [ordenId, setOrdenId] = useState(null);
+  const [calificar, setCalificar] = useState(null);
 
   const consulta = { estado: estado || undefined, search: search || undefined, page, limit: 10 };
   const ordenes = useAsync(() => listOrders(consulta), [JSON.stringify(consulta)]);
+  const resenas = useAsync(listMyReviews, []);
   useEffect(() => setPage(1), [estado, search]);
 
   const porEstado = ordenes.data?.porEstado || {};
@@ -66,6 +72,29 @@ export default function PedidosPage() {
     { key: 'guia', header: 'Guía', render: (o) => o.guia || <span className="text-slate-400">Aún sin guía</span> },
     { key: 'estado', header: 'Estado', render: (o) => <OrderStatusBadge estado={o.estado} /> },
     { key: 'total', header: 'Total', align: 'right', render: (o) => <span className="font-semibold text-slate-900">{formatQ(o.total)}</span> },
+    {
+      key: 'resena',
+      header: 'Reseña',
+      render: (o) => {
+        if (o.estado !== 'ENTREGADO') return <span className="text-slate-300">—</span>;
+        const hechas = (resenas.data || []).filter((r) => r.order === o._id).length;
+        return hechas >= o.items.length ? (
+          <Badge tone="green">Calificado</Badge>
+        ) : (
+          <Button
+            size="sm"
+            variant="soft"
+            icon={Star}
+            onClick={(e) => {
+              e.stopPropagation();
+              setCalificar(o);
+            }}
+          >
+            Calificar
+          </Button>
+        );
+      },
+    },
     { key: 'ver', header: '', render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
   ];
 
@@ -95,6 +124,7 @@ export default function PedidosPage() {
         }
       />
       <OrderQuickView orderId={ordenId} onClose={() => setOrdenId(null)} />
+      <CalificarModal orden={calificar} resenas={resenas.data || []} onClose={() => setCalificar(null)} onSaved={resenas.recargar} />
     </div>
   );
 }

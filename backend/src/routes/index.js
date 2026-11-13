@@ -22,6 +22,7 @@ import publicRoutes from './public.routes.js';
 import customersRoutes from './customers.routes.js';
 import myStoreRoutes from './myStore.routes.js';
 import ticketsRoutes from './tickets.routes.js';
+import reviewsRoutes from './reviews.routes.js';
 
 const router = Router();
 
@@ -48,5 +49,6 @@ router.use('/public', publicRoutes);
 router.use('/customers', customersRoutes);
 router.use('/my-store', myStoreRoutes);
 router.use('/tickets', ticketsRoutes);
+router.use('/reviews', reviewsRoutes);
 
 export default router;

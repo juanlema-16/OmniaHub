@@ -6,6 +6,7 @@ import User from '../models/User.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex, paginate } from '../utils/pagination.js';
 import { PROVEEDOR_PUBLICO } from './product.service.js';
+import { ratingDe, ratingsPorProducto } from './review.service.js';
 
 const SORTS = {
   recientes: { createdAt: -1 },
@@ -26,14 +27,15 @@ const resolverCategoria = async (valor) => {
 };
 
 const marcarImportados = async (dropshipper, products) => {
-  if (dropshipper?.role !== 'dropshipper') return products.map((p) => p.toJSON());
+  const ratings = await ratingsPorProducto(products.map((p) => p._id));
+  if (dropshipper?.role !== 'dropshipper') return products.map((p) => ({ ...p.toJSON(), rating: ratingDe(ratings, p._id) }));
   const imports = await StoreProduct.find({ dropshipper: dropshipper._id, product: { $in: products.map((p) => p._id) } })
     .select('product precioVenta activo')
     .lean();
   const porProducto = new Map(imports.map((sp) => [String(sp.product), sp]));
   return products.map((p) => {
     const sp = porProducto.get(String(p._id));
-    return { ...p.toJSON(), importado: Boolean(sp), storeProduct: sp ? { _id: sp._id, precioVenta: sp.precioVenta, activo: sp.activo } : null };
+    return { ...p.toJSON(), rating: ratingDe(ratings, p._id), importado: Boolean(sp), storeProduct: sp ? { _id: sp._id, precioVenta: sp.precioVenta, activo: sp.activo } : null };
   });
 };
 

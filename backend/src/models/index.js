@@ -24,3 +24,4 @@ export { default as Setting } from './Setting.js';
 export { default as AuditLog } from './AuditLog.js';
 export { default as Counter } from './Counter.js';
 export { default as Ticket } from './Ticket.js';
+export { default as Review } from './Review.js';
