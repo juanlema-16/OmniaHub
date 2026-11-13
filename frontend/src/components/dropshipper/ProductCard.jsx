@@ -18,7 +18,7 @@ export default function ProductCard({ producto: p, onImportar, onEnviar, onFavor
             </span>
           )}
           {p.importado && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#047857] px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
               <Check className="h-3 w-3" aria-hidden="true" /> En tu tienda
             </span>
           )}

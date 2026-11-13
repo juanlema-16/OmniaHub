@@ -7,6 +7,7 @@ import { formatQ } from '../../utils/formatQ';
 import HeaderSearch from './HeaderSearch';
 import NotificationBell from './NotificationBell';
 import ProfileMenu from './ProfileMenu';
+import ThemeToggle from '../ui/ThemeToggle';
 
 function Saldo({ role, wallet }) {
   if (!tieneBilletera(role) || !wallet) return null;
@@ -41,6 +42,7 @@ export default function Header({ onMenu }) {
       </div>
       <div className="ml-auto flex items-center gap-1 sm:gap-2">
         <Saldo role={user.role} wallet={wallet} />
+        <ThemeToggle />
         <NotificationBell role={user.role} />
         <ProfileMenu />
       </div>

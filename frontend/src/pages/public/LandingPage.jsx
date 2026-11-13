@@ -123,7 +123,7 @@ function Banners() {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
               <div className="relative p-5 text-white">
                 <p className="text-lg font-bold">{b.titulo}</p>
-                {b.subtitulo && <p className="text-sm text-slate-200">{b.subtitulo}</p>}
+                {b.subtitulo && <p className="text-sm text-white/85">{b.subtitulo}</p>}
               </div>
             </div>
           );

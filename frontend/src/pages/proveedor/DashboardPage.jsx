@@ -95,7 +95,7 @@ export default function DashboardPage() {
                     <stop offset="100%" stopColor={COLOR} stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
                 <XAxis dataKey="fecha" tickFormatter={formatDiaCorto} tick={{ fontSize: 11, fill: '#64748B' }} tickLine={false} axisLine={false} minTickGap={24} />
                 <YAxis tickFormatter={(v) => `Q${v}`} tick={{ fontSize: 11, fill: '#64748B' }} tickLine={false} axisLine={false} width={56} />
                 <Tooltip content={<TooltipVentas />} />

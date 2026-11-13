@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Package, Store, Truck, Wallet } from 'lucide-react';
 import Logo from '../ui/Logo';
+import ThemeToggle from '../ui/ThemeToggle';
 
 const PUNTOS = [
   { icon: Package, texto: 'Proveedores publican productos verificados' },
@@ -34,7 +35,8 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
         <p className="relative text-sm text-primary-100">© {new Date().getFullYear()} OmniaHub · Hecho para Guatemala</p>
       </aside>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-10 sm:px-8">
+      <main className="relative flex flex-1 items-center justify-center px-4 py-10 sm:px-8">
+        <ThemeToggle className="absolute right-4 top-4" />
         <div className="w-full max-w-md">
           <Link to="/" className="mb-8 inline-block lg:hidden">
             <Logo />
