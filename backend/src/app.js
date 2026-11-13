@@ -31,8 +31,10 @@ app.use(
   })
 );
 
-// Los documentos KYC solo se entregan por /api/kyc/archivo con autenticación
-app.use('/uploads/kyc', (req, res, next) => next(ApiError.notFound('Archivo no encontrado')));
+// Documentos KYC y comprobantes de pago son privados: solo se entregan por la API con autenticación
+const privado = (req, res, next) => next(ApiError.notFound('Archivo no encontrado'));
+app.use('/uploads/kyc', privado);
+app.use('/uploads/comprobantes', privado);
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.get('/api/health', (req, res) => {

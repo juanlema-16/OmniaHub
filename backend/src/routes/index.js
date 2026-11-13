@@ -10,6 +10,8 @@ import inventoryRoutes from './inventory.routes.js';
 import purchasesRoutes from './purchases.routes.js';
 import shippingRoutes from './shipping.routes.js';
 import ordersRoutes from './orders.routes.js';
+import walletRoutes from './wallet.routes.js';
+import bankAccountsRoutes from './bankAccounts.routes.js';
 
 const router = Router();
 
@@ -24,5 +26,7 @@ router.use('/inventory', inventoryRoutes);
 router.use('/purchases', purchasesRoutes);
 router.use('/shipping', shippingRoutes);
 router.use('/orders', ordersRoutes);
+router.use('/wallet', walletRoutes);
+router.use('/bank-accounts', bankAccountsRoutes);
 
 export default router;
