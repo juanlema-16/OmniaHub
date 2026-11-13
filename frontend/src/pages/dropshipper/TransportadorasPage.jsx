@@ -80,8 +80,12 @@ export default function TransportadorasPage() {
                   </p>
                 </div>
                 {usos > 0 && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700"
+                    title={`Favorita en ${plural(usos, 'departamento')}`}
+                  >
                     <Star className="h-3.5 w-3.5 fill-current" aria-hidden="true" /> {usos}
+                    <span className="sr-only">{usos === 1 ? 'departamento' : 'departamentos'} como favorita</span>
                   </span>
                 )}
               </div>

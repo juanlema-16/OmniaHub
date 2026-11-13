@@ -185,7 +185,7 @@ export default function CuponesPage() {
     { key: 'usos', header: 'Usos', render: (c) => `${c.usos} / ${c.usosMaximos ?? '∞'}` },
     { key: 'vence', header: 'Vence', render: (c) => (c.venceEn ? formatFecha(c.venceEn) : 'No vence') },
     { key: 'estado', header: 'Estado', render: (c) => <Badge tone={ESTADOS[c.estadoActual].tone} dot>{ESTADOS[c.estadoActual].label}</Badge> },
-    { key: 'activo', header: 'Activo', align: 'center', render: (c) => <Switch checked={c.activo} onChange={() => alternar(c)} label={<span className="sr-only">Activar {c.codigo}</span>} /> },
+    { key: 'activo', header: 'Activo', align: 'center', render: (c) => <Switch checked={c.activo} onChange={() => alternar(c)} label={<span className="sr-only">Cupón {c.codigo} activo</span>} /> },
     {
       key: 'acciones',
       header: '',

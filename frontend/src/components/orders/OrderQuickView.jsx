@@ -86,8 +86,11 @@ export default function OrderQuickView({ orderId, onClose, renderAcciones }) {
                   <Linea label="Total" value={formatQ(o.total)} className="font-semibold text-slate-900" />
                   {o.costoEnvio !== undefined && o.gananciaDropshipper !== undefined && (
                     <>
-                      <Linea label="Envío" value={formatQ(o.costoEnvio)} />
-                      {o.comision !== undefined && <Linea label="Comisión de la plataforma" value={formatQ(o.comision)} />}
+                      {o.items.every((i) => i.precioProveedor !== undefined) && (
+                        <Linea label="Precio proveedor" value={`− ${formatQ(o.items.reduce((s, i) => s + i.precioProveedor * i.cantidad, 0))}`} />
+                      )}
+                      <Linea label="Envío" value={`− ${formatQ(o.costoEnvio)}`} />
+                      {o.comision !== undefined && <Linea label="Comisión de la plataforma" value={`− ${formatQ(o.comision)}`} />}
                       <Linea label="Tu ganancia" value={formatQ(o.gananciaDropshipper)} className={`font-semibold ${o.gananciaDropshipper < 0 ? 'text-danger' : 'text-success'}`} />
                     </>
                   )}
