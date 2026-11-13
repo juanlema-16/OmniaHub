@@ -181,6 +181,7 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
 | GET | `/invoices` | admin, dropshipper, proveedor, cliente | Facturas emitidas (dropshipper, proveedor), recibidas (cliente) o todas (admin). Filtros: `search`, `origen` (`ORDEN` \| `POS`), `desde`, `hasta` |
+| GET | `/invoices/export` | ídem | Facturas en CSV con los mismos filtros del listado, sin paginación |
 | GET | `/invoices/:id` | ídem | Detalle para ver o imprimir (número correlativo `FAC-000001`) |
 
 ## Reportes

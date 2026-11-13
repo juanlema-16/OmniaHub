@@ -3,6 +3,7 @@ import User from '../models/User.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex, paginate } from '../utils/pagination.js';
 import { generarNumeroFactura, round2 } from '../utils/codes.js';
+import { fechaGt, toCsv } from '../utils/csv.js';
 
 const crear = async (data, session) => {
   const [invoice] = await Invoice.create([{ numero: await generarNumeroFactura(session), fecha: new Date(), ...data }], { session });
@@ -63,7 +64,7 @@ const scopeFor = (user) => {
   throw ApiError.forbidden();
 };
 
-export const list = (user, { search, origen, desde, hasta, page, limit }) => {
+const buildFilter = (user, { search, origen, desde, hasta }) => {
   const filter = { ...scopeFor(user) };
   if (origen === 'ORDEN') filter.order = { $exists: true };
   if (origen === 'POS') filter.posSale = { $exists: true };
@@ -76,7 +77,30 @@ export const list = (user, { search, origen, desde, hasta, page, limit }) => {
     const regex = new RegExp(escapeRegex(search), 'i');
     filter.$or = [{ numero: regex }, { 'receptor.nombre': regex }, { 'receptor.nit': regex }, { 'emisor.nombre': regex }];
   }
-  return paginate(Invoice, filter, { page, limit, sort: { fecha: -1, numero: -1 }, populate: { path: 'order', select: 'numero guia' } });
+  return filter;
+};
+
+export const list = (user, query) =>
+  paginate(Invoice, buildFilter(user, query), { page: query.page, limit: query.limit, sort: { fecha: -1, numero: -1 }, populate: { path: 'order', select: 'numero guia' } });
+
+export const exportCsv = async (user, query) => {
+  const facturas = await Invoice.find(buildFilter(user, query)).sort({ fecha: -1, numero: -1 }).limit(5000).populate('order', 'numero').lean();
+  return toCsv(
+    ['Número', 'Fecha', 'Origen', 'Orden', 'Emisor', 'NIT emisor', 'Receptor', 'NIT receptor', 'Subtotal (Q)', 'Descuento (Q)', 'Total (Q)'],
+    facturas.map((f) => [
+      f.numero,
+      fechaGt(f.fecha),
+      f.order ? 'Orden' : 'Punto de venta',
+      f.order?.numero,
+      f.emisor.nombre,
+      f.emisor.nit,
+      f.receptor.nombre,
+      f.receptor.nit,
+      f.subtotal.toFixed(2),
+      f.descuento.toFixed(2),
+      f.total.toFixed(2),
+    ])
+  );
 };
 
 export const getOne = async (user, id) => {
