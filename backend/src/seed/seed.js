@@ -440,7 +440,7 @@ const run = async () => {
       titulo: 'Compra fácil, paga al recibir',
       subtitulo: 'Envíos a los 22 departamentos y pago contra entrega en las tiendas de OmniaHub.',
       imagen: '/banners/compra-facil.svg',
-      link: '/tienda/tienda-demo',
+      link: '/tienda/chapin-store',
       ubicacion: ['PANEL'],
       roles: ['cliente'],
       inicio: haceDias(1),

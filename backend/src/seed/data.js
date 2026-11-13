@@ -35,7 +35,7 @@ export const USERS = {
     email: 'dropshipper@omniahub.test',
     telefono: '55510004',
     role: 'dropshipper',
-    tienda: { nombre: 'Tienda Demo', slug: 'tienda-demo', logo: placeholder('TD', '200x200') },
+    tienda: { nombre: 'Chapín Store', slug: 'chapin-store', logo: placeholder('CS', '200x200') },
   },
   nuevo: {
     nombre: 'Valeria',

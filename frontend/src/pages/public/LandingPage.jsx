@@ -75,7 +75,7 @@ function Hero({ autenticado, user }) {
               </>
             )}
           </div>
-          <Link to="/tienda/tienda-demo" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary-100 hover:text-white">
+          <Link to="/tienda/chapin-store" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary-100 hover:text-white">
             Ver una tienda de ejemplo <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </Link>
         </div>

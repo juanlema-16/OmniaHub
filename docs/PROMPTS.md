@@ -201,7 +201,7 @@ Después mezcla feature/backend-negocio en dev con --no-ff y haz push.
 ```
 
 **✅ Valida antes de seguir**
-- [ ] `GET /api/public/stores/tienda-demo` (o la ruta que indique) devuelve la tienda y sus productos
+- [ ] `GET /api/public/stores/chapin-store` (o la ruta que indique) devuelve la tienda y sus productos
 - [ ] El cupón `BIENVENIDO10` es válido; un cupón inventado da error
 - [ ] Abrir caja → venta POS → cerrar caja muestra el arqueo
 - [ ] `docs/API.md` existe y está completo
@@ -327,7 +327,7 @@ Mezcla feature/frontend-tienda en dev con --no-ff y haz push.
 ```
 
 **✅ Valida antes de seguir**
-- [ ] `http://localhost:5173/tienda/tienda-demo` muestra los productos
+- [ ] `http://localhost:5173/tienda/chapin-store` muestra los productos
 - [ ] Compra completa con el cupón `BIENVENIDO10` → aparece el número de orden
 - [ ] La orden aparece en el panel del dropshipper y del cliente
 - [ ] El banner de cookies aparece una sola vez
@@ -379,7 +379,7 @@ Actualiza docs/API.md con los endpoints nuevos (commit docs(api): endpoints de t
 Crea la rama release/v1.0.0 desde dev.
 
 1. Lanza el subagente code-reviewer (está en .claude/agents), que no ha visto el código. Debe leer CLAUDE.md y revisar el código contra las reglas de negocio (sección 6, sobre todo el reparto de la billetera en 6.4), la seguridad (sección 5), los negativos (sección 13) y la salida (sección 14). Debe devolver una lista de problemas ordenados por gravedad, sin corregirlos.
-2. Mientras tanto, tú recorre el flujo completo con los usuarios del seed llamando a la API (y revisa también tickets, reseñas, favoritos y modo oscuro): cliente compra en la tienda tienda-demo con el cupón BIENVENIDO10 → el dropshipper confirma → el proveedor genera la guía → la transportadora marca en tránsito y entregado → verifica las transacciones de las 4 billeteras y la factura.
+2. Mientras tanto, tú recorre el flujo completo con los usuarios del seed llamando a la API (y revisa también tickets, reseñas, favoritos y modo oscuro): cliente compra en la tienda chapin-store con el cupón BIENVENIDO10 → el dropshipper confirma → el proveedor genera la guía → la transportadora marca en tránsito y entregado → verifica las transacciones de las 4 billeteras y la factura.
 3. Corrige cada problema encontrado con un commit fix por cada uno, usando la skill verification-before-completion antes de dar algo por arreglado.
 4. Revisa que no queden console.log ni código muerto.
 5. Completa el README.md raíz según la sección 14 y los README de backend y frontend. Commit: docs: readme completo con instalación, usuarios demo y flujo del dinero

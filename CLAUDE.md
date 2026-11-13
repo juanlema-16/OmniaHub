@@ -317,7 +317,7 @@ Departamentos de Guatemala (22) en una constante compartida: Alta Verapaz, Baja 
 | admin | admin@omniahub.test |
 | proveedor | proveedor@omniahub.test (KYC aprobado) |
 | proveedor | proveedor2@omniahub.test (KYC aprobado) |
-| dropshipper | dropshipper@omniahub.test (KYC aprobado, tienda "Tienda Demo", slug `tienda-demo`) |
+| dropshipper | dropshipper@omniahub.test (KYC aprobado, tienda "Chapín Store", slug `chapin-store`) |
 | dropshipper | nuevo@omniahub.test (KYC pendiente, para mostrar la aprobación) |
 | transportadora | rutaexpress@omniahub.test |
 | transportadora | velozgt@omniahub.test |

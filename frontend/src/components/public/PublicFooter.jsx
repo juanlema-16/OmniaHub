@@ -28,7 +28,7 @@ export default function PublicFooter() {
               </Link>
             </li>
             <li>
-              <Link to="/tienda/tienda-demo" className="hover:text-primary">
+              <Link to="/tienda/chapin-store" className="hover:text-primary">
                 Ver una tienda de ejemplo
               </Link>
             </li>
