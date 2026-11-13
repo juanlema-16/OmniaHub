@@ -190,7 +190,9 @@ export default function InicioPage() {
     { key: 'cliente', header: 'Cliente', render: (o) => `${o.cliente.nombres} ${o.cliente.apellidos}` },
     { key: 'destino', header: 'Destino', render: (o) => `${o.destino.municipio}, ${o.destino.departamento}` },
     { key: 'estado', header: 'Estado', render: (o) => <OrderStatusBadge estado={o.estado} /> },
-    { key: 'total', header: 'Total', align: 'right', render: (o) => (o.total !== undefined ? formatQ(o.total) : '—') },
+    role === 'proveedor'
+      ? { key: 'pago', header: 'Tu pago', align: 'right', render: (o) => formatQ(o.items.reduce((s, i) => s + i.precioProveedor * i.cantidad, 0)) }
+      : { key: 'total', header: 'Total', align: 'right', render: (o) => (o.total !== undefined ? formatQ(o.total) : '—') },
   ];
 
   return (
