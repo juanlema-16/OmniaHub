@@ -60,7 +60,7 @@ Base URL: `http://localhost:4000/api`
 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
-| GET | `/catalog` | dropshipper, admin | Productos de proveedores verificados. Filtros: `search`, `categoria` (id o slug), `proveedor`, `precioMin`, `precioMax`, `conStock`, `stockMin`, `verificado`, `orden` (`recientes`, `precio_asc`, `precio_desc`, `stock_desc`, `nombre`). Cada producto indica si ya está `importado` |
+| GET | `/catalog` | dropshipper, admin | Productos de proveedores verificados. Filtros: `search`, `categoria` (id o slug), `proveedor`, `precioMin`, `precioMax`, `conStock`, `stockMin`, `verificado`, `favoritos` (solo mis favoritos), `orden` (`recientes`, `precio_asc`, `precio_desc`, `stock_desc`, `nombre`). Cada producto indica si ya está `importado`, si es `favorito` y su `rating` (`{ promedio, cantidad }`) |
 | GET | `/catalog/proveedores` | dropshipper, admin | Directorio de proveedores con productos, categorías y bodega |
 | GET | `/catalog/:id` | dropshipper, admin | Detalle con proveedor, productos relacionados y estado de importación |
 
@@ -204,7 +204,7 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
-| GET | `/store/:slug` | Público | Datos de la tienda y sus productos a precio de venta (nunca muestra el precio proveedor). Filtros: `search`, `categoria`, `orden` |
+| GET | `/store/:slug` | Público | Datos de la tienda y sus productos a precio de venta con su `rating` (nunca muestra el precio proveedor). Filtros: `search`, `categoria`, `orden` |
 | GET | `/store/:slug/products/:productId` | Público | Detalle de un producto de la tienda |
 | POST | `/store/:slug/coupon` | Público | Valida un cupón contra el carrito `{ codigo, items }` y devuelve el descuento |
 | POST | `/store/:slug/checkout` | cliente | Crea una orden con origen `TIENDA` `{ destino, items, transportadora, metodoPago: CONTRAENTREGA \| TARJETA, cupon?, cliente? }`. Los precios salen de la tienda, no del navegador |
@@ -216,6 +216,38 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 | GET | `/public/banners?ubicacion=LANDING\|PANEL&rol=` | Público | Banners activos y vigentes. En `PANEL` con `rol` devuelve los dirigidos a ese rol o a todos; sin `rol`, solo los dirigidos a todos. `LANDING` es pública y no distingue roles |
 | GET | `/public/policies` | Público | Lista de políticas |
 | GET | `/public/policies/:slug` | Público | `terminos-y-condiciones`, `privacidad`, `cookies` o `envios-y-devoluciones` |
+
+## Tickets de soporte
+
+Cualquier usuario autenticado. Cada usuario solo ve sus tickets; el admin ve todos. Estados: `ABIERTO` → `EN_PROCESO` → `RESUELTO` → `CERRADO`. Categorías: `PEDIDO`, `PAGO`, `CUENTA`, `TECNICO`, `OTRO`. Prioridades: `BAJA`, `MEDIA`, `ALTA`.
+
+| Método | Ruta | Rol | Descripción |
+|---|---|---|---|
+| GET | `/tickets` | Autenticado | Mis tickets (el admin, todos) con `porEstado` para las pestañas. Filtros: `estado`, `prioridad`, `categoria`, `search` (número, asunto y, para el admin, usuario) |
+| POST | `/tickets` | Autenticado | Crea un ticket `{ asunto, categoria, prioridad?, mensaje, order? }`. `order` debe ser una orden propia. Avisa a los admins |
+| GET | `/tickets/:id` | Dueño o admin | Conversación completa |
+| POST | `/tickets/:id/messages` | Dueño o admin | Responde `{ texto }`. El admin que responde pasa `ABIERTO` a `EN_PROCESO`; si el usuario responde un `RESUELTO`, se reabre. No se responde un ticket `CERRADO`. Notifica a la otra parte |
+| PATCH | `/tickets/:id/status` | Dueño o admin | Cambia el estado `{ estado }`. El admin elige cualquiera (queda en auditoría); el usuario solo puede `CERRADO` |
+
+## Reseñas
+
+| Método | Ruta | Rol | Descripción |
+|---|---|---|---|
+| GET | `/reviews/products/:productId` | Público | Reseñas visibles de un producto con `resumen` (`promedio`, `cantidad`, `distribucion` por estrellas). El autor se muestra como "Nombre A." |
+| POST | `/reviews` | cliente | Califica `{ product, order, rating (1-5), comentario }`. Solo si la orden es del cliente, está `ENTREGADO` e incluye el producto; una vez por producto y orden (`409` si se repite) |
+| GET | `/reviews/mine` | cliente | Mis reseñas, para saber qué productos de mis pedidos faltan por calificar |
+| GET | `/reviews` | admin | Todas las reseñas para moderar. Filtros: `visible`, `rating`, `search` |
+| PATCH | `/reviews/:id` | admin | Oculta o muestra una reseña `{ visible }` (queda en auditoría). Las ocultas no cuentan en el promedio |
+
+## Favoritos (dropshipper)
+
+| Método | Ruta | Rol | Descripción |
+|---|---|---|---|
+| GET | `/favorites` | dropshipper | Ids de mis productos favoritos |
+| PUT | `/favorites/:productId` | dropshipper | Marca un producto como favorito (idempotente) |
+| DELETE | `/favorites/:productId` | dropshipper | Lo desmarca (idempotente) |
+
+El catálogo acepta `favoritos=true` para mostrar solo los favoritos.
 
 ## Administración
 
