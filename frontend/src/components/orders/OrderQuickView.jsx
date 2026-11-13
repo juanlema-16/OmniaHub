@@ -1,10 +1,12 @@
-import { MapPin, Package, Truck, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MapPin, Package, ShoppingBag, Truck, User } from 'lucide-react';
 import Modal from '../ui/Modal';
 import Timeline from '../ui/Timeline';
 import Skeleton from '../ui/Skeleton';
 import Alert from '../ui/Alert';
 import { OrderStatusBadge } from '../ui/Badge';
 import useAsync from '../../hooks/useAsync';
+import { useAuth } from '../../context/AuthContext';
 import { getOrder } from '../../api/orders';
 import { formatQ } from '../../utils/formatQ';
 import { TIPO_PAGO } from '../../utils/constants';
@@ -30,7 +32,16 @@ const Linea = ({ label, value, className = '' }) => (
 // renderAcciones(orden, { recargar }) dibuja los botones que ese rol puede usar.
 export default function OrderQuickView({ orderId, onClose, renderAcciones }) {
   const { data: o, cargando, error, recargar } = useAsync(() => (orderId ? getOrder(orderId) : Promise.resolve(null)), [orderId]);
-  const acciones = o && !cargando && renderAcciones ? renderAcciones(o, { recargar }) : null;
+  const { user } = useAuth();
+  const tienda = o?.dropshipper?.tienda;
+  // El cliente puede volver a la tienda donde compró desde el detalle de su pedido
+  const volverAComprar =
+    o && !cargando && user?.role === 'cliente' && tienda?.slug ? (
+      <Link to={`/tienda/${tienda.slug}`} className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-white hover:bg-primary-hover">
+        <ShoppingBag className="h-4 w-4" aria-hidden="true" /> Volver a comprar en {tienda.nombre}
+      </Link>
+    ) : null;
+  const acciones = o && !cargando && renderAcciones ? renderAcciones(o, { recargar }) : volverAComprar;
 
   return (
     <Modal

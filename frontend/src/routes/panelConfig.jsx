@@ -35,6 +35,7 @@ import FacturasPage from '../pages/shared/FacturasPage';
 import SoportePage from '../pages/shared/SoportePage';
 import AdminResenasPage from '../pages/admin/ResenasPage';
 import ClientePedidosPage from '../pages/cliente/PedidosPage';
+import ExplorarTiendasPage from '../pages/cliente/ExplorarTiendasPage';
 import DashboardPage from '../pages/dropshipper/DashboardPage';
 import CatalogoPage from '../pages/dropshipper/CatalogoPage';
 import ProductoDetallePage from '../pages/dropshipper/ProductoDetallePage';
@@ -139,6 +140,7 @@ export const PANELES = {
   ],
   cliente: [
     inicio,
+    { label: 'Explorar tiendas', icon: Store, path: 'tiendas', element: <ExplorarTiendasPage />, section: 'Compras' },
     { label: 'Mis pedidos', icon: PackageSearch, path: 'pedidos', element: <ClientePedidosPage />, section: 'Compras' },
     { label: 'Facturas', icon: Receipt, path: 'facturas', element: <FacturasPage />, section: 'Compras' },
     soporte,

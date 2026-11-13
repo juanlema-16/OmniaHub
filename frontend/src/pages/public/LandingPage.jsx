@@ -16,7 +16,8 @@ import {
 } from 'lucide-react';
 import useAsync from '../../hooks/useAsync';
 import { useAuth } from '../../context/AuthContext';
-import { getBanners } from '../../api/public';
+import { getBanners, listStores } from '../../api/public';
+import TiendaCard from '../../components/store/TiendaCard';
 import { homeFor } from '../../utils/constants';
 
 const ROLES = [
@@ -143,6 +144,25 @@ function Banners() {
   );
 }
 
+// Las tiendas mejor calificadas, para que cualquier visitante pueda entrar a comprar
+function TiendasDestacadas() {
+  const { data } = useAsync(() => listStores({ orden: 'destacadas', limit: 3 }), []);
+  if (!data?.items?.length) return null;
+  return (
+    <section id="tiendas" aria-labelledby="tiendas-destacadas" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6">
+      <h2 id="tiendas-destacadas" className="text-3xl font-bold tracking-tight text-slate-900">
+        Tiendas destacadas
+      </h2>
+      <p className="mt-2 max-w-2xl text-slate-600">Compra directo en las tiendas de OmniaHub: envíos a todo el país y pago contra entrega.</p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {data.items.map((t) => (
+          <TiendaCard key={t.slug} tienda={t} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage() {
   const { autenticado, user } = useAuth();
 
@@ -150,6 +170,7 @@ export default function LandingPage() {
     <>
       <Hero autenticado={autenticado} user={user} />
       <Banners />
+      <TiendasDestacadas />
 
       <section id="como-funciona" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6">
         <h2 className="text-3xl font-bold tracking-tight text-slate-900">Cómo funciona</h2>

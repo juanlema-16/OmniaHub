@@ -19,10 +19,13 @@ import useAsync from '../../hooks/useAsync';
 import { getSummary } from '../../api/reports';
 import { listOrders } from '../../api/orders';
 import { getBanners } from '../../api/public';
+import { getMyStores } from '../../api/store';
+import TiendaCard from '../../components/store/TiendaCard';
 import StatCard from '../../components/ui/StatCard';
 import Card from '../../components/ui/Card';
 import Table from '../../components/ui/Table';
 import Alert from '../../components/ui/Alert';
+import Skeleton from '../../components/ui/Skeleton';
 import { OrderStatusBadge } from '../../components/ui/Badge';
 import OrderQuickView from '../../components/orders/OrderQuickView';
 import { formatQ } from '../../utils/formatQ';
@@ -101,7 +104,7 @@ function BannerPanel({ banner, role }) {
         {banner.subtitulo && <p className="mt-1.5 text-sm text-indigo-100">{banner.subtitulo}</p>}
         {(interno || externo) && (
           <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-inset ring-white/30">
-            Ver más <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            {role === 'cliente' ? 'Ir a comprar' : 'Ver más'} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
         )}
       </div>
@@ -118,6 +121,39 @@ function BannerPanel({ banner, role }) {
   return contenido;
 }
 
+// Tiendas donde el cliente ya compró, para volver con un clic
+function MisTiendas({ tiendas }) {
+  const lista = tiendas.data || [];
+  return (
+    <section aria-labelledby="mis-tiendas">
+      <div className="mb-3 flex items-end justify-between gap-3">
+        <h2 id="mis-tiendas" className="text-lg font-semibold text-slate-900">
+          Mis tiendas
+        </h2>
+        <Link to="/cliente/tiendas" className="text-sm font-medium text-primary hover:underline">
+          Explorar más tiendas
+        </Link>
+      </div>
+      {tiendas.cargando && <Skeleton className="h-44 w-full rounded-2xl" />}
+      {!tiendas.cargando && !lista.length && (
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white px-5 py-6 text-sm text-slate-500">
+          Aún no has comprado en ninguna tienda.{' '}
+          <Link to="/cliente/tiendas" className="font-medium text-primary hover:underline">
+            Explorar tiendas
+          </Link>
+        </div>
+      )}
+      {lista.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {lista.map((t) => (
+            <TiendaCard key={t.slug} tienda={t} accion="Seguir comprando" detalle={`${plural(t.pedidos, 'pedido')} · última compra ${formatFecha(t.ultimaCompra)}`} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function InicioPage() {
   const { user } = useAuth();
   const role = user.role;
@@ -126,6 +162,7 @@ export default function InicioPage() {
   const resumen = useAsync(() => (role === 'cliente' ? Promise.resolve(null) : getSummary()), [role]);
   const ordenes = useAsync(() => listOrders({ limit: 5 }), [role]);
   const banners = useAsync(() => getBanners('PANEL', role), [role]);
+  const tiendas = useAsync(() => (role === 'cliente' ? getMyStores() : Promise.resolve(null)), [role]);
 
   const k = resumen.data?.kpis;
   const porEstado = ordenes.data?.porEstado || {};
@@ -176,6 +213,8 @@ export default function InicioPage() {
           <StatCard key={t.label} {...t} loading={role === 'cliente' ? ordenes.cargando : resumen.cargando} />
         ))}
       </div>
+
+      {role === 'cliente' && <MisTiendas tiendas={tiendas} />}
 
       <Card title="Últimas órdenes" description="Haz clic en una orden para ver su seguimiento." padding={false}>
         <Table

@@ -13,6 +13,7 @@ import {
   POLICIES,
   PRODUCTS,
   STORE_PRODUCTS,
+  STORE_PRODUCTS_EXTRA,
   USERS,
   ZONAS,
   placeholder,
@@ -64,7 +65,7 @@ const buildUsers = async () => {
       updatedAt: haceDias(30),
     };
   }
-  for (const key of ['proveedor', 'proveedor2', 'dropshipper']) {
+  for (const key of ['proveedor', 'proveedor2', 'dropshipper', 'dropshipper2', 'dropshipper3']) {
     users[key].kyc.revisadoPor = users.admin._id;
     users[key].kyc.revisadoEn = haceDias(27);
   }
@@ -124,13 +125,10 @@ const run = async () => {
     };
   });
 
-  const storeProducts = STORE_PRODUCTS.map(({ idx, precioVenta }) => ({
-    _id: oid(),
-    dropshipper: users.dropshipper._id,
-    product: products[idx]._id,
-    precioVenta,
-    activo: true,
-  }));
+  const importados = [['dropshipper', STORE_PRODUCTS], ...Object.entries(STORE_PRODUCTS_EXTRA)];
+  const storeProducts = importados.flatMap(([clave, lista]) =>
+    lista.map(({ idx, precioVenta }) => ({ _id: oid(), dropshipper: users[clave]._id, product: products[idx]._id, precioVenta, activo: true }))
+  );
 
   const coupon = {
     _id: oid(),
@@ -445,7 +443,7 @@ const run = async () => {
       titulo: 'Compra fácil, paga al recibir',
       subtitulo: 'Envíos a los 22 departamentos y pago contra entrega en las tiendas de OmniaHub.',
       imagen: '/banners/compra-facil.svg',
-      link: '/tienda/chapin-store',
+      link: '/cliente/tiendas',
       ubicacion: ['PANEL'],
       roles: ['cliente'],
       inicio: haceDias(1),

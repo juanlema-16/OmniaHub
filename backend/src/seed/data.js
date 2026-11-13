@@ -50,6 +50,22 @@ export const USERS = {
     role: 'dropshipper',
     tienda: { nombre: 'Estilo Chapín', slug: 'estilo-chapin', logo: logoSeed('estilo-chapin') },
   },
+  dropshipper2: {
+    nombre: 'Rodrigo',
+    apellido: 'Cifuentes',
+    email: 'dropshipper2@omniahub.test',
+    telefono: '55510011',
+    role: 'dropshipper',
+    tienda: { nombre: 'Casa Nova GT', slug: 'casa-nova-gt', logo: logoSeed('casa-nova-gt') },
+  },
+  dropshipper3: {
+    nombre: 'Paola',
+    apellido: 'Orellana',
+    email: 'dropshipper3@omniahub.test',
+    telefono: '55510012',
+    role: 'dropshipper',
+    tienda: { nombre: 'Bella Antigua', slug: 'bella-antigua', logo: logoSeed('bella-antigua') },
+  },
   rutaexpress: {
     nombre: 'Marco',
     apellido: 'Pérez',
@@ -114,6 +130,28 @@ export const PRODUCTS = [
 ];
 
 // Índices de PRODUCTS importados a la tienda demo, con su precio de venta
+// Productos importados por los otros dropshippers con KYC aprobado (hogar y belleza/moda/mascotas), para que el directorio tenga varias tiendas
+export const STORE_PRODUCTS_EXTRA = {
+  dropshipper2: [
+    { idx: 2, precioVenta: 95 },
+    { idx: 4, precioVenta: 179 },
+    { idx: 5, precioVenta: 105 },
+    { idx: 6, precioVenta: 135 },
+    { idx: 7, precioVenta: 155 },
+    { idx: 16, precioVenta: 105 },
+  ],
+  dropshipper3: [
+    { idx: 8, precioVenta: 209 },
+    { idx: 9, precioVenta: 99 },
+    { idx: 10, precioVenta: 89 },
+    { idx: 11, precioVenta: 79 },
+    { idx: 13, precioVenta: 69 },
+    { idx: 14, precioVenta: 105 },
+    { idx: 18, precioVenta: 259 },
+    { idx: 19, precioVenta: 175 },
+  ],
+};
+
 export const STORE_PRODUCTS = [
   { idx: 0, precioVenta: 149 },
   { idx: 1, precioVenta: 279 },
