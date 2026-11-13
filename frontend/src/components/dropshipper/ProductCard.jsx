@@ -1,13 +1,14 @@
 import { ResumenEstrellas } from '../ui/Estrellas';
 import { Link } from 'react-router-dom';
 import { BadgeCheck, Check, Send, Store } from 'lucide-react';
+import BotonFavorito from './BotonFavorito';
 import { formatQ } from '../../utils/formatQ';
 
 // Tarjeta del catálogo: precio proveedor, sugerido, stock y las dos acciones principales
-export default function ProductCard({ producto: p, onImportar, onEnviar }) {
+export default function ProductCard({ producto: p, onImportar, onEnviar, onFavorito }) {
   const agotado = p.stock <= 0;
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+    <article className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <Link to={`/dropshipper/catalogo/${p._id}`} className="relative block aspect-square overflow-hidden bg-slate-50">
         <img src={p.imagenes?.[0]} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
         <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
@@ -23,6 +24,7 @@ export default function ProductCard({ producto: p, onImportar, onEnviar }) {
           )}
         </div>
       </Link>
+      {onFavorito && <BotonFavorito activo={p.favorito} nombre={p.nombre} onClick={() => onFavorito(p)} className="absolute right-2 top-2 z-10" />}
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-center justify-between text-xs">

@@ -7,6 +7,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex, paginate } from '../utils/pagination.js';
 import { PROVEEDOR_PUBLICO } from './product.service.js';
 import { ratingDe, ratingsPorProducto } from './review.service.js';
+import { favoriteIds } from './favorite.service.js';
 
 const SORTS = {
   recientes: { createdAt: -1 },
@@ -28,6 +29,7 @@ const resolverCategoria = async (valor) => {
 
 const marcarImportados = async (dropshipper, products) => {
   const ratings = await ratingsPorProducto(products.map((p) => p._id));
+  const favoritos = new Set(dropshipper?.role === 'dropshipper' ? (await favoriteIds(dropshipper)).map(String) : []);
   if (dropshipper?.role !== 'dropshipper') return products.map((p) => ({ ...p.toJSON(), rating: ratingDe(ratings, p._id) }));
   const imports = await StoreProduct.find({ dropshipper: dropshipper._id, product: { $in: products.map((p) => p._id) } })
     .select('product precioVenta activo')
@@ -35,12 +37,12 @@ const marcarImportados = async (dropshipper, products) => {
   const porProducto = new Map(imports.map((sp) => [String(sp.product), sp]));
   return products.map((p) => {
     const sp = porProducto.get(String(p._id));
-    return { ...p.toJSON(), rating: ratingDe(ratings, p._id), importado: Boolean(sp), storeProduct: sp ? { _id: sp._id, precioVenta: sp.precioVenta, activo: sp.activo } : null };
+    return { ...p.toJSON(), rating: ratingDe(ratings, p._id), favorito: favoritos.has(String(p._id)), importado: Boolean(sp), storeProduct: sp ? { _id: sp._id, precioVenta: sp.precioVenta, activo: sp.activo } : null };
   });
 };
 
 export const listCatalog = async (user, query) => {
-  const { search, categoria, proveedor, precioMin, precioMax, conStock, stockMin, verificado, orden, page, limit } = query;
+  const { search, categoria, proveedor, precioMin, precioMax, conStock, stockMin, verificado, favoritos, orden, page, limit } = query;
   const habilitados = await proveedoresHabilitados();
   const filter = { activo: true, proveedor: { $in: habilitados } };
 
@@ -54,6 +56,7 @@ export const listCatalog = async (user, query) => {
   if (conStock) filter.stock = { $gt: 0 };
   if (stockMin !== undefined) filter.stock = { ...filter.stock, $gte: stockMin };
   if (verificado !== undefined) filter.verificado = verificado;
+  if (favoritos && user.role === 'dropshipper') filter._id = { $in: await favoriteIds(user) };
   if (search) {
     const regex = new RegExp(escapeRegex(search), 'i');
     filter.$or = [{ nombre: regex }, { sku: regex }, { descripcion: regex }];

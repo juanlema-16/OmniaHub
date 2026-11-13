@@ -20,7 +20,7 @@ import {
 const {
   User, Wallet, Transaction, Category, Product, StoreProduct, Order, Carrier, CarrierPreference, Coupon,
   Customer, Invoice, BankAccount, TopUp, InventoryMovement, Purchase, Notification, Banner, Policy,
-  Setting, AuditLog, Counter, Ticket, Review,
+  Setting, AuditLog, Counter, Ticket, Review, Favorite,
 } = models;
 
 const HORA = 60 * 60 * 1000;
@@ -463,6 +463,8 @@ const run = async () => {
     resena('ORD-000014', 'karla', 5, 'Alisa en pocos minutos y deja el cabello suave. Me encantó.', 2),
   ];
 
+  const favorites = [0, 1, 8].map((i) => ({ dropshipper: users.dropshipper._id, product: products[i]._id }));
+
   const mensajeDe = (u, texto, fecha) => ({ autor: u._id, rol: u.role, texto, fecha });
   const tickets = [
     {
@@ -543,6 +545,7 @@ const run = async () => {
   await Banner.insertMany(banners);
   await Ticket.insertMany(tickets);
   await Review.insertMany(reviews);
+  await Favorite.insertMany(favorites);
   await Policy.insertMany(policies);
   await Setting.insertMany(settings);
   await Counter.insertMany(counters);
