@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Building2, Check, Lock, Mail, Phone, ShoppingBag, Store, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AuthLayout from '../../components/layout/AuthLayout';
@@ -27,6 +27,7 @@ const esquemaPara = (role) => ({
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState(INICIAL);
   const [errores, setErrores] = useState({});
   const [error, setError] = useState('');
@@ -56,7 +57,7 @@ export default function RegisterPage() {
       };
       const { user, devCode } = await register(payload);
       toast.success('Cuenta creada. Revisa tu correo');
-      navigate('/verificar-correo', { state: { email: user.email, devCode } });
+      navigate('/verificar-correo', { state: { email: user.email, devCode, from: location.state?.from } });
     } catch (err) {
       setErrores(erroresDeApi(err));
       setError(getErrorMessage(err));
@@ -72,7 +73,7 @@ export default function RegisterPage() {
       footer={
         <>
           ¿Ya tienes cuenta?{' '}
-          <Link to="/login" className="font-semibold text-primary hover:text-primary-hover">
+          <Link to="/login" state={{ from: location.state?.from }} className="font-semibold text-primary hover:text-primary-hover">
             Inicia sesión
           </Link>
         </>

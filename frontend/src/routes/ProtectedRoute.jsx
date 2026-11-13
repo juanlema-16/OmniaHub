@@ -14,9 +14,14 @@ export default function ProtectedRoute({ roles, children }) {
   return children;
 }
 
-// Login, registro y verificación: si ya hay sesión, directo al panel
+// Login, registro y verificación: si ya hay sesión, directo al panel (o, siendo cliente, de vuelta a la tienda)
 export function PublicOnlyRoute({ children }) {
   const { autenticado, user } = useAuth();
-  if (autenticado) return <Navigate to={homeFor(user.role)} replace />;
+  const location = useLocation();
+  if (autenticado) {
+    const volver = location.state?.from;
+    const aTienda = user.role === 'cliente' && typeof volver === 'string' && volver.startsWith('/tienda/');
+    return <Navigate to={aTienda ? volver : homeFor(user.role)} replace />;
+  }
   return children;
 }

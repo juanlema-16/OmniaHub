@@ -67,7 +67,8 @@ export default function VerifyEmailPage() {
     try {
       const user = await verifyEmail(email, codigo);
       toast.success('¡Correo verificado! Bienvenido a OmniaHub');
-      navigate(homeFor(user.role), { replace: true });
+      const destino = state?.from;
+      navigate(user.role === 'cliente' && destino?.startsWith('/tienda/') ? destino : homeFor(user.role), { replace: true });
     } catch (err) {
       setError(getErrorMessage(err));
       setDigitos(Array(6).fill(''));
