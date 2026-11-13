@@ -27,6 +27,7 @@ import InicioPage from '../pages/shared/InicioPage';
 import NotificacionesPage from '../pages/shared/NotificacionesPage';
 import PerfilPage from '../pages/shared/PerfilPage';
 import KycPage from '../pages/shared/KycPage';
+import BilleteraPage from '../pages/shared/BilleteraPage';
 import DashboardPage from '../pages/dropshipper/DashboardPage';
 import CatalogoPage from '../pages/dropshipper/CatalogoPage';
 import ProductoDetallePage from '../pages/dropshipper/ProductoDetallePage';
@@ -44,7 +45,7 @@ import TransportadorasPage from '../pages/dropshipper/TransportadorasPage';
 const inicio = { label: 'Inicio', icon: Home, path: '', element: <InicioPage />, section: 'General' };
 const notificaciones = { label: 'Notificaciones', icon: Bell, path: 'notificaciones', element: <NotificacionesPage />, section: 'Cuenta' };
 const verificacion = { label: 'Verificación', icon: ShieldCheck, path: 'kyc', element: <KycPage />, section: 'Cuenta' };
-const billetera = { label: 'Billetera', icon: Wallet, path: 'billetera', section: 'Finanzas' };
+const billetera = { label: 'Billetera', icon: Wallet, path: 'billetera', element: <BilleteraPage />, section: 'Finanzas' };
 const reportes = { label: 'Reportes', icon: BarChart3, path: 'reportes', section: 'Finanzas' };
 const facturas = { label: 'Facturas', icon: Receipt, path: 'facturas', section: 'Finanzas' };
 
