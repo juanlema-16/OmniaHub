@@ -7,3 +7,4 @@ export const getStoreProduct = (slug, productId) => api.get(`/store/${slug}/prod
 export const validateStoreCart = (slug, items) => api.post(`/store/${slug}/cart/validate`, { items }).then(data);
 export const checkStoreCoupon = (slug, body) => api.post(`/store/${slug}/coupon`, body).then(data);
 export const storeCheckout = (slug, body) => api.post(`/store/${slug}/checkout`, body).then(data);
+export const getMyStores = () => api.get('/store/mine').then(data);

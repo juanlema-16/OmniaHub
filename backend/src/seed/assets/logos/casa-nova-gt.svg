@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Casa Nova GT">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#047857"/></linearGradient></defs>
+<rect width="200" height="200" rx="44" fill="url(#g)"/>
+<path d="M100 46 160 98H144V152H56V98H40Z" fill="#fff"/><rect x="84" y="112" width="32" height="40" rx="5" fill="#059669"/>
+</svg>

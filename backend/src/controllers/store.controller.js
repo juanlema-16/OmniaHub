@@ -9,6 +9,14 @@ export const getStore = asyncHandler(async (req, res) => {
   sendOk(res, data, data.tienda.nombre);
 });
 
+export const stores = asyncHandler(async (req, res) => {
+  sendOk(res, await storeService.listStores(req.validated.query), 'Tiendas');
+});
+
+export const myStores = asyncHandler(async (req, res) => {
+  sendOk(res, await storeService.myStores(req.user), 'Tus tiendas');
+});
+
 export const getProduct = asyncHandler(async (req, res) => {
   const { slug, productId } = req.validated.params;
   sendOk(res, await storeService.getStoreProduct(slug, productId), 'Detalle del producto');

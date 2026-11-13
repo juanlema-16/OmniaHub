@@ -116,8 +116,8 @@ export default function PedidosPage() {
           estado || search ? 'Prueba con otra búsqueda.' : (
             <>
               Cuando compres en una tienda de OmniaHub, tus pedidos aparecerán aquí.{' '}
-              <Link to="/tienda/chapin-store" className="font-medium text-primary hover:underline">
-                Ver la tienda de ejemplo
+              <Link to="/cliente/tiendas" className="font-medium text-primary hover:underline">
+                Explorar tiendas
               </Link>
             </>
           )

@@ -4,6 +4,8 @@ import Product from '../models/Product.js';
 import StoreProduct from '../models/StoreProduct.js';
 import Category from '../models/Category.js';
 import Banner from '../models/Banner.js';
+import Review from '../models/Review.js';
+import Order from '../models/Order.js';
 import Policy from '../models/Policy.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex, paginate } from '../utils/pagination.js';
@@ -39,6 +41,65 @@ const productoPublico = (sp, rating) => ({
 
 const productosVendibles = async (filtro = {}) =>
   Product.find({ activo: true, proveedor: { $in: await proveedoresHabilitados() }, ...filtro }).distinct('_id');
+
+// Tiendas visibles: dropshippers activos con KYC aprobado y una tienda configurada
+const FILTRO_TIENDAS = { role: 'dropshipper', accountStatus: 'activo', 'kyc.status': 'aprobado', 'tienda.slug': { $exists: true, $ne: null } };
+
+// Cantidad de productos vendibles y calificación promedio (reseñas visibles de esos productos) de cada tienda
+const resumenDeTiendas = async (dropshippers) => {
+  const resumen = new Map(dropshippers.map((d) => [String(d._id), { productos: 0, suma: 0, cantidad: 0 }]));
+  if (!dropshippers.length) return resumen;
+  const sps = await StoreProduct.find({ dropshipper: { $in: dropshippers.map((d) => d._id) }, activo: true, product: { $in: await productosVendibles() } })
+    .select('dropshipper product')
+    .lean();
+  const filas = await Review.aggregate([
+    { $match: { product: { $in: [...new Set(sps.map((sp) => sp.product))] }, visible: true } },
+    { $group: { _id: '$product', suma: { $sum: '$rating' }, cantidad: { $sum: 1 } } },
+  ]);
+  const porProducto = new Map(filas.map((f) => [String(f._id), f]));
+  sps.forEach((sp) => {
+    const r = resumen.get(String(sp.dropshipper));
+    const f = porProducto.get(String(sp.product));
+    r.productos += 1;
+    if (f) {
+      r.suma += f.suma;
+      r.cantidad += f.cantidad;
+    }
+  });
+  return resumen;
+};
+
+const tiendaConResumen = (d, r) => ({
+  ...tiendaPublica(d),
+  productos: r.productos,
+  rating: { promedio: r.cantidad ? Math.round((r.suma / r.cantidad) * 10) / 10 : 0, cantidad: r.cantidad },
+});
+
+// Directorio público de tiendas con al menos un producto a la venta. orden "destacadas": mejor calificadas primero
+export const listStores = async ({ search, orden, page, limit }) => {
+  const filtro = { ...FILTRO_TIENDAS };
+  if (search) filtro['tienda.nombre'] = new RegExp(escapeRegex(search), 'i');
+  const dropshippers = await User.find(filtro).select('nombre apellido tienda').sort({ 'tienda.nombre': 1 }).lean();
+  const resumen = await resumenDeTiendas(dropshippers);
+  const tiendas = dropshippers.map((d) => tiendaConResumen(d, resumen.get(String(d._id)))).filter((t) => t.productos > 0);
+  if (orden === 'destacadas') tiendas.sort((a, b) => b.rating.promedio - a.rating.promedio || b.rating.cantidad - a.rating.cantidad || b.productos - a.productos);
+  return { items: tiendas.slice((page - 1) * limit, page * limit), total: tiendas.length, page, pages: Math.max(1, Math.ceil(tiendas.length / limit)) };
+};
+
+// Tiendas donde el cliente ya compró, la más reciente primero
+export const myStores = async (cliente) => {
+  const filas = await Order.aggregate([
+    { $match: { 'cliente.user': cliente._id } },
+    { $group: { _id: '$dropshipper', pedidos: { $sum: 1 }, ultimaCompra: { $max: '$createdAt' } } },
+    { $sort: { ultimaCompra: -1 } },
+  ]);
+  const dropshippers = await User.find({ ...FILTRO_TIENDAS, _id: { $in: filas.map((f) => f._id) } }).select('nombre apellido tienda').lean();
+  const resumen = await resumenDeTiendas(dropshippers);
+  const porId = new Map(dropshippers.map((d) => [String(d._id), d]));
+  return filas
+    .filter((f) => porId.has(String(f._id)))
+    .map((f) => ({ ...tiendaConResumen(porId.get(String(f._id)), resumen.get(String(f._id))), pedidos: f.pedidos, ultimaCompra: f.ultimaCompra }));
+};
 
 export const getStore = async (slug, { search, categoria, orden, page, limit }) => {
   const dropshipper = await findStore(slug);

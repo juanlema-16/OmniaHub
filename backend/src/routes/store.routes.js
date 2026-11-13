@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import * as storeController from '../controllers/store.controller.js';
-import { auth } from '../middlewares/auth.js';
+import { auth, authorize } from '../middlewares/auth.js';
 import { validate } from '../middlewares/validate.js';
 import { cartValidateSchema, checkoutSchema, couponCheckSchema, slugParams, storeProductParams, storeQuery } from '../validators/store.validator.js';
 
 const router = Router();
 
+router.get('/mine', auth, authorize('cliente'), storeController.myStores);
 router.get('/:slug', validate({ params: slugParams, query: storeQuery }), storeController.getStore);
 router.get('/:slug/products/:productId', validate({ params: storeProductParams }), storeController.getProduct);
 router.post('/:slug/coupon', validate({ params: slugParams, body: couponCheckSchema }), storeController.checkCoupon);

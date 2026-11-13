@@ -7,3 +7,4 @@ export const getBanners = (ubicacion, rol) => api.get('/public/banners', { param
 export const listPolicies = () => api.get('/public/policies').then(data);
 export const getPolicy = (slug) => api.get(`/public/policies/${slug}`).then(data);
 export const getMunicipios = () => api.get('/public/municipios').then(data);
+export const listStores = (params) => api.get('/public/stores', { params }).then(data);

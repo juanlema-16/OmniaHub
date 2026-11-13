@@ -6,6 +6,13 @@ import { codigoField } from './coupon.validator.js';
 import { clienteSchema, destinoSchema } from './order.validator.js';
 
 export const slugParams = z.object({ slug: z.string().trim().toLowerCase().regex(/^[a-z0-9-]{2,80}$/, { error: 'Tienda no válida' }) });
+export const storesQuery = z.object({
+  search: z.string().trim().max(60).optional(),
+  orden: z.enum(['nombre', 'destacadas'], { error: 'Orden no válido' }).default('nombre'),
+  ...paginationQuery,
+  limit: paginationQuery.limit.default(12),
+});
+
 export const storeProductParams = slugParams.extend({ productId: objectId('producto') });
 
 export const storeQuery = z.object({
