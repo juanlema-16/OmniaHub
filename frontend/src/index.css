@@ -18,3 +18,20 @@
     @apply bg-surface font-sans text-slate-800 antialiased;
   }
 }
+
+/* Impresión de facturas: solo se imprime la copia que se monta aparte en el body */
+.print-only-root {
+  display: none;
+}
+
+@media print {
+  body > *:not(.print-only-root) {
+    display: none !important;
+  }
+  .print-only-root {
+    display: block !important;
+  }
+  body {
+    background: #fff;
+  }
+}

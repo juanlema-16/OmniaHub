@@ -38,6 +38,12 @@ import MiTiendaPage from '../pages/dropshipper/MiTiendaPage';
 import CuponesPage from '../pages/dropshipper/CuponesPage';
 import ClientesPage from '../pages/dropshipper/ClientesPage';
 import TransportadorasPage from '../pages/dropshipper/TransportadorasPage';
+import ProvDashboardPage from '../pages/proveedor/DashboardPage';
+import ProvProductosPage from '../pages/proveedor/ProductosPage';
+import ProvInventarioPage from '../pages/proveedor/InventarioPage';
+import ProvComprasPage from '../pages/proveedor/ComprasPage';
+import ProvOrdenesPage from '../pages/proveedor/OrdenesPage';
+import ProvPosPage from '../pages/proveedor/PosPage';
 
 // Una sola fuente para el menú y las rutas de cada panel.
 // Un ítem aparece en el Sidebar en cuanto tiene "element"; los demás son los módulos que
@@ -69,12 +75,12 @@ export const PANELES = {
   ],
   proveedor: [
     inicio,
-    { label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard', section: 'General' },
-    { label: 'Mis productos', icon: Package, path: 'productos', section: 'Catálogo' },
-    { label: 'Inventario', icon: Boxes, path: 'inventario', section: 'Catálogo' },
-    { label: 'Compras', icon: ShoppingBag, path: 'compras', section: 'Catálogo' },
-    { label: 'Órdenes', icon: ClipboardList, path: 'ordenes', section: 'Ventas' },
-    { label: 'Caja y POS', icon: Store, path: 'pos', section: 'Ventas' },
+    { label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard', element: <ProvDashboardPage />, section: 'General' },
+    { label: 'Mis productos', icon: Package, path: 'productos', element: <ProvProductosPage />, section: 'Catálogo' },
+    { label: 'Inventario', icon: Boxes, path: 'inventario', element: <ProvInventarioPage />, section: 'Catálogo' },
+    { label: 'Compras', icon: ShoppingBag, path: 'compras', element: <ProvComprasPage />, section: 'Catálogo' },
+    { label: 'Órdenes', icon: ClipboardList, path: 'ordenes', element: <ProvOrdenesPage />, section: 'Ventas' },
+    { label: 'Caja y POS', icon: Store, path: 'pos', element: <ProvPosPage />, section: 'Ventas' },
     billetera,
     reportes,
     facturas,
