@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import Counter from '../models/Counter.js';
 
 export const pad = (n, size = 6) => String(n).padStart(size, '0');
@@ -30,6 +31,7 @@ export const slugify = (text) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-export const generarCodigoVerificacion = () => String(Math.floor(100000 + Math.random() * 900000));
+// Generador criptográfico: el código protege la verificación del correo
+export const generarCodigoVerificacion = () => String(randomInt(100000, 1000000));
 
 export const round2 = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
