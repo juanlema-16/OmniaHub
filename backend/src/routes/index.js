@@ -12,6 +12,13 @@ import shippingRoutes from './shipping.routes.js';
 import ordersRoutes from './orders.routes.js';
 import walletRoutes from './wallet.routes.js';
 import bankAccountsRoutes from './bankAccounts.routes.js';
+import couponsRoutes from './coupons.routes.js';
+import posRoutes from './pos.routes.js';
+import invoicesRoutes from './invoices.routes.js';
+import reportsRoutes from './reports.routes.js';
+import notificationsRoutes from './notifications.routes.js';
+import storeRoutes from './store.routes.js';
+import publicRoutes from './public.routes.js';
 
 const router = Router();
 
@@ -28,5 +35,12 @@ router.use('/shipping', shippingRoutes);
 router.use('/orders', ordersRoutes);
 router.use('/wallet', walletRoutes);
 router.use('/bank-accounts', bankAccountsRoutes);
+router.use('/coupons', couponsRoutes);
+router.use('/pos', posRoutes);
+router.use('/invoices', invoicesRoutes);
+router.use('/reports', reportsRoutes);
+router.use('/notifications', notificationsRoutes);
+router.use('/store', storeRoutes);
+router.use('/public', publicRoutes);
 
 export default router;

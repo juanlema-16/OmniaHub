@@ -47,6 +47,8 @@ const orderSchema = new Schema(
       validate: { validator: (v) => v.length > 0, message: 'La orden debe tener al menos un producto' },
     },
     tipoPago: { type: String, enum: TIPO_PAGO, required: true },
+    // Cómo paga el cliente final en la tienda: en efectivo al recibir o con tarjeta (simulada) al comprar
+    metodoPagoCliente: { type: String, enum: ['CONTRAENTREGA', 'TARJETA'], default: 'CONTRAENTREGA' },
     transportadora: { type: Schema.Types.ObjectId, ref: 'Carrier', required: true },
     costoEnvio: { type: Number, required: true, min: 0 },
     subtotal: { type: Number, required: true, min: 0 },

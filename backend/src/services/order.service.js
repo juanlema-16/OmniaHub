@@ -12,12 +12,13 @@ import { getSetting } from './setting.service.js';
 import { getTarifa } from './shipping.service.js';
 import { debit } from './wallet.service.js';
 import { notify } from './notification.service.js';
+import { consumeCoupon } from './coupon.service.js';
 
 // Calcula precios, envío, comisión y ganancia (sección 6.1). Lanza 400 si algo no cumple las reglas.
 export const cotizarOrden = async (
   { dropshipper, items, destino, transportadora, descuento = 0 },
   session = null,
-  { permitirNegativa = false } = {}
+  { permitirNegativa = false, mensajeNegativa } = {}
 ) => {
   const products = await Product.find({ _id: { $in: items.map((i) => i.product) }, activo: true })
     .populate('proveedor', 'kyc.status accountStatus')
@@ -69,6 +70,7 @@ export const cotizarOrden = async (
   const comision = round2((total * comisionPorcentaje) / 100);
   const ganancia = round2(total - costoProveedor - costoEnvio - comision);
 
+  if (ganancia < 0 && !permitirNegativa && mensajeNegativa) throw ApiError.badRequest(mensajeNegativa);
   if (ganancia < 0 && !permitirNegativa) {
     throw ApiError.badRequest(
       `La ganancia sería negativa (Q ${ganancia.toFixed(2)}). Sube el precio de venta o elige otra transportadora.`,
@@ -114,7 +116,10 @@ export const previewOrder = async (dropshipper, { items, departamento, transport
 
 export const createOrder = async (dropshipper, data, { origen = 'PANEL', descuento = 0, cupon, clienteUser } = {}) => {
   const order = await withTransaction(async (session) => {
-    const c = await cotizarOrden({ dropshipper, ...data, descuento }, session);
+    const c = await cotizarOrden({ dropshipper, ...data, descuento }, session, {
+      mensajeNegativa: origen === 'TIENDA' ? 'No es posible procesar este pedido con ese cupón. Intenta sin cupón.' : undefined,
+    });
+    if (cupon) await consumeCoupon(cupon, session);
     const numero = await generarNumeroOrden(session);
     const [created] = await Order.create(
       [
@@ -127,6 +132,7 @@ export const createOrder = async (dropshipper, data, { origen = 'PANEL', descuen
           destino: data.destino,
           items: c.items,
           tipoPago: data.tipoPago,
+          metodoPagoCliente: data.metodoPagoCliente || 'CONTRAENTREGA',
           transportadora: c.carrier._id,
           costoEnvio: c.costoEnvio,
           subtotal: c.subtotal,

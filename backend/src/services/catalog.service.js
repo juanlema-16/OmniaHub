@@ -16,7 +16,7 @@ const SORTS = {
 };
 
 // Solo se venden productos de proveedores activos con KYC aprobado
-const proveedoresHabilitados = () =>
+export const proveedoresHabilitados = () =>
   User.find({ role: 'proveedor', accountStatus: 'activo', 'kyc.status': 'aprobado' }).distinct('_id');
 
 const resolverCategoria = async (valor) => {

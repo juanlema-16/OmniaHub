@@ -119,7 +119,10 @@ const aplicarEfectos = async (order, to, { actorId, motivo, montoRecaudado }, se
     await repartir(order, actorId, session);
     order.efectos.repartido = true;
     order.entregadaEn = new Date();
-    if (order.tipoPago === 'CON_RECAUDO') order.montoRecaudado = montoRecaudado ?? order.total;
+    // Con tarjeta el cliente ya pagó en línea: la transportadora no cobra efectivo
+    if (order.tipoPago === 'CON_RECAUDO') {
+      order.montoRecaudado = order.metodoPagoCliente === 'TARJETA' ? 0 : montoRecaudado ?? order.total;
+    }
     await createForOrder(order, session);
   }
 
@@ -200,7 +203,8 @@ export const changeStatus = async (user, id, { estado: to, nota, motivo, montoRe
     if (user.role === 'admin' && !nota) {
       throw ApiError.badRequest('Datos inválidos', [{ campo: 'nota', mensaje: 'Indica el motivo de la corrección' }]);
     }
-    if (to === 'ENTREGADO' && order.tipoPago === 'CON_RECAUDO' && user.role === 'transportadora') {
+    const cobraEfectivo = order.tipoPago === 'CON_RECAUDO' && order.metodoPagoCliente !== 'TARJETA';
+    if (to === 'ENTREGADO' && cobraEfectivo && user.role === 'transportadora') {
       if (montoRecaudado === undefined) {
         throw ApiError.badRequest('Datos inválidos', [{ campo: 'montoRecaudado', mensaje: `Confirma el monto cobrado: Q ${order.total.toFixed(2)}` }]);
       }

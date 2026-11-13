@@ -7,6 +7,7 @@ import BankAccount from '../models/BankAccount.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex, paginate } from '../utils/pagination.js';
 import { round2 } from '../utils/codes.js';
+import { fechaGt, toCsv } from '../utils/csv.js';
 import { getSettings } from './setting.service.js';
 
 const MAX_CSV = 5000;
@@ -86,13 +87,6 @@ export const listTransactions = async (user, query) => {
   return { ...result, totales: { entradas: porTipo.ENTRADA ?? 0, salidas: porTipo.SALIDA ?? 0 } };
 };
 
-// Evita que Excel interprete un texto como fórmula (inyección CSV)
-const celda = (valor) => {
-  let texto = valor === undefined || valor === null ? '' : String(valor);
-  if (/^[=+\-@\t\r]/.test(texto)) texto = `'${texto}`;
-  return `"${texto.replace(/"/g, '""')}"`;
-};
-
 export const exportTransactionsCsv = async (user, query) => {
   const wallet = await getWallet(user._id);
   const filter = await buildFilter(wallet, query);
@@ -102,10 +96,10 @@ export const exportTransactionsCsv = async (user, query) => {
     .populate('order', 'numero guia')
     .lean();
 
-  const encabezado = ['Fecha', 'Tipo', 'Concepto', 'Monto (Q)', 'Saldo previo (Q)', 'Saldo nuevo (Q)', 'Descripción', 'Orden', 'Guía'];
-  const lineas = rows.map((t) =>
-    [
-      new Date(t.createdAt).toLocaleString('es-GT', { timeZone: 'America/Guatemala' }),
+  return toCsv(
+    ['Fecha', 'Tipo', 'Concepto', 'Monto (Q)', 'Saldo previo (Q)', 'Saldo nuevo (Q)', 'Descripción', 'Orden', 'Guía'],
+    rows.map((t) => [
+      fechaGt(t.createdAt),
       t.tipo,
       CONCEPTO_LABEL[t.concepto] || t.concepto,
       t.monto.toFixed(2),
@@ -114,10 +108,6 @@ export const exportTransactionsCsv = async (user, query) => {
       t.descripcion,
       t.order?.numero,
       t.order?.guia,
-    ]
-      .map(celda)
-      .join(',')
+    ])
   );
-  // BOM para que Excel abra bien los acentos
-  return `﻿${[encabezado.map(celda).join(','), ...lineas].join('\r\n')}\r\n`;
 };

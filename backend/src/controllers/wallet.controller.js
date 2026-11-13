@@ -3,6 +3,7 @@ import * as topUpService from '../services/topup.service.js';
 import * as withdrawalService from '../services/withdrawal.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendOk } from '../utils/response.js';
+import { sendCsv } from '../utils/csv.js';
 
 export const overview = asyncHandler(async (req, res) => {
   sendOk(res, await walletQueryService.getOverview(req.user), 'Tu billetera');
@@ -13,14 +14,7 @@ export const transactions = asyncHandler(async (req, res) => {
 });
 
 export const exportCsv = asyncHandler(async (req, res) => {
-  const csv = await walletQueryService.exportTransactionsCsv(req.user, req.validated.query);
-  const fecha = new Date().toISOString().slice(0, 10);
-  res.set({
-    'Content-Type': 'text/csv; charset=utf-8',
-    'Content-Disposition': `attachment; filename="movimientos-omniahub-${fecha}.csv"`,
-    'Cache-Control': 'no-store',
-  });
-  res.send(csv);
+  sendCsv(res, 'movimientos-omniahub', await walletQueryService.exportTransactionsCsv(req.user, req.validated.query));
 });
 
 // Recargas
