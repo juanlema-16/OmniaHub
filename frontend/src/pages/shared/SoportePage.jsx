@@ -106,9 +106,12 @@ export default function SoportePage() {
         title="Soporte"
         description={esAdmin ? 'Bandeja de tickets de todos los usuarios.' : 'Escríbenos si tienes un problema con un pedido, un pago o tu cuenta.'}
         actions={
-          <Button icon={Plus} onClick={() => setNuevo(true)}>
-            Nuevo ticket
-          </Button>
+          // El admin atiende los tickets de los usuarios; no abre tickets propios
+          !esAdmin && (
+            <Button icon={Plus} onClick={() => setNuevo(true)}>
+              Nuevo ticket
+            </Button>
+          )
         }
       />
 

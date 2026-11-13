@@ -20,7 +20,8 @@ export default function ProfileMenu() {
   const opciones = [
     { to: `${base}/perfil`, label: 'Mi perfil', icon: UserCircle },
     { to: `${base}/billetera`, label: 'Mi billetera', icon: Wallet },
-    { to: `${base}/kyc`, label: 'Verificación de identidad', icon: ShieldCheck },
+    // Solo quien debe verificar su identidad; el admin revisa la de otros desde su menú de KYC
+    ...(necesitaKyc(user.role) ? [{ to: `${base}/kyc`, label: 'Verificación de identidad', icon: ShieldCheck }] : []),
   ].filter((o) => rutaDisponible(user.role, o.to));
 
   const salir = () => {
