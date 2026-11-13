@@ -1,7 +1,7 @@
 // Interruptor accesible (role="switch") para filtros y estados activo/inactivo
 export default function Switch({ checked, onChange, label, disabled = false, className = '' }) {
   return (
-    <label className={`inline-flex cursor-pointer select-none items-center gap-2 text-sm text-slate-700 ${disabled ? 'cursor-not-allowed opacity-60' : ''} ${className}`}>
+    <label className={`relative inline-flex cursor-pointer select-none items-center gap-2 text-sm text-slate-700 ${disabled ? 'cursor-not-allowed opacity-60' : ''} ${className}`}>
       <button
         type="button"
         role="switch"
