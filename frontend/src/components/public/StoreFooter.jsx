@@ -22,7 +22,7 @@ export default function StoreFooter({ tienda }) {
             </Link>
           ))}
         </nav>
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-primary">
+        <Link to="/" className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm text-slate-500 hover:text-primary">
           <LogoMark className="h-5 w-5 text-primary" />
           <span>
             Con tecnología de <span className="font-semibold text-slate-700">OmniaHub</span>

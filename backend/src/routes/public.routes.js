@@ -6,6 +6,7 @@ import { bannersQuery, policyParams } from '../validators/store.validator.js';
 const router = Router();
 
 router.get('/banners', validate({ query: bannersQuery }), storeController.banners);
+router.get('/municipios', storeController.municipios);
 router.get('/policies', storeController.policies);
 router.get('/policies/:slug', validate({ params: policyParams }), storeController.policy);
 

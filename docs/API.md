@@ -112,7 +112,7 @@ Base URL: `http://localhost:4000/api`
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
 | POST | `/orders/preview` | dropshipper | Resumen en vivo: total a recaudar, precio proveedor, envío, comisión y ganancia (aunque sea negativa) |
-| POST | `/orders` | dropshipper + KYC | Crea una orden (origen `PANEL`). `SIN_RECAUDO` descuenta producto + envío + comisión de la billetera. Crea o actualiza el cliente |
+| POST | `/orders` | dropshipper + KYC | Crea una orden (origen `PANEL`); el `destino.municipio` debe pertenecer al departamento. `SIN_RECAUDO` descuenta producto + envío + comisión de la billetera. Crea o actualiza el cliente |
 | GET | `/orders` | Autenticado | Órdenes según el rol, con conteo `porEstado`. Filtros: `estado` (uno o varios separados por coma), `desde`, `hasta`, `transportadora`, `tipoPago`, `origen`, `novedad`, `search` (número, guía, teléfono o nombre) |
 | GET | `/orders/:id` | Autenticado | Detalle con historial (línea de tiempo) |
 | PATCH | `/orders/:id/status` | dropshipper, proveedor, transportadora, admin | Cambia el estado `{ estado, nota, motivo, montoRecaudado }`. Ver tabla de permisos abajo |
@@ -208,13 +208,14 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 | GET | `/store/:slug/products/:productId` | Público | Detalle de un producto de la tienda |
 | POST | `/store/:slug/cart/validate` | Público | Revisa un carrito `{ items: [{ product, cantidad }] }` y devuelve, por producto, `disponible`, `motivo` (`NO_DISPONIBLE` \| `AGOTADO`), `nombre`, `imagen`, `precio` y `stock` actuales para que el navegador lo actualice |
 | POST | `/store/:slug/coupon` | Público | Valida un cupón contra el carrito `{ codigo, items }` y devuelve el descuento |
-| POST | `/store/:slug/checkout` | cliente | Crea una orden con origen `TIENDA` `{ destino, items, transportadora, metodoPago: CONTRAENTREGA \| TARJETA, cupon?, cliente? }`. Los precios salen de la tienda, no del navegador |
+| POST | `/store/:slug/checkout` | cliente | Crea una orden con origen `TIENDA` (el `destino.municipio` debe pertenecer al `departamento`) `{ destino, items, transportadora, metodoPago: CONTRAENTREGA \| TARJETA, cupon?, cliente? }`. Los precios salen de la tienda, no del navegador |
 
 ## Contenido público
 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
 | GET | `/public/banners?ubicacion=LANDING\|PANEL&rol=` | Público | Banners activos y vigentes. En `PANEL` con `rol` devuelve los dirigidos a ese rol o a todos; sin `rol`, solo los dirigidos a todos. `LANDING` es pública y no distingue roles |
+| GET | `/public/municipios` | Público | Los 340 municipios agrupados por departamento. Es la lista que valida el backend y que usan los selectores del frontend |
 | GET | `/public/policies` | Público | Lista de políticas |
 | GET | `/public/policies/:slug` | Público | `terminos-y-condiciones`, `privacidad`, `cookies` o `envios-y-devoluciones` |
 

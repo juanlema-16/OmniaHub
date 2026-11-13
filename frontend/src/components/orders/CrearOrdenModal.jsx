@@ -11,6 +11,7 @@ import Alert from '../ui/Alert';
 import Skeleton from '../ui/Skeleton';
 import { useAuth } from '../../context/AuthContext';
 import useDebounce from '../../hooks/useDebounce';
+import useMunicipios from '../../hooks/useMunicipios';
 import { getErrorMessage } from '../../api/axios';
 import { getCatalog } from '../../api/catalog';
 import { quoteShipping } from '../../api/shipping';
@@ -29,7 +30,7 @@ const ESQUEMA = {
   telefono: [reglas.requerido('El teléfono'), reglas.telefono],
   email: [reglas.email],
   departamento: [reglas.requerido('El departamento')],
-  municipio: [reglas.requerido('El municipio'), reglas.minimo('El municipio', 2)],
+  municipio: [(v) => (!v ? 'Selecciona el municipio' : null)],
   direccion: [reglas.requerido('La dirección', 'a'), reglas.minimo('La dirección', 5)],
 };
 
@@ -155,6 +156,7 @@ function AgregarProducto({ proveedorId, excluir, onAgregar }) {
 
 export default function CrearOrdenModal({ open, onClose, producto, precioVenta, clienteInicial, onCreated }) {
   const { wallet, refresh } = useAuth();
+  const { municipiosDe, cargando: cargandoMunicipios } = useMunicipios();
   const [cliente, setCliente] = useState(CLIENTE_VACIO);
   const [lineas, setLineas] = useState([]);
   const [tipoPago, setTipoPago] = useState('CON_RECAUDO');
@@ -268,7 +270,8 @@ export default function CrearOrdenModal({ open, onClose, producto, precioVenta, 
 
   const cambiar = (e) => {
     const { name, value } = e.target;
-    setCliente((c) => ({ ...c, [name]: value }));
+    // Al cambiar de departamento, el municipio elegido ya no aplica
+    setCliente((c) => ({ ...c, [name]: value, ...(name === 'departamento' ? { municipio: '' } : {}) }));
     setErrores((er) => ({ ...er, [name]: undefined }));
     setErrorGeneral('');
   };
@@ -281,7 +284,7 @@ export default function CrearOrdenModal({ open, onClose, producto, precioVenta, 
       apellidos: sugerido.apellidos,
       email: sugerido.email || '',
       departamento: sugerido.departamento || c.departamento,
-      municipio: sugerido.municipio || c.municipio,
+      municipio: municipiosDe(sugerido.departamento || c.departamento).includes(sugerido.municipio) ? sugerido.municipio : '',
       direccion: sugerido.direccion || c.direccion,
     }));
     setErrores({});
@@ -362,7 +365,17 @@ export default function CrearOrdenModal({ open, onClose, producto, precioVenta, 
             )}
             <div className="grid gap-3 sm:grid-cols-2">
               <Select label="Departamento" name="departamento" options={DEPARTAMENTOS} placeholder="Selecciona" value={cliente.departamento} onChange={cambiar} error={errores.departamento} required />
-              <Input label="Municipio" name="municipio" value={cliente.municipio} onChange={cambiar} error={errores.municipio} placeholder="Ej. Mixco" required />
+              <Select
+                label="Municipio"
+                name="municipio"
+                options={municipiosDe(cliente.departamento)}
+                placeholder={cliente.departamento ? 'Selecciona' : 'Elige primero el departamento'}
+                value={cliente.municipio}
+                onChange={cambiar}
+                error={errores.municipio}
+                disabled={!cliente.departamento || cargandoMunicipios}
+                required
+              />
             </div>
             <Input label="Dirección" name="direccion" icon={MapPin} value={cliente.direccion} onChange={cambiar} error={errores.direccion} placeholder="Calle, número, zona o colonia" required />
             <Input label="Referencias" name="referencias" value={cliente.referencias} onChange={cambiar} placeholder="Ej. Portón negro, frente a la iglesia" />

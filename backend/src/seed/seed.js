@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { connectDB, disconnectDB } from '../config/db.js';
 import * as models from '../models/index.js';
 import { DEPARTAMENTOS, SETTINGS_DEFAULT } from '../utils/constants.js';
+import { municipioDe } from '../utils/municipios.js';
 import { formatGuia, formatNumeroFactura, formatNumeroOrden, round2 } from '../utils/codes.js';
 import {
   CARRIERS,
@@ -223,6 +224,8 @@ const run = async () => {
     const subtotal = round2(o.precioVenta * o.cantidad);
     const descuento = o.cupon ? round2(subtotal * (coupon.valor / 100)) : 0;
     const total = round2(subtotal - descuento);
+    // Los destinos del seed deben cumplir la misma regla que la API: el municipio pertenece al departamento
+    if (!municipioDe(o.destino.departamento, o.destino.municipio)) throw new Error(`Municipio no válido en el seed: ${o.destino.municipio} (${o.destino.departamento})`);
     const costoEnvio = carrier.tarifas.find((t) => t.departamento === o.destino.departamento).precio;
     const comision = round2(total * comisionPct);
     const costoProveedor = round2(product.precioProveedor * o.cantidad);
