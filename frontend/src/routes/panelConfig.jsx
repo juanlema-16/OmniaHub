@@ -28,6 +28,8 @@ import NotificacionesPage from '../pages/shared/NotificacionesPage';
 import PerfilPage from '../pages/shared/PerfilPage';
 import KycPage from '../pages/shared/KycPage';
 import BilleteraPage from '../pages/shared/BilleteraPage';
+import ReportesPage from '../pages/shared/ReportesPage';
+import FacturasPage from '../pages/shared/FacturasPage';
 import DashboardPage from '../pages/dropshipper/DashboardPage';
 import CatalogoPage from '../pages/dropshipper/CatalogoPage';
 import ProductoDetallePage from '../pages/dropshipper/ProductoDetallePage';
@@ -64,8 +66,8 @@ const inicio = { label: 'Inicio', icon: Home, path: '', element: <InicioPage />,
 const notificaciones = { label: 'Notificaciones', icon: Bell, path: 'notificaciones', element: <NotificacionesPage />, section: 'Cuenta' };
 const verificacion = { label: 'Verificación', icon: ShieldCheck, path: 'kyc', element: <KycPage />, section: 'Cuenta' };
 const billetera = { label: 'Billetera', icon: Wallet, path: 'billetera', element: <BilleteraPage />, section: 'Finanzas' };
-const reportes = { label: 'Reportes', icon: BarChart3, path: 'reportes', section: 'Finanzas' };
-const facturas = { label: 'Facturas', icon: Receipt, path: 'facturas', section: 'Finanzas' };
+const reportes = { label: 'Reportes', icon: BarChart3, path: 'reportes', element: <ReportesPage />, section: 'Finanzas' };
+const facturas = { label: 'Facturas', icon: Receipt, path: 'facturas', element: <FacturasPage />, section: 'Finanzas' };
 
 export const PANELES = {
   dropshipper: [
@@ -127,7 +129,7 @@ export const PANELES = {
   cliente: [
     inicio,
     { label: 'Mis pedidos', icon: PackageSearch, path: 'pedidos', section: 'Compras' },
-    { label: 'Facturas', icon: Receipt, path: 'facturas', section: 'Compras' },
+    { label: 'Facturas', icon: Receipt, path: 'facturas', element: <FacturasPage />, section: 'Compras' },
     notificaciones,
   ],
 };
