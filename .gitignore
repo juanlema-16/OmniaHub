@@ -3,3 +3,5 @@ node_modules/
 dist/
 backend/uploads/
 docs/referencias-dropi/
+.claude/settings.local.json
+.claude/launch.json
