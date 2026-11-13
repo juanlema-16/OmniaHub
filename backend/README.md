@@ -21,7 +21,7 @@ Completa `MONGODB_URI` y `JWT_SECRET` en `.env`.
 
 | Script | Qué hace |
 |---|---|
-| `npm run dev` | Arranca la API con recarga automática (`node --watch`) |
+| `npm run dev` | Arranca la API con recarga automática (nodemon, configurado en `nodemon.json`) |
 | `npm start` | Arranca la API en modo normal |
 | `npm run seed` | Borra y crea los datos de prueba |
 
