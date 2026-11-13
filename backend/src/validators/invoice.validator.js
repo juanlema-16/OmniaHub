@@ -9,3 +9,6 @@ export const listInvoicesQuery = z.object({
   hasta: fecha('La fecha final').optional(),
   ...paginationQuery,
 });
+
+// Mismos filtros que el listado, sin paginación
+export const exportInvoicesQuery = listInvoicesQuery.omit({ page: true, limit: true });

@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import useAsync from '../../hooks/useAsync';
 import * as notificationsApi from '../../api/notifications';
 import { getErrorMessage } from '../../api/axios';
-import { rutaDisponible } from '../../routes/panelConfig';
+import { resolverLink, rutaDisponible } from '../../routes/panelConfig';
 import PageHeader from '../../components/ui/PageHeader';
 import Tabs from '../../components/ui/Tabs';
 import Button from '../../components/ui/Button';
@@ -16,6 +16,7 @@ import Skeleton from '../../components/ui/Skeleton';
 import Alert from '../../components/ui/Alert';
 import { NOTIFICATION_TONE } from '../../utils/constants';
 import { formatFechaHora, formatRelativa } from '../../utils/dates';
+import { plural } from '../../utils/plural';
 
 const TIPO_LABEL = { ORDEN: 'Orden', NOVEDAD: 'Novedad', KYC: 'Verificación', BILLETERA: 'Billetera', SISTEMA: 'Sistema' };
 
@@ -33,7 +34,7 @@ export default function NotificacionesPage() {
         await notificationsApi.markRead(n._id);
         setData((d) => ({ ...d, noLeidas: Math.max(0, d.noLeidas - 1), items: d.items.map((x) => (x._id === n._id ? { ...x, leida: true } : x)) }));
       }
-      if (rutaDisponible(user.role, n.link)) navigate(n.link);
+      if (rutaDisponible(user.role, n.link)) navigate(resolverLink(user.role, n.link));
     } catch (err) {
       toast.error(getErrorMessage(err));
     }
@@ -42,7 +43,7 @@ export default function NotificacionesPage() {
   const marcarTodas = async () => {
     try {
       const { marcadas } = await notificationsApi.markAllRead();
-      toast.success(marcadas ? `${marcadas} notificación(es) marcadas como leídas` : 'No tenías notificaciones sin leer');
+      toast.success(marcadas ? `${plural(marcadas, 'notificación marcada', 'notificaciones marcadas')} como leída${marcadas === 1 ? '' : 's'}` : 'No tenías notificaciones sin leer');
       recargar();
     } catch (err) {
       toast.error(getErrorMessage(err));

@@ -54,3 +54,29 @@ export const DEPARTAMENTOS = [
   'Huehuetenango', 'Izabal', 'Jalapa', 'Jutiapa', 'Petén', 'Quetzaltenango', 'Quiché', 'Retalhuleu',
   'Sacatepéquez', 'San Marcos', 'Santa Rosa', 'Sololá', 'Suchitepéquez', 'Totonicapán', 'Zacapa',
 ];
+
+export const CONCEPTO_TRANSACCION = {
+  VENTA_ENTREGADA: 'Venta entregada',
+  PAGO_PROVEEDOR: 'Pago a proveedor',
+  PAGO_ENVIO: 'Pago de envío',
+  COMISION_PLATAFORMA: 'Comisión de la plataforma',
+  ORDEN_SIN_RECAUDO: 'Orden sin recaudo',
+  FLETE_DEVOLUCION: 'Flete de devolución',
+  RECARGA: 'Recarga',
+  RETIRO: 'Retiro',
+  AJUSTE_ADMIN: 'Ajuste del administrador',
+};
+
+export const SOLICITUD_ESTADO = {
+  PENDIENTE: { label: 'Pendiente', tone: 'amber' },
+  APROBADA: { label: 'Aprobada', tone: 'green' },
+  RECHAZADA: { label: 'Rechazada', tone: 'red' },
+};
+
+export const METODO_RECARGA = {
+  TRANSFERENCIA: 'Transferencia bancaria',
+  TARJETA: 'Tarjeta (simulada)',
+};
+
+export const BANCOS = ['Banco Industrial', 'Banrural', 'BAM', 'G&T Continental', 'BAC Credomatic', 'Banco Promerica'];
+export const TIPO_CUENTA = { MONETARIA: 'Monetaria', AHORRO: 'Ahorro' };

@@ -9,6 +9,7 @@ import { createForOrder } from './invoice.service.js';
 import { notify } from './notification.service.js';
 import { logAudit } from './audit.service.js';
 import { getOrderPopulated, scopeFor } from './order.service.js';
+import { plural } from '../utils/plural.js';
 
 // Quién puede mover qué estado (sección 6.3). El admin puede corregir cualquiera.
 const TRANSICIONES = {
@@ -158,7 +159,7 @@ const notificar = async (order, from, to, actor, session) => {
 
   switch (to) {
     case 'PENDIENTE':
-      await n(order.proveedor, 'Nueva orden por preparar', `${ref}: ${order.items.length} producto(s) para ${order.destino.municipio}, ${order.destino.departamento}.`, 'ORDEN', 'proveedor');
+      await n(order.proveedor, 'Nueva orden por preparar', `${ref}: ${plural(order.items.length, 'producto')} para ${order.destino.municipio}, ${order.destino.departamento}.`, 'ORDEN', 'proveedor');
       break;
     case 'GUIA_GENERADA':
       await n(carrier.user, 'Nueva guía asignada', `${order.guia} (${ref}) lista para recolección. Destino: ${order.destino.municipio}, ${order.destino.departamento}.`, 'ORDEN', 'transportadora');

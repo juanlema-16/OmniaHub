@@ -4,7 +4,7 @@ import EmptyState from './EmptyState';
 
 // columns: [{ key, header, render?: (row) => node, className?, align?: 'right' | 'center' }]
 // pagination: { page, pages, total, limit?, onPageChange }
-// search: { value, onChange, placeholder }
+// search: { value, onChange, placeholder } · aboveTable: panel opcional entre la barra y la tabla (filtros avanzados)
 export default function Table({
   columns,
   data = [],
@@ -19,6 +19,7 @@ export default function Table({
   emptyIcon,
   skeletonRows = 5,
   bare = false,
+  aboveTable,
 }) {
   const alinear = (c) => (c.align === 'right' ? 'text-right' : c.align === 'center' ? 'text-center' : 'text-left');
 
@@ -43,6 +44,7 @@ export default function Table({
           {filters && <div className="flex flex-wrap items-center gap-2 sm:ml-auto">{filters}</div>}
         </div>
       )}
+      {aboveTable}
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-100 text-sm">

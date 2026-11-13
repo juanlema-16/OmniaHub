@@ -25,4 +25,7 @@ export const enteroNoNegativo = (label) =>
     .min(0, { error: `${label} no puede ser negativo` })
     .max(1_000_000, { error: `${label} es demasiado alto` });
 
-export const fecha = (label) => z.coerce.date({ error: `${label} no es una fecha válida` });
+// Una fecha sin hora ("2026-11-12") es un día de Guatemala (UTC-6, sin horario de verano), no de UTC:
+// así "hasta" incluye todo el día local, también lo que ocurre después de las 6 p. m.
+export const fecha = (label) =>
+  z.preprocess((v) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? `${v}T00:00:00-06:00` : v), z.coerce.date({ error: `${label} no es una fecha válida` }));

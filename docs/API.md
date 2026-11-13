@@ -73,6 +73,14 @@ Base URL: `http://localhost:4000/api`
 | PATCH | `/store-products/:id` | dropshipper + KYC | Cambia `precioVenta` o `activo` |
 | DELETE | `/store-products/:id` | dropshipper | Quita el producto de la tienda |
 
+## Mi tienda y clientes (dropshipper)
+
+| Método | Ruta | Rol | Descripción |
+|---|---|---|---|
+| GET | `/my-store` | dropshipper | Nombre, slug, logo y resumen de mi tienda (productos activos y ventas desde la tienda) |
+| PATCH | `/my-store` *(multipart)* | dropshipper | Cambia `nombre`, sube `logo` (imagen de hasta 2 MB) o lo quita con `quitarLogo`. El slug no cambia para no romper el link público |
+| GET | `/customers` | dropshipper | Mis clientes (se crean solos con cada orden). Filtros: `search` (nombre, teléfono o correo), `departamento` |
+
 ## Inventario (proveedor)
 
 | Método | Ruta | Rol | Descripción |
@@ -173,14 +181,15 @@ Al pasar a **`DEVOLUCION`**: se devuelve el stock y la transportadora recibe el 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
 | GET | `/invoices` | admin, dropshipper, proveedor, cliente | Facturas emitidas (dropshipper, proveedor), recibidas (cliente) o todas (admin). Filtros: `search`, `origen` (`ORDEN` \| `POS`), `desde`, `hasta` |
+| GET | `/invoices/export` | ídem | Facturas en CSV con los mismos filtros del listado, sin paginación |
 | GET | `/invoices/:id` | ídem | Detalle para ver o imprimir (número correlativo `FAC-000001`) |
 
 ## Reportes
 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
-| GET | `/reports/summary` | admin, dropshipper, proveedor, transportadora | KPIs del rol, órdenes por estado, serie diaria y productos más vendidos. El admin también ve usuarios por rol, comisiones, pendientes y mejores tiendas. Período: `desde`, `hasta` (por defecto, últimos 30 días) |
-| GET | `/reports/orders/export` | ídem | Órdenes del período en CSV, con columnas según el rol. Filtro: `estado` |
+| GET | `/reports/summary` | admin, dropshipper, proveedor, transportadora | KPIs del rol, órdenes por estado, serie diaria y productos más vendidos (el dropshipper también ve sus departamentos con más entregas). El admin también ve usuarios por rol, comisiones, pendientes y mejores tiendas. Período: `desde`, `hasta` (por defecto, últimos 30 días) |
+| GET | `/reports/orders/export` | ídem | Órdenes en CSV, con columnas según el rol. Acepta los mismos filtros que `GET /orders` (`estado`, `desde`, `hasta`, `transportadora`, `tipoPago`, `origen`, `novedad`, `search`), sin paginación |
 
 ## Notificaciones
 

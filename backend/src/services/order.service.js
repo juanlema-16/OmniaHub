@@ -241,8 +241,9 @@ export const scopeFor = async (user) => {
   }
 };
 
-export const listOrders = async (user, query) => {
-  const { estado, desde, hasta, transportadora, tipoPago, origen, novedad, search, page, limit } = query;
+// Filtros compartidos por el listado y la exportación a CSV (sin el de estado)
+export const buildOrderFilter = async (user, query) => {
+  const { desde, hasta, transportadora, tipoPago, origen, novedad, search } = query;
   const scope = await scopeFor(user);
   const filter = { ...scope };
 
@@ -266,16 +267,25 @@ export const listOrders = async (user, query) => {
     ];
     filter.$and = [...(filter.$and || []), { $or: busqueda }];
   }
+  return { scope, filter };
+};
+
+// Restringe los estados pedidos a los que el rol puede ver
+export const aplicarEstados = (filter, scope, estado) => {
+  const permitidos = scope.estado?.$in;
+  const pedidos = permitidos ? estado.filter((e) => permitidos.includes(e)) : estado;
+  filter.estado = { $in: pedidos };
+};
+
+export const listOrders = async (user, query) => {
+  const { estado, page, limit } = query;
+  const { scope, filter } = await buildOrderFilter(user, query);
 
   // Conteo por estado para las pestañas, con los mismos filtros salvo el de estado
   const porEstadoRows = await Order.aggregate([{ $match: filter }, { $group: { _id: '$estado', n: { $sum: 1 } } }]);
   const porEstado = Object.fromEntries(porEstadoRows.map((r) => [r._id, r.n]));
 
-  if (estado) {
-    const permitidos = scope.estado?.$in;
-    const pedidos = permitidos ? estado.filter((e) => permitidos.includes(e)) : estado;
-    filter.estado = { $in: pedidos };
-  }
+  if (estado) aplicarEstados(filter, scope, estado);
 
   const [items, total] = await Promise.all([
     Order.find(filter)
