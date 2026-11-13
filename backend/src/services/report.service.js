@@ -103,6 +103,17 @@ const topProductos = async (scope, rango, campoIngreso = 'precioVenta') => {
   return rows.map((r) => ({ product: r._id, nombre: r.nombre, imagen: r.imagen, unidades: r.unidades, ingresos: round2(r.ingresos) }));
 };
 
+// Departamentos con más órdenes entregadas en el período
+const topDepartamentos = async (scope, rango) => {
+  const rows = await Order.aggregate([
+    { $match: { ...scope, estado: 'ENTREGADO', entregadaEn: rango } },
+    { $group: { _id: '$destino.departamento', ordenes: { $sum: 1 }, ventas: { $sum: '$total' } } },
+    { $sort: { ordenes: -1, ventas: -1 } },
+    { $limit: 5 },
+  ]);
+  return rows.map((r) => ({ departamento: r._id, ordenes: r.ordenes, ventas: round2(r.ventas) }));
+};
+
 const tasa = (parte, total) => (total ? round2((parte / total) * 100) : 0);
 
 export const summary = async (user, query) => {
@@ -115,10 +126,11 @@ export const summary = async (user, query) => {
   const base = { periodo: { desde, hasta }, porEstado, serie: ventas.serie };
 
   if (user.role === 'dropshipper') {
-    const [pendientesConfirmar, novedadesActivas, top] = await Promise.all([
+    const [pendientesConfirmar, novedadesActivas, top, departamentos] = await Promise.all([
       Order.countDocuments({ ...scope, estado: 'PENDIENTE_CONFIRMACION' }),
       Order.countDocuments({ ...scope, 'novedad.activa': true }),
       topProductos(scope, rango),
+      topDepartamentos(scope, rango),
     ]);
     return {
       ...base,
@@ -134,6 +146,7 @@ export const summary = async (user, query) => {
         novedadesActivas,
       },
       topProductos: top,
+      topDepartamentos: departamentos,
     };
   }
 

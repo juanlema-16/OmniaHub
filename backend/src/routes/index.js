@@ -19,6 +19,8 @@ import reportsRoutes from './reports.routes.js';
 import notificationsRoutes from './notifications.routes.js';
 import storeRoutes from './store.routes.js';
 import publicRoutes from './public.routes.js';
+import customersRoutes from './customers.routes.js';
+import myStoreRoutes from './myStore.routes.js';
 
 const router = Router();
 
@@ -42,5 +44,7 @@ router.use('/reports', reportsRoutes);
 router.use('/notifications', notificationsRoutes);
 router.use('/store', storeRoutes);
 router.use('/public', publicRoutes);
+router.use('/customers', customersRoutes);
+router.use('/my-store', myStoreRoutes);
 
 export default router;
