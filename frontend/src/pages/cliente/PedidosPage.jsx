@@ -18,6 +18,7 @@ import { formatQ } from '../../utils/formatQ';
 import { formatFecha } from '../../utils/dates';
 import { ORDER_STATUS } from '../../utils/constants';
 import ImagenProducto from '../../components/ui/ImagenProducto';
+import TiendaCelda from '../../components/store/TiendaCelda';
 
 export default function PedidosPage() {
   const [estado, setEstado] = useState('');
@@ -47,11 +48,12 @@ export default function PedidosPage() {
         </div>
       ),
     },
+    { key: 'tienda', header: 'Tienda', render: (o) => <TiendaCelda tienda={o.dropshipper?.tienda} /> },
     {
       key: 'productos',
       header: 'Productos',
       render: (o) => (
-        <div className="flex max-w-64 items-center gap-2.5">
+        <div className="flex max-w-48 items-center gap-2.5">
           <ImagenProducto src={o.items[0]?.imagen} respaldo={o.items[0]?.imagenActual} className="h-10 w-10" />
           <div className="min-w-0">
             <p className="truncate text-slate-800">{o.items[0]?.nombre}</p>
@@ -96,7 +98,7 @@ export default function PedidosPage() {
         );
       },
     },
-    { key: 'ver', header: '', render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
+    { key: 'ver', header: '', sticky: true, render: () => <ChevronRight className="h-4 w-4 text-slate-300" aria-hidden="true" /> },
   ];
 
   return (

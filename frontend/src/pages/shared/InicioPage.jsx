@@ -21,6 +21,7 @@ import { listOrders } from '../../api/orders';
 import { getBanners } from '../../api/public';
 import { getMyStores } from '../../api/store';
 import TiendaCard from '../../components/store/TiendaCard';
+import TiendaCelda from '../../components/store/TiendaCelda';
 import StatCard from '../../components/ui/StatCard';
 import Card from '../../components/ui/Card';
 import Table from '../../components/ui/Table';
@@ -187,7 +188,10 @@ export default function InicioPage() {
         </div>
       ),
     },
-    { key: 'cliente', header: 'Cliente', render: (o) => `${o.cliente.nombres} ${o.cliente.apellidos}` },
+    // El cliente ya sabe quién es: le sirve más ver en qué tienda compró
+    role === 'cliente'
+      ? { key: 'tienda', header: 'Tienda', render: (o) => <TiendaCelda tienda={o.dropshipper?.tienda} /> }
+      : { key: 'cliente', header: 'Cliente', render: (o) => `${o.cliente.nombres} ${o.cliente.apellidos}` },
     { key: 'destino', header: 'Destino', render: (o) => `${o.destino.municipio}, ${o.destino.departamento}` },
     { key: 'estado', header: 'Estado', render: (o) => <OrderStatusBadge estado={o.estado} /> },
     role === 'proveedor'
