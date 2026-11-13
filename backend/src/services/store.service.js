@@ -76,17 +76,46 @@ const preciosDelCarrito = async (dropshipper, items) => {
   const vendibles = new Set((await productosVendibles({ _id: { $in: items.map((i) => i.product) } })).map(String));
   const sps = await StoreProduct.find({ dropshipper: dropshipper._id, activo: true, product: { $in: items.map((i) => i.product) } }).lean();
   const porProducto = new Map(sps.map((sp) => [String(sp.product), sp]));
+  const nombres = new Map((await Product.find({ _id: { $in: items.map((i) => i.product) } }).select('nombre').lean()).map((p) => [String(p._id), p.nombre]));
   const errores = [];
   const lineas = items.map((item, idx) => {
     const sp = porProducto.get(item.product);
     if (!sp || !vendibles.has(item.product)) {
-      errores.push({ campo: `items.${idx}.product`, mensaje: 'Este producto ya no está disponible en la tienda' });
+      const nombre = nombres.get(item.product);
+      errores.push({ campo: `items.${idx}.product`, mensaje: `${nombre ? `"${nombre}"` : 'Un producto de tu carrito'} ya no está disponible en la tienda` });
       return null;
     }
     return { product: item.product, cantidad: item.cantidad, precioVenta: sp.precioVenta };
   });
-  if (errores.length) throw ApiError.badRequest('Revisa tu carrito', errores);
+  if (errores.length) throw ApiError.badRequest(`Revisa tu carrito: ${errores.map((e) => e.mensaje).join('; ')}`, errores);
   return { lineas, subtotal: round2(lineas.reduce((s, l) => s + l.precioVenta * l.cantidad, 0)) };
+};
+
+// Estado actual de cada producto del carrito: el navegador usa esto para quitar, repreciar y ajustar cantidades
+export const validateCart = async (slug, items) => {
+  const dropshipper = await findStore(slug);
+  const ids = items.map((i) => i.product);
+  const vendibles = new Set((await productosVendibles({ _id: { $in: ids } })).map(String));
+  const sps = await StoreProduct.find({ dropshipper: dropshipper._id, activo: true, product: { $in: ids } })
+    .populate({ path: 'product', select: 'nombre imagenes stock' })
+    .lean();
+  const porProducto = new Map(sps.map((sp) => [String(sp.product._id), sp]));
+  return {
+    items: items.map((item) => {
+      const sp = porProducto.get(item.product);
+      if (!sp || !vendibles.has(item.product)) return { product: item.product, disponible: false, motivo: 'NO_DISPONIBLE' };
+      const { product: p } = sp;
+      return {
+        product: item.product,
+        disponible: p.stock > 0,
+        motivo: p.stock > 0 ? undefined : 'AGOTADO',
+        nombre: p.nombre,
+        imagen: p.imagenes?.[0],
+        precio: sp.precioVenta,
+        stock: p.stock,
+      };
+    }),
+  };
 };
 
 export const checkCoupon = async (slug, { codigo, items }) => {

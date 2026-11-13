@@ -33,7 +33,7 @@ export const cotizarOrden = async (
   const lineas = items.map((item, idx) => {
     const p = porId.get(item.product);
     if (!p || p.proveedor?.kyc?.status !== 'aprobado' || p.proveedor.accountStatus !== 'activo') {
-      errores.push({ campo: `items.${idx}.product`, mensaje: 'El producto no está disponible' });
+      errores.push({ campo: `items.${idx}.product`, mensaje: `${p ? `"${p.nombre}"` : 'El producto'} no está disponible` });
       return null;
     }
     const precioVenta = item.precioVenta ?? precioTienda.get(item.product) ?? p.precioSugerido;
@@ -41,7 +41,10 @@ export const cotizarOrden = async (
       errores.push({ campo: `items.${idx}.precioVenta`, mensaje: `"${p.nombre}": el precio de venta debe ser al menos Q ${p.precioProveedor.toFixed(2)}` });
     }
     if (p.stock < item.cantidad) {
-      errores.push({ campo: `items.${idx}.cantidad`, mensaje: `"${p.nombre}": solo hay ${p.stock} unidades disponibles` });
+      errores.push({
+        campo: `items.${idx}.cantidad`,
+        mensaje: p.stock > 0 ? `"${p.nombre}": solo hay ${p.stock} ${p.stock === 1 ? 'unidad disponible' : 'unidades disponibles'} y pediste ${item.cantidad}` : `"${p.nombre}" está agotado`,
+      });
     }
     return {
       product: p._id,
@@ -53,7 +56,7 @@ export const cotizarOrden = async (
       precioVenta,
     };
   });
-  if (errores.length) throw ApiError.badRequest('Revisa los productos de la orden', errores);
+  if (errores.length) throw ApiError.badRequest(`Revisa los productos de la orden: ${errores.map((e) => e.mensaje).join('; ')}`, errores);
 
   const proveedores = new Set(lineas.map((l) => String(l.proveedor)));
   if (proveedores.size > 1) {

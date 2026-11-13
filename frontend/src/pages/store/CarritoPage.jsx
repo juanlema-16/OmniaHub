@@ -1,6 +1,8 @@
 import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import useValidarCarrito from '../../hooks/useValidarCarrito';
+import AvisosCarrito from '../../components/store/AvisosCarrito';
 import Button from '../../components/ui/Button';
 import EmptyState from '../../components/ui/EmptyState';
 import { formatQ } from '../../utils/formatQ';
@@ -10,10 +12,12 @@ export default function CarritoPage() {
   const { slug } = useOutletContext();
   const navigate = useNavigate();
   const carrito = useCart(slug);
+  const { validando } = useValidarCarrito(slug);
 
   if (!carrito.items.length) {
     return (
-      <div className="mx-auto max-w-lg py-16">
+      <div className="mx-auto max-w-lg space-y-4 px-4 py-16">
+        <AvisosCarrito avisos={carrito.avisos} onCerrar={carrito.descartarAvisos} />
         <div className="rounded-2xl border border-slate-200 bg-white">
           <EmptyState
             icon={ShoppingCart}
@@ -33,7 +37,8 @@ export default function CarritoPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Tu carrito</h1>
-      <p className="mt-1 text-sm text-slate-500">{plural(carrito.cantidad, 'producto')}</p>
+      <p className="mt-1 text-sm text-slate-500">{validando ? 'Revisando disponibilidad y precios…' : plural(carrito.cantidad, 'producto')}</p>
+      <AvisosCarrito avisos={carrito.avisos} onCerrar={carrito.descartarAvisos} className="mt-4" />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_22rem]">
         <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -84,7 +89,7 @@ export default function CarritoPage() {
             </div>
           </dl>
           <p className="mt-2 text-xs text-slate-500">¿Tienes un cupón? Lo aplicas en el siguiente paso.</p>
-          <Button className="mt-5" fullWidth size="lg" onClick={() => navigate(`/tienda/${slug}/pagar`)}>
+          <Button className="mt-5" fullWidth size="lg" loading={validando} onClick={() => navigate(`/tienda/${slug}/pagar`)}>
             Continuar con la compra
           </Button>
           <Link to={`/tienda/${slug}`} className="mt-3 block text-center text-sm font-medium text-primary hover:underline">
