@@ -53,7 +53,9 @@ export default function LoginPage() {
       const user = await login({ email: form.email.trim(), password: form.password });
       toast.success(`¡Hola, ${user.nombre}!`);
       const destino = location.state?.from;
-      navigate(destino && destino.startsWith(homeFor(user.role)) ? destino : homeFor(user.role), { replace: true });
+      // Solo se vuelve a una ruta del propio panel o, siendo cliente, a la tienda donde estaba comprando
+      const permitido = destino && (destino.startsWith(homeFor(user.role)) || (user.role === 'cliente' && destino.startsWith('/tienda/')));
+      navigate(permitido ? destino : homeFor(user.role), { replace: true });
     } catch (err) {
       const data = err.response?.data;
       if (data?.errors?.codigo === 'EMAIL_NO_VERIFICADO') {
@@ -76,7 +78,7 @@ export default function LoginPage() {
       footer={
         <>
           ¿No tienes cuenta?{' '}
-          <Link to="/registro" className="font-semibold text-primary hover:text-primary-hover">
+          <Link to="/registro" state={{ from: location.state?.from }} className="font-semibold text-primary hover:text-primary-hover">
             Regístrate gratis
           </Link>
         </>

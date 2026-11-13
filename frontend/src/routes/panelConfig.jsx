@@ -30,6 +30,7 @@ import KycPage from '../pages/shared/KycPage';
 import BilleteraPage from '../pages/shared/BilleteraPage';
 import ReportesPage from '../pages/shared/ReportesPage';
 import FacturasPage from '../pages/shared/FacturasPage';
+import ClientePedidosPage from '../pages/cliente/PedidosPage';
 import DashboardPage from '../pages/dropshipper/DashboardPage';
 import CatalogoPage from '../pages/dropshipper/CatalogoPage';
 import ProductoDetallePage from '../pages/dropshipper/ProductoDetallePage';
@@ -128,7 +129,7 @@ export const PANELES = {
   ],
   cliente: [
     inicio,
-    { label: 'Mis pedidos', icon: PackageSearch, path: 'pedidos', section: 'Compras' },
+    { label: 'Mis pedidos', icon: PackageSearch, path: 'pedidos', element: <ClientePedidosPage />, section: 'Compras' },
     { label: 'Facturas', icon: Receipt, path: 'facturas', element: <FacturasPage />, section: 'Compras' },
     notificaciones,
   ],

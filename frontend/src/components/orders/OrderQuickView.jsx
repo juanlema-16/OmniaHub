@@ -82,7 +82,7 @@ export default function OrderQuickView({ orderId, onClose, renderAcciones }) {
               </ul>
               {o.total !== undefined && (
                 <div className="mt-2 space-y-1 text-sm text-slate-600">
-                  {o.descuento > 0 && <Linea label={`Descuento${o.cupon ? ` (${o.cupon})` : ''}`} value={`− ${formatQ(o.descuento)}`} />}
+                  {o.descuento > 0 && <Linea label={`Descuento${o.cupon?.codigo ? ` (${o.cupon.codigo})` : ''}`} value={`− ${formatQ(o.descuento)}`} />}
                   <Linea label="Total" value={formatQ(o.total)} className="font-semibold text-slate-900" />
                   {o.costoEnvio !== undefined && o.gananciaDropshipper !== undefined && (
                     <>

@@ -1,4 +1,7 @@
-// Vista previa del contenido de una política: títulos "## ", listas "- " y párrafos separados por línea en blanco
+// Convierte **texto** en negrita
+const conNegritas = (texto) => texto.split(/\*\*(.+?)\*\*/g).map((parte, i) => (i % 2 ? <strong key={i} className="font-semibold text-slate-900">{parte}</strong> : parte));
+
+// Contenido de una política: títulos "## ", listas "- ", negritas **así** y párrafos separados por línea en blanco
 export default function PoliticaVista({ titulo, contenido }) {
   const bloques = contenido
     .split(/\n{2,}/)
@@ -18,7 +21,7 @@ export default function PoliticaVista({ titulo, contenido }) {
             {resto.every((l) => l.startsWith('- ')) && resto.length > 0 ? (
               <ul className="list-disc space-y-1 pl-5">
                 {resto.map((l, j) => (
-                  <li key={j}>{l.slice(2)}</li>
+                  <li key={j}>{conNegritas(l.slice(2))}</li>
                 ))}
               </ul>
             ) : (

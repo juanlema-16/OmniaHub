@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { useAuth } from './context/AuthContext';
 import ProtectedRoute, { PublicOnlyRoute } from './routes/ProtectedRoute';
 import { PANELES, rutasDe } from './routes/panelConfig';
 import DashboardLayout from './components/layout/DashboardLayout';
@@ -7,20 +6,32 @@ import LoginPage from './pages/public/LoginPage';
 import RegisterPage from './pages/public/RegisterPage';
 import VerifyEmailPage from './pages/public/VerifyEmailPage';
 import NotFoundPage from './pages/public/NotFoundPage';
-import PageLoader from './components/ui/PageLoader';
-import { homeFor } from './utils/constants';
-
-// Mientras no exista la landing (Prompt 12), la raíz lleva al login o al panel
-function Inicio() {
-  const { autenticado, user, cargando } = useAuth();
-  if (cargando && !user) return <PageLoader />;
-  return <Navigate to={autenticado ? homeFor(user.role) : '/login'} replace />;
-}
+import LandingPage from './pages/public/LandingPage';
+import PoliticaPage from './pages/public/PoliticaPage';
+import PublicLayout from './components/public/PublicLayout';
+import StoreLayout from './components/public/StoreLayout';
+import TiendaPage from './pages/store/TiendaPage';
+import ProductoPage from './pages/store/ProductoPage';
+import CarritoPage from './pages/store/CarritoPage';
+import CheckoutPage from './pages/store/CheckoutPage';
+import PedidoConfirmadoPage from './pages/store/PedidoConfirmadoPage';
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Inicio />} />
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/politicas/:slug" element={<PoliticaPage />} />
+      </Route>
+
+      <Route path="/tienda/:slug" element={<StoreLayout />}>
+        <Route index element={<TiendaPage />} />
+        <Route path="producto/:productId" element={<ProductoPage />} />
+        <Route path="carrito" element={<CarritoPage />} />
+        <Route path="pagar" element={<CheckoutPage />} />
+        <Route path="pedido/:id" element={<PedidoConfirmadoPage />} />
+      </Route>
+
       <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
       <Route path="/registro" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
       <Route path="/verificar-correo" element={<PublicOnlyRoute><VerifyEmailPage /></PublicOnlyRoute>} />
