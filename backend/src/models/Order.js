@@ -68,6 +68,13 @@ const orderSchema = new Schema(
     montoRecaudado: { type: Number, min: 0 },
     notasProveedor: { type: String, trim: true, maxlength: 500 },
     entregadaEn: Date,
+    // Marcas para que stock y dinero se apliquen una sola vez, aunque el admin corrija estados
+    efectos: {
+      stockDescontado: { type: Boolean, default: false },
+      salidaSinRecaudo: { type: Boolean, default: false },
+      repartido: { type: Boolean, default: false },
+      fleteCobrado: { type: Boolean, default: false },
+    },
   },
   { timestamps: true }
 );

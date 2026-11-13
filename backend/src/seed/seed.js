@@ -256,6 +256,7 @@ const run = async () => {
       estado: 'PENDIENTE_CONFIRMACION',
       historial: [],
       novedad: { activa: false },
+      efectos: { stockDescontado: false, salidaSinRecaudo: false, repartido: false, fleteCobrado: false },
       createdAt: creada,
       updatedAt: creada,
     };
@@ -272,6 +273,7 @@ const run = async () => {
       cambiar('PENDIENTE_CONFIRMACION', creada, o.cliente.esUsuario ? users.cliente._id : dropId, o.origen === 'TIENDA' ? 'Compra en la tienda en línea' : 'Orden creada desde el panel');
       if (o.tipoPago === 'SIN_RECAUDO') {
         mover({ user: dropId, tipo: 'SALIDA', concepto: 'ORDEN_SIN_RECAUDO', monto: round2(costoProveedor + costoEnvio + comision), descripcion: `${ref}: producto + envío + comisión`, fecha: creada, order: order._id, createdBy: dropId });
+        order.efectos.salidaSinRecaudo = true;
       }
     });
 
@@ -285,6 +287,7 @@ const run = async () => {
     evento(t(1), () => {
       cambiar('PENDIENTE', t(1), dropId, 'Orden confirmada con el cliente');
       moverStock({ productId: product._id, tipo: 'SALIDA_VENTA', cantidad: -o.cantidad, referencia: ref, user: dropId, fecha: t(1) });
+      order.efectos.stockDescontado = true;
     });
     if (o.estado === 'PENDIENTE') return;
 
@@ -313,6 +316,8 @@ const run = async () => {
         mover({ user: dropId, tipo: 'SALIDA', concepto: 'FLETE_DEVOLUCION', monto: costoEnvio, descripcion: `${ref}: flete de devolución`, fecha: t(70), order: order._id });
         mover({ user: carrierUser._id, tipo: 'ENTRADA', concepto: 'PAGO_ENVIO', monto: costoEnvio, descripcion: `${ref}: flete de devolución`, fecha: t(70), order: order._id });
         moverStock({ productId: product._id, tipo: 'DEVOLUCION', cantidad: o.cantidad, referencia: ref, user: carrierUser._id, fecha: t(70) });
+        order.efectos.stockDescontado = false;
+        order.efectos.fleteCobrado = true;
       });
       return;
     }
@@ -322,6 +327,7 @@ const run = async () => {
       const fecha = t(44);
       cambiar('ENTREGADO', fecha, carrierUser._id, o.tipoPago === 'CON_RECAUDO' ? `Entregado y cobrado Q ${total.toFixed(2)}` : 'Entregado');
       order.entregadaEn = fecha;
+      order.efectos.repartido = true;
       if (o.tipoPago === 'CON_RECAUDO') order.montoRecaudado = total;
       mover({ user: proveedorId, tipo: 'ENTRADA', concepto: 'PAGO_PROVEEDOR', monto: costoProveedor, descripcion: `${ref}: pago de producto`, fecha, order: order._id });
       mover({ user: carrierUser._id, tipo: 'ENTRADA', concepto: 'PAGO_ENVIO', monto: costoEnvio, descripcion: `${ref}: costo de envío`, fecha, order: order._id });

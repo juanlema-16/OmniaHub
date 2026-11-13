@@ -8,6 +8,8 @@ import catalogRoutes from './catalog.routes.js';
 import storeProductsRoutes from './storeProducts.routes.js';
 import inventoryRoutes from './inventory.routes.js';
 import purchasesRoutes from './purchases.routes.js';
+import shippingRoutes from './shipping.routes.js';
+import ordersRoutes from './orders.routes.js';
 
 const router = Router();
 
@@ -20,5 +22,7 @@ router.use('/catalog', catalogRoutes);
 router.use('/store-products', storeProductsRoutes);
 router.use('/inventory', inventoryRoutes);
 router.use('/purchases', purchasesRoutes);
+router.use('/shipping', shippingRoutes);
+router.use('/orders', ordersRoutes);
 
 export default router;

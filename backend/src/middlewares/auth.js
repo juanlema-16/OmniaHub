@@ -30,6 +30,15 @@ export const auth = asyncHandler(async (req, res, next) => {
   next();
 });
 
+// Si viene un token válido carga el usuario; si no, sigue como visitante (tienda pública)
+export const optionalAuth = (req, res, next) => {
+  if (!req.headers.authorization) return next();
+  auth(req, res, (error) => {
+    if (error) req.user = undefined;
+    next();
+  });
+};
+
 export const authorize =
   (...roles) =>
   (req, res, next) => {
