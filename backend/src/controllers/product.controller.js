@@ -2,6 +2,7 @@ import * as productService from '../services/product.service.js';
 import * as catalogService from '../services/catalog.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendOk } from '../utils/response.js';
+import { plural } from '../utils/plural.js';
 
 export const listMine = asyncHandler(async (req, res) => {
   const data = await productService.listMine(req.user, req.validated.query);
@@ -28,6 +29,6 @@ export const remove = asyncHandler(async (req, res) => {
   sendOk(
     res,
     product,
-    tiendasAfectadas ? `Producto desactivado y retirado de ${tiendasAfectadas} tienda(s)` : 'Producto desactivado'
+    tiendasAfectadas ? `Producto desactivado y retirado de ${plural(tiendasAfectadas, 'tienda')}` : 'Producto desactivado'
   );
 });

@@ -16,6 +16,7 @@ import Skeleton from '../../components/ui/Skeleton';
 import Alert from '../../components/ui/Alert';
 import { NOTIFICATION_TONE } from '../../utils/constants';
 import { formatFechaHora, formatRelativa } from '../../utils/dates';
+import { plural } from '../../utils/plural';
 
 const TIPO_LABEL = { ORDEN: 'Orden', NOVEDAD: 'Novedad', KYC: 'Verificación', BILLETERA: 'Billetera', SISTEMA: 'Sistema' };
 
@@ -42,7 +43,7 @@ export default function NotificacionesPage() {
   const marcarTodas = async () => {
     try {
       const { marcadas } = await notificationsApi.markAllRead();
-      toast.success(marcadas ? `${marcadas} notificación(es) marcadas como leídas` : 'No tenías notificaciones sin leer');
+      toast.success(marcadas ? `${plural(marcadas, 'notificación marcada', 'notificaciones marcadas')} como leída${marcadas === 1 ? '' : 's'}` : 'No tenías notificaciones sin leer');
       recargar();
     } catch (err) {
       toast.error(getErrorMessage(err));

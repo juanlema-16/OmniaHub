@@ -19,12 +19,28 @@ const Dato = ({ icon: Icon, titulo, children }) => (
   </div>
 );
 
+const Linea = ({ label, value, className = '' }) => (
+  <div className={`flex justify-between gap-3 ${className}`}>
+    <span>{label}</span>
+    <span>{value}</span>
+  </div>
+);
+
 // Resumen de una orden con su línea de tiempo. Cada rol recibe de la API solo sus montos.
-export default function OrderQuickView({ orderId, onClose }) {
-  const { data: o, cargando, error } = useAsync(() => (orderId ? getOrder(orderId) : Promise.resolve(null)), [orderId]);
+// renderAcciones(orden, { recargar }) dibuja los botones que ese rol puede usar.
+export default function OrderQuickView({ orderId, onClose, renderAcciones }) {
+  const { data: o, cargando, error, recargar } = useAsync(() => (orderId ? getOrder(orderId) : Promise.resolve(null)), [orderId]);
+  const acciones = o && !cargando && renderAcciones ? renderAcciones(o, { recargar }) : null;
 
   return (
-    <Modal open={Boolean(orderId)} onClose={onClose} size="lg" title={o ? `Orden ${o.numero}` : 'Orden'} description={o?.guia ? `Guía ${o.guia}` : undefined}>
+    <Modal
+      open={Boolean(orderId)}
+      onClose={onClose}
+      size="lg"
+      title={o ? `Orden ${o.numero}` : 'Orden'}
+      description={o?.guia ? `Guía ${o.guia}` : undefined}
+      footer={acciones}
+    >
       {error && <Alert tone="error">{error}</Alert>}
       {cargando && (
         <div className="space-y-3">
@@ -65,16 +81,28 @@ export default function OrderQuickView({ orderId, onClose }) {
                 ))}
               </ul>
               {o.total !== undefined && (
-                <p className="mt-2 flex justify-between font-semibold text-slate-900">
-                  <span>Total</span>
-                  <span>{formatQ(o.total)}</span>
-                </p>
+                <div className="mt-2 space-y-1 text-sm text-slate-600">
+                  {o.descuento > 0 && <Linea label={`Descuento${o.cupon ? ` (${o.cupon})` : ''}`} value={`− ${formatQ(o.descuento)}`} />}
+                  <Linea label="Total" value={formatQ(o.total)} className="font-semibold text-slate-900" />
+                  {o.costoEnvio !== undefined && o.gananciaDropshipper !== undefined && (
+                    <>
+                      <Linea label="Envío" value={formatQ(o.costoEnvio)} />
+                      {o.comision !== undefined && <Linea label="Comisión de la plataforma" value={formatQ(o.comision)} />}
+                      <Linea label="Tu ganancia" value={formatQ(o.gananciaDropshipper)} className={`font-semibold ${o.gananciaDropshipper < 0 ? 'text-danger' : 'text-success'}`} />
+                    </>
+                  )}
+                </div>
               )}
             </Dato>
             {o.novedad?.activa && (
               <Alert tone="warning" title="Novedad activa">
                 {o.novedad.motivo}
               </Alert>
+            )}
+            {o.notasProveedor && (
+              <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                <strong className="text-slate-700">Notas para el proveedor:</strong> {o.notasProveedor}
+              </p>
             )}
           </div>
           <div className="md:col-span-2">

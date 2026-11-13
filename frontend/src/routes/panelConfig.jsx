@@ -27,6 +27,16 @@ import InicioPage from '../pages/shared/InicioPage';
 import NotificacionesPage from '../pages/shared/NotificacionesPage';
 import PerfilPage from '../pages/shared/PerfilPage';
 import KycPage from '../pages/shared/KycPage';
+import DashboardPage from '../pages/dropshipper/DashboardPage';
+import CatalogoPage from '../pages/dropshipper/CatalogoPage';
+import ProductoDetallePage from '../pages/dropshipper/ProductoDetallePage';
+import PedidosPage from '../pages/dropshipper/PedidosPage';
+import NovedadesPage from '../pages/dropshipper/NovedadesPage';
+import ProductosImportadosPage from '../pages/dropshipper/ProductosImportadosPage';
+import MiTiendaPage from '../pages/dropshipper/MiTiendaPage';
+import CuponesPage from '../pages/dropshipper/CuponesPage';
+import ClientesPage from '../pages/dropshipper/ClientesPage';
+import TransportadorasPage from '../pages/dropshipper/TransportadorasPage';
 
 // Una sola fuente para el menú y las rutas de cada panel.
 // Un ítem aparece en el Sidebar en cuanto tiene "element"; los demás son los módulos que
@@ -41,15 +51,15 @@ const facturas = { label: 'Facturas', icon: Receipt, path: 'facturas', section: 
 export const PANELES = {
   dropshipper: [
     inicio,
-    { label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard', section: 'General' },
-    { label: 'Catálogo', icon: Search, path: 'catalogo', section: 'Ventas' },
-    { label: 'Mis pedidos', icon: ShoppingCart, path: 'ordenes', section: 'Ventas' },
-    { label: 'Novedades', icon: TriangleAlert, path: 'novedades', section: 'Ventas' },
-    { label: 'Mis productos', icon: Package, path: 'productos', section: 'Mi tienda' },
-    { label: 'Mi tienda', icon: Store, path: 'tienda', section: 'Mi tienda' },
-    { label: 'Cupones', icon: Ticket, path: 'cupones', section: 'Mi tienda' },
-    { label: 'Clientes', icon: Users, path: 'clientes', section: 'Mi tienda' },
-    { label: 'Transportadoras', icon: Truck, path: 'transportadoras', section: 'Mi tienda' },
+    { label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard', element: <DashboardPage />, section: 'General' },
+    { label: 'Catálogo', icon: Search, path: 'catalogo', element: <CatalogoPage />, section: 'Ventas' },
+    { label: 'Mis pedidos', icon: ShoppingCart, path: 'ordenes', element: <PedidosPage />, section: 'Ventas' },
+    { label: 'Novedades', icon: TriangleAlert, path: 'novedades', element: <NovedadesPage />, section: 'Ventas' },
+    { label: 'Mis productos', icon: Package, path: 'productos', element: <ProductosImportadosPage />, section: 'Mi tienda' },
+    { label: 'Mi tienda', icon: Store, path: 'tienda', element: <MiTiendaPage />, section: 'Mi tienda' },
+    { label: 'Cupones', icon: Ticket, path: 'cupones', element: <CuponesPage />, section: 'Mi tienda' },
+    { label: 'Clientes', icon: Users, path: 'clientes', element: <ClientesPage />, section: 'Mi tienda' },
+    { label: 'Transportadoras', icon: Truck, path: 'transportadoras', element: <TransportadorasPage />, section: 'Mi tienda' },
     billetera,
     reportes,
     facturas,
@@ -103,12 +113,15 @@ export const PANELES = {
   ],
 };
 
-// Rutas del panel que no van en el menú (se abren desde el header)
+// Rutas del panel que no van en el menú (perfil desde el header, detalles desde sus listas)
 export const RUTAS_EXTRA = [{ path: 'perfil', element: <PerfilPage /> }];
+const RUTAS_OCULTAS = {
+  dropshipper: [{ path: 'catalogo/:id', element: <ProductoDetallePage /> }],
+};
 
 export const menuDe = (role) => (PANELES[role] || []).filter((item) => item.element);
 
-export const rutasDe = (role) => [...menuDe(role), ...RUTAS_EXTRA];
+export const rutasDe = (role) => [...menuDe(role), ...(RUTAS_OCULTAS[role] || []), ...RUTAS_EXTRA];
 
 // ¿Existe ya la página para este enlace? (las notificaciones traen links a módulos futuros)
 export const rutaDisponible = (role, link) => {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  ArrowRight,
   Banknote,
   CheckCircle2,
   ClipboardList,
@@ -12,7 +13,6 @@ import {
   Store,
   TrendingUp,
   Truck,
-  Wallet,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import useAsync from '../../hooks/useAsync';
@@ -27,6 +27,7 @@ import { OrderStatusBadge } from '../../components/ui/Badge';
 import OrderQuickView from '../../components/orders/OrderQuickView';
 import { formatQ } from '../../utils/formatQ';
 import { formatFecha } from '../../utils/dates';
+import { plural } from '../../utils/plural';
 
 const saludo = () => {
   const h = new Date().getHours();
@@ -67,15 +68,17 @@ const tarjetasPara = (role, k = {}) =>
 function Pendientes({ role, k }) {
   if (!k) return null;
   const avisos = [];
+  const n = (cantidad, singular, pluralTexto, verboUno, verboVarios) =>
+    `${plural(cantidad, singular, pluralTexto)} ${cantidad === 1 ? verboUno : verboVarios}`;
   if (role === 'dropshipper') {
-    if (k.pendientesConfirmar) avisos.push(`${k.pendientesConfirmar} pedido(s) esperan tu confirmación`);
-    if (k.novedadesActivas) avisos.push(`${k.novedadesActivas} novedad(es) por solucionar`);
+    if (k.pendientesConfirmar) avisos.push(n(k.pendientesConfirmar, 'pedido', 'pedidos', 'espera tu confirmación', 'esperan tu confirmación'));
+    if (k.novedadesActivas) avisos.push(`${plural(k.novedadesActivas, 'novedad')} por solucionar`);
   }
-  if (role === 'proveedor' && k.productosStockBajo) avisos.push(`${k.productosStockBajo} producto(s) con stock bajo`);
-  if (role === 'transportadora' && k.novedadesActivas) avisos.push(`${k.novedadesActivas} novedad(es) activas`);
+  if (role === 'proveedor' && k.productosStockBajo) avisos.push(`${plural(k.productosStockBajo, 'producto')} con stock bajo`);
+  if (role === 'transportadora' && k.novedadesActivas) avisos.push(n(k.novedadesActivas, 'novedad', 'novedades', 'activa', 'activas'));
   if (role === 'admin') {
-    if (k.recargasPendientes) avisos.push(`${k.recargasPendientes} recarga(s) por aprobar`);
-    if (k.retirosPendientes) avisos.push(`${k.retirosPendientes} retiro(s) por aprobar`);
+    if (k.recargasPendientes) avisos.push(`${plural(k.recargasPendientes, 'recarga')} por aprobar`);
+    if (k.retirosPendientes) avisos.push(`${plural(k.retirosPendientes, 'retiro')} por aprobar`);
   }
   if (!avisos.length) return null;
   return (
@@ -85,31 +88,38 @@ function Pendientes({ role, k }) {
   );
 }
 
-function BannerPanel({ banner }) {
-  // Texto a la izquierda e imagen en su propio espacio: así la imagen nunca tapa el título
+// Banner a todo el ancho: la imagen cubre el fondo y un degradado índigo mantiene el texto legible
+function BannerPanel({ banner, role }) {
+  const interno = banner.link?.startsWith(`/${role}`);
+  const externo = /^https?:\/\//.test(banner.link || '');
   const contenido = (
-    <div className="flex overflow-hidden rounded-xl bg-gradient-to-r from-primary to-indigo-700 shadow-sm">
-      <div className="flex-1 px-6 py-7 text-white sm:px-8">
-        <p className="text-xl font-bold sm:text-2xl">{banner.titulo}</p>
-        {banner.subtitulo && <p className="mt-1 max-w-xl text-sm text-primary-100">{banner.subtitulo}</p>}
+    <div className="relative isolate flex min-h-40 items-center overflow-hidden rounded-xl bg-primary shadow-sm">
+      <img src={banner.imagen} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover object-right" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-950/85 via-indigo-900/55 to-transparent" aria-hidden="true" />
+      <div className="max-w-xl px-6 py-8 text-white sm:px-8">
+        <p className="text-xl font-bold tracking-tight sm:text-2xl">{banner.titulo}</p>
+        {banner.subtitulo && <p className="mt-1.5 text-sm text-indigo-100">{banner.subtitulo}</p>}
+        {(interno || externo) && (
+          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-inset ring-white/30">
+            Ver más <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+        )}
       </div>
-      <img src={banner.imagen} alt="" className="hidden w-2/5 max-w-sm object-cover md:block" />
     </div>
   );
-  if (!banner.link) return contenido;
-  return banner.link.startsWith('/') ? (
-    <Link to={banner.link} className="block transition-opacity hover:opacity-95">
-      {contenido}
-    </Link>
-  ) : (
-    <a href={banner.link} target="_blank" rel="noopener noreferrer" className="block transition-opacity hover:opacity-95">
-      {contenido}
-    </a>
-  );
+  if (interno) return <Link to={banner.link} className="block transition-opacity hover:opacity-95">{contenido}</Link>;
+  if (externo) {
+    return (
+      <a href={banner.link} target="_blank" rel="noopener noreferrer" className="block transition-opacity hover:opacity-95">
+        {contenido}
+      </a>
+    );
+  }
+  return contenido;
 }
 
 export default function InicioPage() {
-  const { user, wallet } = useAuth();
+  const { user } = useAuth();
   const role = user.role;
   const [ordenId, setOrdenId] = useState(null);
 
@@ -148,23 +158,16 @@ export default function InicioPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            {saludo()}, {user.nombre}
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {role === 'cliente' ? 'Aquí tienes el resumen de tus compras.' : 'Este es el resumen de los últimos 30 días.'}
-          </p>
-        </div>
-        {wallet && (
-          <p className="flex items-center gap-2 text-sm text-slate-500">
-            <Wallet className="h-4 w-4" aria-hidden="true" /> Saldo disponible <strong className="text-slate-900">{formatQ(wallet.saldoDisponible)}</strong>
-          </p>
-        )}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          {saludo()}, {user.nombre}
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          {role === 'cliente' ? 'Aquí tienes el resumen de tus compras.' : 'Este es el resumen de los últimos 30 días.'}
+        </p>
       </div>
 
-      {banners.data?.[0] && <BannerPanel banner={banners.data[0]} />}
+      {banners.data?.[0] && <BannerPanel banner={banners.data[0]} role={role} />}
       <Pendientes role={role} k={k} />
       {resumen.error && <Alert tone="error">{resumen.error}</Alert>}
 

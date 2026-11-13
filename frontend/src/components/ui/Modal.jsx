@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
-const TAMANOS = { sm: 'max-w-md', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-5xl' };
+const TAMANOS = { sm: 'max-w-md', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-5xl', '2xl': 'max-w-6xl' };
 
 export default function Modal({ open, onClose, title, description, size = 'md', footer, children }) {
   const panel = useRef(null);

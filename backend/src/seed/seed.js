@@ -426,8 +426,8 @@ const run = async () => {
     {
       titulo: 'Vende más con OmniaHub',
       subtitulo: 'Importa productos verificados y envía a los 22 departamentos.',
-      imagen: placeholder('OmniaHub: vende sin inventario', '1200x400'),
-      link: '/register',
+      imagen: '/banners/vende-mas.svg',
+      link: '/registro',
       ubicacion: ['LANDING', 'PANEL'],
       inicio: haceDias(1),
       fin: haceDias(-90),

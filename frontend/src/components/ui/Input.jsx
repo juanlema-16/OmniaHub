@@ -22,7 +22,7 @@ const Input = forwardRef(function Input(
           type={esPassword && visible ? 'text' : type}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={controlClass(error, `h-10 ${Icon || prefix ? 'pl-10' : 'pl-3'} ${esPassword ? 'pr-10' : 'pr-3'}`)}
+          className={controlClass(error, `h-10 ${Icon ? 'pl-10' : prefix ? (String(prefix).length > 2 ? 'pl-14' : 'pl-8') : 'pl-3'} ${esPassword ? 'pr-10' : 'pr-3'}`)}
           {...props}
         />
         {esPassword && (
