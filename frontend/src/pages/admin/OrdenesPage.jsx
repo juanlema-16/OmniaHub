@@ -28,7 +28,7 @@ const EXTRA = { transportadora: '', tipoPago: '', origen: '', desde: '', hasta: 
 function AccionesAdmin({ orden, onChange }) {
   const [corregir, setCorregir] = useState(false);
   if (!puedeCorregir(orden)) {
-    const motivo = orden.estado === 'ENTREGADO' ? 'Orden entregada: el dinero ya se repartió' : `Orden en ${orden.estado === 'CANCELADO' ? 'cancelada' : 'devolución'}: su dinero ya se liquidó`;
+    const motivo = orden.estado === 'ENTREGADO' ? 'Orden entregada: el dinero ya se repartió' : `${orden.estado === 'CANCELADO' ? 'Orden cancelada' : 'Orden en devolución'}: su dinero ya se liquidó`;
     return <p className="text-sm text-slate-500">{motivo} y su estado no se puede cambiar.</p>;
   }
   return (
