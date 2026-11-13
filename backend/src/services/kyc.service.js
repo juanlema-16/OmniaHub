@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import User from '../models/User.js';
+import { withTransaction } from '../utils/transaction.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex, paginate } from '../utils/pagination.js';
 import { uploadPath } from '../middlewares/upload.js';
@@ -72,41 +72,36 @@ export const reviewKyc = async (admin, userId, { accion, motivo }) => {
   if (user.kyc?.status !== 'pendiente') throw ApiError.badRequest('Este usuario no tiene una verificación pendiente');
 
   const aprobado = accion === 'aprobar';
-  const session = await mongoose.startSession();
-  try {
-    await session.withTransaction(async () => {
-      user.kyc.status = aprobado ? 'aprobado' : 'rechazado';
-      user.kyc.motivoRechazo = aprobado ? undefined : motivo;
-      user.kyc.revisadoPor = admin._id;
-      user.kyc.revisadoEn = new Date();
-      await user.save({ session });
+  await withTransaction(async (session) => {
+    user.kyc.status = aprobado ? 'aprobado' : 'rechazado';
+    user.kyc.motivoRechazo = aprobado ? undefined : motivo;
+    user.kyc.revisadoPor = admin._id;
+    user.kyc.revisadoEn = new Date();
+    await user.save({ session });
 
-      await notify(
-        {
-          user: user._id,
-          titulo: aprobado ? 'Identidad verificada' : 'Verificación rechazada',
-          mensaje: aprobado
-            ? 'Tu KYC fue aprobado. Ya puedes publicar, vender y retirar tu dinero.'
-            : `Tu KYC fue rechazado: ${motivo}. Corrige los documentos y envíalos de nuevo.`,
-          tipo: 'KYC',
-          link: `/${user.role}/kyc`,
-        },
-        session
-      );
-      await logAudit(
-        {
-          user: admin._id,
-          accion: aprobado ? 'KYC_APROBADO' : 'KYC_RECHAZADO',
-          entidad: 'User',
-          entidadId: user._id,
-          detalle: { email: user.email, ...(aprobado ? {} : { motivo }) },
-        },
-        session
-      );
-    });
-  } finally {
-    await session.endSession();
-  }
+    await notify(
+      {
+        user: user._id,
+        titulo: aprobado ? 'Identidad verificada' : 'Verificación rechazada',
+        mensaje: aprobado
+          ? 'Tu KYC fue aprobado. Ya puedes publicar, vender y retirar tu dinero.'
+          : `Tu KYC fue rechazado: ${motivo}. Corrige los documentos y envíalos de nuevo.`,
+        tipo: 'KYC',
+        link: `/${user.role}/kyc`,
+      },
+      session
+    );
+    await logAudit(
+      {
+        user: admin._id,
+        accion: aprobado ? 'KYC_APROBADO' : 'KYC_RECHAZADO',
+        entidad: 'User',
+        entidadId: user._id,
+        detalle: { email: user.email, ...(aprobado ? {} : { motivo }) },
+      },
+      session
+    );
+  });
 
   return user;
 };

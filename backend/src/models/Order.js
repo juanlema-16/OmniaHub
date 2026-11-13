@@ -47,6 +47,8 @@ const orderSchema = new Schema(
       validate: { validator: (v) => v.length > 0, message: 'La orden debe tener al menos un producto' },
     },
     tipoPago: { type: String, enum: TIPO_PAGO, required: true },
+    // Cómo paga el cliente final en la tienda: en efectivo al recibir o con tarjeta (simulada) al comprar
+    metodoPagoCliente: { type: String, enum: ['CONTRAENTREGA', 'TARJETA'], default: 'CONTRAENTREGA' },
     transportadora: { type: Schema.Types.ObjectId, ref: 'Carrier', required: true },
     costoEnvio: { type: Number, required: true, min: 0 },
     subtotal: { type: Number, required: true, min: 0 },
@@ -68,6 +70,13 @@ const orderSchema = new Schema(
     montoRecaudado: { type: Number, min: 0 },
     notasProveedor: { type: String, trim: true, maxlength: 500 },
     entregadaEn: Date,
+    // Marcas para que stock y dinero se apliquen una sola vez, aunque el admin corrija estados
+    efectos: {
+      stockDescontado: { type: Boolean, default: false },
+      salidaSinRecaudo: { type: Boolean, default: false },
+      repartido: { type: Boolean, default: false },
+      fleteCobrado: { type: Boolean, default: false },
+    },
   },
   { timestamps: true }
 );

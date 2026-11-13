@@ -1,9 +1,7 @@
 import { z } from 'zod';
 import { KYC_STATUS } from '../utils/constants.js';
 import { paginationQuery } from '../utils/pagination.js';
-
-export const objectId = (label = 'id') =>
-  z.string().regex(/^[a-f\d]{24}$/i, { error: `El ${label} no es válido` });
+import { objectId } from './common.validator.js';
 
 export const kycFileParams = z.object({
   filename: z.string().regex(/^[a-f\d-]{36}\.(jpg|png|webp)$/i, { error: 'Archivo no válido' }),
