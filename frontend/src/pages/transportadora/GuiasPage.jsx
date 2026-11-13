@@ -22,18 +22,31 @@ import { ORDER_STATUS, TIPO_PAGO } from '../../utils/constants';
 const ESTADOS = ['GUIA_GENERADA', 'EN_TRANSITO', 'NOVEDAD', 'ENTREGADO', 'DEVOLUCION'];
 const EXTRA = { tipoPago: '', desde: '', hasta: '' };
 
-const Cobro = ({ orden }) =>
-  cobraEfectivo(orden) ? (
+// Según el estado: por cobrar mientras va en camino, cobrado al entregarse, no cobrado si se devolvió o canceló
+const ESTADO_COBRO = {
+  ENTREGADO: { texto: 'Cobrado', clase: 'text-emerald-700' },
+  DEVOLUCION: { texto: 'No cobrado', clase: 'text-slate-500' },
+  CANCELADO: { texto: 'No cobrado', clase: 'text-slate-500' },
+};
+
+const Cobro = ({ orden }) => {
+  if (!cobraEfectivo(orden)) {
+    return (
+      <div>
+        <p className="font-medium text-slate-500">Sin cobro</p>
+        <p className="text-xs text-slate-500">{orden.tipoPago === 'SIN_RECAUDO' ? 'Prepagada' : 'Pagada con tarjeta'}</p>
+      </div>
+    );
+  }
+  const cobro = ESTADO_COBRO[orden.estado] || { texto: 'Cobrar en efectivo', clase: 'text-amber-700' };
+  const monto = orden.estado === 'ENTREGADO' ? orden.montoRecaudado ?? orden.total : orden.total;
+  return (
     <div>
-      <p className="font-semibold text-slate-900">{formatQ(orden.total)}</p>
-      <p className="text-xs text-amber-700">Cobrar en efectivo</p>
-    </div>
-  ) : (
-    <div>
-      <p className="font-medium text-slate-500">Sin cobro</p>
-      <p className="text-xs text-slate-500">{orden.tipoPago === 'SIN_RECAUDO' ? 'Prepagada' : 'Pagada con tarjeta'}</p>
+      <p className={`font-semibold ${ESTADO_COBRO[orden.estado] && orden.estado !== 'ENTREGADO' ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{formatQ(monto)}</p>
+      <p className={`text-xs ${cobro.clase}`}>{cobro.texto}</p>
     </div>
   );
+};
 
 export default function GuiasPage() {
   const [params, setParams] = useSearchParams();
@@ -100,7 +113,7 @@ export default function GuiasPage() {
         </div>
       ),
     },
-    { key: 'cobro', header: 'A cobrar', render: (o) => <Cobro orden={o} /> },
+    { key: 'cobro', header: 'Cobro', render: (o) => <Cobro orden={o} /> },
     { key: 'pago', header: 'Pago', render: (o) => <Badge tone={o.tipoPago === 'CON_RECAUDO' ? 'sky' : 'violet'}>{TIPO_PAGO[o.tipoPago]}</Badge> },
     {
       key: 'estado',
