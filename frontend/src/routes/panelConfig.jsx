@@ -44,6 +44,18 @@ import ProvInventarioPage from '../pages/proveedor/InventarioPage';
 import ProvComprasPage from '../pages/proveedor/ComprasPage';
 import ProvOrdenesPage from '../pages/proveedor/OrdenesPage';
 import ProvPosPage from '../pages/proveedor/PosPage';
+import AdminDashboardPage from '../pages/admin/DashboardPage';
+import AdminUsuariosPage from '../pages/admin/UsuariosPage';
+import AdminKycPage from '../pages/admin/KycPage';
+import AdminSolicitudesPage from '../pages/admin/SolicitudesPage';
+import AdminOrdenesPage from '../pages/admin/OrdenesPage';
+import AdminTransportadorasPage from '../pages/admin/TransportadorasPage';
+import AdminConfiguracionPage from '../pages/admin/ConfiguracionPage';
+import AdminBannersPage from '../pages/admin/BannersPage';
+import AdminPoliticasPage from '../pages/admin/PoliticasPage';
+import AdminAuditoriaPage from '../pages/admin/AuditoriaPage';
+import TransGuiasPage from '../pages/transportadora/GuiasPage';
+import TransNovedadesPage from '../pages/transportadora/NovedadesPage';
 
 // Una sola fuente para el menú y las rutas de cada panel.
 // Un ítem aparece en el Sidebar en cuanto tiene "element"; los demás son los módulos que
@@ -89,24 +101,24 @@ export const PANELES = {
   ],
   transportadora: [
     inicio,
-    { label: 'Guías', icon: Truck, path: 'guias', section: 'Operación' },
-    { label: 'Novedades', icon: TriangleAlert, path: 'novedades', section: 'Operación' },
+    { label: 'Guías', icon: Truck, path: 'guias', element: <TransGuiasPage />, section: 'Operación' },
+    { label: 'Novedades', icon: TriangleAlert, path: 'novedades', element: <TransNovedadesPage />, section: 'Operación' },
     billetera,
     reportes,
     notificaciones,
   ],
   admin: [
     inicio,
-    { label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard', section: 'General' },
-    { label: 'Usuarios', icon: Users, path: 'usuarios', section: 'Gestión' },
-    { label: 'KYC', icon: ShieldCheck, path: 'kyc', section: 'Gestión' },
-    { label: 'Órdenes', icon: ClipboardList, path: 'ordenes', section: 'Gestión' },
-    { label: 'Recargas y retiros', icon: Wallet, path: 'solicitudes', section: 'Finanzas' },
-    { label: 'Transportadoras', icon: Truck, path: 'transportadoras', section: 'Configuración' },
-    { label: 'Publicidad', icon: Megaphone, path: 'banners', section: 'Configuración' },
-    { label: 'Políticas', icon: ScrollText, path: 'politicas', section: 'Configuración' },
-    { label: 'Configuración', icon: Settings, path: 'configuracion', section: 'Configuración' },
-    { label: 'Auditoría', icon: FileText, path: 'auditoria', section: 'Configuración' },
+    { label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard', element: <AdminDashboardPage />, section: 'General' },
+    { label: 'Usuarios', icon: Users, path: 'usuarios', element: <AdminUsuariosPage />, section: 'Gestión' },
+    { label: 'KYC', icon: ShieldCheck, path: 'kyc', element: <AdminKycPage />, section: 'Gestión' },
+    { label: 'Órdenes', icon: ClipboardList, path: 'ordenes', element: <AdminOrdenesPage />, section: 'Gestión' },
+    { label: 'Recargas y retiros', icon: Wallet, path: 'solicitudes', element: <AdminSolicitudesPage />, section: 'Finanzas' },
+    { label: 'Transportadoras', icon: Truck, path: 'transportadoras', element: <AdminTransportadorasPage />, section: 'Configuración' },
+    { label: 'Publicidad', icon: Megaphone, path: 'banners', element: <AdminBannersPage />, section: 'Configuración' },
+    { label: 'Políticas', icon: ScrollText, path: 'politicas', element: <AdminPoliticasPage />, section: 'Configuración' },
+    { label: 'Configuración', icon: Settings, path: 'configuracion', element: <AdminConfiguracionPage />, section: 'Configuración' },
+    { label: 'Auditoría', icon: FileText, path: 'auditoria', element: <AdminAuditoriaPage />, section: 'Configuración' },
     billetera,
     reportes,
     facturas,
